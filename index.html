@@ -518,26 +518,8 @@ input,textarea{user-select:text;-webkit-user-select:text}
 
 /* Mosaic artwork — centered square */
 /* Logo — above the mosaic, centered */
-#heroLogo {
-  position: absolute;
-  z-index: 4;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: clamp(48px, 9vw, 96px);
-  font-weight: 900;
-  letter-spacing: -.04em;
-  color: #fff;
-  text-shadow: 0 2px 8px rgba(0,0,0,.8), 0 0 40px rgba(0,0,0,.6);
-  white-space: nowrap;
-  text-align: center;
 
-}
-#heroLogo span {
-  background: linear-gradient(90deg, #818cf8, rgba(255,255,255,.9), #fb7185);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+
 
 /* Hide old loader center elements */
 
@@ -883,6 +865,23 @@ html, body {
 
 #app { display: flex; width: 100%; height: 100vh; }
 #loaderCenter { display: none !important; }
+
+/* ── Hero Mosaic (Beatles PNG) ── */
+#heroMosaic {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(72vh, 72vw);
+  height: min(72vh, 72vw);
+  max-width: 820px;
+  max-height: 820px;
+  object-fit: contain;
+  pointer-events: none;
+  /* Subtle shadow so it pops from blurred bg */
+  filter: drop-shadow(0 20px 60px rgba(0,0,0,.6));
+}
 </style>
 </head>
 <body>
@@ -926,7 +925,7 @@ html, body {
   <div id="brickFront"></div>
 
   <!-- Layer 4: Logo -->
-  <div id="heroLogo">BRICK<span>PIC</span></div>
+  <img id="heroMosaic" src="https://siul98.github.io/BrickPic/Beatles.png" alt="BrickPic Beatles Mosaic">
 
   <!-- Scroll hint -->
   <div id="scrollHint">
