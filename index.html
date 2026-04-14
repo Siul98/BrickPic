@@ -454,7 +454,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .preview-thumb {
   width: 54px;
   height: 54px;
-  overflow: hidden;
+  overflow: visible;
   cursor: pointer;
   flex-shrink: 0;
   opacity: 0.6;
@@ -1818,20 +1818,20 @@ function initLoader(){
   const rim=new THREE.DirectionalLight(0xa0c0ff,.5);rim.position.set(0,-6,-10);scene.add(rim);
   const WANTED=['Brick_2x4_Orange_Orange_0','Brick_2x2_Brown_Brown_0','Brick_1x2_Yellow_Yellow_0','Brick_2x4_Dark_Blue_Dark_Blue_0','Brick_2x2_Purple_Purple_0','Plane_2x4_White_White_0','Plane_1x2_Grey_Grey_0','Brick_2x2_Dark_Red_Dark_Red_0','Brick_1x2_Violet_Violet_0','Plane_2x2_Green_Green_0','Brick_2x4_Red_Red_0','Plane_1x2_Blue_Blue_0'];
   const LAYOUT=[
-  // ── BEHIND mosaic (Z<0, blurry) — outer ring only ──
-  {pos:[-9.5, 3.0,-5], rotAxis:[.3,1,.1],  speed:.003,scale:0.35,floatAmp:.20,floatSpd:.65,delay:.3},
-  {pos:[ 9.2, 2.8,-4], rotAxis:[.1,1,.3],  speed:.002,scale:0.21,floatAmp:.12,floatSpd:.55,delay:.5},
-  {pos:[-8.5,-4.5,-6], rotAxis:[.4,1,.1],  speed:.003,scale:0.28,floatAmp:.10,floatSpd:.60,delay:.6},
-  {pos:[ 7.8,-3.5,-3], rotAxis:[.2,1,.5],  speed:.004,scale:0.18,floatAmp:.08,floatSpd:.80,delay:.8},
-  {pos:[ 1.0, 5.5,-5], rotAxis:[.5,1,.2],  speed:.003,scale:0.25,floatAmp:.14,floatSpd:.70,delay:.45},
-  // ── IN FRONT of mosaic (Z≥0, sharp + cast shadow) — outer ring only ──
-  {pos:[-9.0, 0.5, 3], rotAxis:[.2,1,-.2], speed:.005,scale:0.42,floatAmp:.16,floatSpd:.75,delay:.4},
-  {pos:[ 9.3, 1.2, 2], rotAxis:[.1,1,.4],  speed:.004,scale:0.25,floatAmp:.09,floatSpd:.85,delay:.7},
-  {pos:[-7.5, 4.5, 3], rotAxis:[.5,1,.2],  speed:.006,scale:0.32,floatAmp:.13,floatSpd:.70,delay:.2},
-  {pos:[ 7.2,-4.8, 4], rotAxis:[.3,1,-.3], speed:.005,scale:0.21,floatAmp:.07,floatSpd:.90,delay:.35},
-  {pos:[-1.5, 5.8, 2], rotAxis:[.4,1,.2],  speed:.003,scale:1.20,floatAmp:.18,floatSpd:.60,delay:.55},
-  {pos:[ 2.5,-5.5, 3], rotAxis:[.2,1,.6],  speed:.006,scale:0.28,floatAmp:.08,floatSpd:.95,delay:.15},
-  {pos:[-9.5,-2.5, 2], rotAxis:[.6,1,.1],  speed:.004,scale:0.39,floatAmp:.15,floatSpd:.68,delay:.65},
+  // ── BEHIND mosaic (Z<0, rendered by blurRenderer) ──
+  {pos:[-9.5, 3.0,-5], rotAxis:[.3,1,.1],  speed:.003,scale:.10,floatAmp:.20,floatSpd:.65,delay:.3},
+  {pos:[ 9.2, 2.8,-4], rotAxis:[.1,1,.3],  speed:.002,scale:.06,floatAmp:.12,floatSpd:.55,delay:.5},
+  {pos:[-8.5,-4.5,-6], rotAxis:[.4,1,.1],  speed:.003,scale:.08,floatAmp:.10,floatSpd:.60,delay:.6},
+  {pos:[ 1.0, 5.5,-5], rotAxis:[.5,1,.2],  speed:.003,scale:.07,floatAmp:.14,floatSpd:.70,delay:.45},
+  // ── IN FRONT of mosaic (Z≥0, rendered by sharpRenderer) ──
+  // These overlap the mosaic edges so they visually float over it
+  {pos:[-4.5, 4.0, 2], rotAxis:[.2,1,-.2], speed:.005,scale:.18,floatAmp:.16,floatSpd:.75,delay:.4},  // top-left over mosaic
+  {pos:[ 4.8,-3.5, 3], rotAxis:[.5,1,.2],  speed:.006,scale:.14,floatAmp:.13,floatSpd:.70,delay:.2},  // bottom-right over mosaic
+  {pos:[-3.0,-4.0, 2], rotAxis:[.3,1,-.3], speed:.005,scale:.09,floatAmp:.09,floatSpd:.90,delay:.35}, // bottom-left edge
+  {pos:[ 3.5, 3.5, 2], rotAxis:[.4,1,.2],  speed:.003,scale:.40,floatAmp:.18,floatSpd:.60,delay:.55}, // top-right, large
+  {pos:[ 0.5,-5.0, 3], rotAxis:[.2,1,.6],  speed:.006,scale:.08,floatAmp:.08,floatSpd:.95,delay:.15}, // bottom center edge
+  {pos:[-9.0, 0.0, 2], rotAxis:[.6,1,.1],  speed:.004,scale:.11,floatAmp:.15,floatSpd:.68,delay:.65}, // far left
+  {pos:[ 9.0,-1.0, 2], rotAxis:[.1,1,.4],  speed:.004,scale:.07,floatAmp:.09,floatSpd:.85,delay:.7},  // far right
 ];
   const loader3d=new THREE.GLTFLoader();
   loader3d.load(LEGO_GLB_DATA,(gltf)=>{
