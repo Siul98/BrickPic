@@ -839,7 +839,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 #heroMosaic {
   position: absolute;
   z-index: 2;
-  top: 56%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: min(50vh, 50vw);
@@ -875,7 +875,7 @@ html, body {
 #heroMosaic {
   position: absolute;
   z-index: 2;
-  top: 56%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: min(50vh, 50vw);
@@ -888,16 +888,40 @@ html, body {
   filter: drop-shadow(0 20px 60px rgba(0,0,0,.6));
 }
 
-/* ── BrickPic Logo ── */
-#brickpicLogo {
+
+
+/* ── Logo + Slogan overlay ── */
+#heroOverlay {
   position: absolute;
   z-index: 5;
-  top: 12%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  width: min(280px, 55vw);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
   pointer-events: none;
-  filter: drop-shadow(0 4px 20px rgba(0,0,0,.5));
+  /* Subtle gradient behind text for readability */
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,0,0,.45) 0%, transparent 100%);
+  padding: 32px 48px 28px;
+  border-radius: 16px;
+  width: min(500px, 80vw);
+}
+#brickpicLogo {
+  width: min(260px, 52vw);
+  pointer-events: none;
+  filter: drop-shadow(0 3px 12px rgba(0,0,0,.6));
+}
+#heroSlogan {
+  font-size: clamp(13px, 2.2vw, 18px);
+  font-weight: 600;
+  color: rgba(255,255,255,.85);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0,0,0,.7);
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
 }
 </style>
 </head>
@@ -942,7 +966,6 @@ html, body {
   <div id="brickFront"></div>
 
   <!-- Layer 4: Logo -->
-  <img id="brickpicLogo" src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic">
   <img id="heroMosaic" src="https://siul98.github.io/BrickPic/Beatles.png" alt="BrickPic Beatles Mosaic">
 
   <!-- Scroll hint -->
