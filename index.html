@@ -528,9 +528,16 @@ input,textarea{user-select:text;-webkit-user-select:text}
   font-weight: 900;
   letter-spacing: -.04em;
   color: #fff;
-  text-shadow: 0 2px 40px rgba(0,0,0,.3);
+  text-shadow: 0 2px 8px rgba(0,0,0,.8), 0 0 40px rgba(0,0,0,.6);
   white-space: nowrap;
   text-align: center;
+  /* Semi-transparent pill behind logo */
+  background: rgba(0,0,0,.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 12px 32px;
+  border-radius: 60px;
+  border: 1px solid rgba(255,255,255,.15);
 }
 #heroLogo span {
   background: linear-gradient(90deg, #818cf8, rgba(255,255,255,.9), #fb7185);
@@ -589,7 +596,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   position: absolute;
   inset: -30px;
   background: url('https://siul98.github.io/BrickPic/eimsbudeHD.jpeg') center center / cover no-repeat;
-  filter: blur(14px);
+  filter: blur(9px);
   transform: scale(1.05);
 }
 /* Layer 2: Sharp image — only visible in center strip via mask */
@@ -601,15 +608,15 @@ input,textarea{user-select:text;-webkit-user-select:text}
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent   0%,
-    black        32%,
-    black        68%,
+    black        20%,
+    black        80%,
     transparent 100%
   );
   mask-image: linear-gradient(
     to bottom,
     transparent   0%,
-    black        32%,
-    black        68%,
+    black        20%,
+    black        80%,
     transparent 100%
   );
 }
