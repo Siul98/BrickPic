@@ -531,13 +531,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   text-shadow: 0 2px 8px rgba(0,0,0,.8), 0 0 40px rgba(0,0,0,.6);
   white-space: nowrap;
   text-align: center;
-  /* Semi-transparent pill behind logo */
-  background: rgba(0,0,0,.25);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 12px 32px;
-  border-radius: 60px;
-  border: 1px solid rgba(255,255,255,.15);
+
 }
 #heroLogo span {
   background: linear-gradient(90deg, #818cf8, rgba(255,255,255,.9), #fb7185);
@@ -583,42 +577,21 @@ input,textarea{user-select:text;-webkit-user-select:text}
 /* Scroll parallax: mosaic drifts up slightly */
 /* ── Hero Mosaic: centered, absolute ── */
 
-/* ══ BACKGROUND IMAGE — TILT SHIFT ════════════════════════════════════ */
+/* ══ BACKGROUND IMAGE ══════════════════════════════════════════════════ */
 #roomBg {
   position: absolute;
-  inset: 0;
+  inset: -20px;
   z-index: 0;
-  overflow: hidden;
-}
-/* Layer 1: Full image blurred — visible top + bottom */
-#roomBg::before {
-  content: '';
-  position: absolute;
-  inset: -30px;
   background: url('https://siul98.github.io/BrickPic/eimsbudeHD.jpeg') center center / cover no-repeat;
-  filter: blur(9px);
-  transform: scale(1.05);
+  filter: blur(10px);
+  transform: scale(1.03);
 }
-/* Layer 2: Sharp image — only visible in center strip via mask */
+/* Dark overlay to make logo + bricks pop */
 #roomBg::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: url('https://siul98.github.io/BrickPic/eimsbudeHD.jpeg') center center / cover no-repeat;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent   0%,
-    black        20%,
-    black        80%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent   0%,
-    black        20%,
-    black        80%,
-    transparent 100%
-  );
+  background: rgba(0,0,0,.35);
 }
 #roomCanvas { display: none; }
 
