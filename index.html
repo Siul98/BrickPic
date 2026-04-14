@@ -576,12 +576,42 @@ input,textarea{user-select:text;-webkit-user-select:text}
 /* Scroll parallax: mosaic drifts up slightly */
 /* ── Hero Mosaic: centered, absolute ── */
 
-/* ══ BACKGROUND IMAGE ══════════════════════════════════════════════════ */
+/* ══ BACKGROUND IMAGE — TILT SHIFT ════════════════════════════════════ */
 #roomBg {
   position: absolute;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
+}
+/* Layer 1: Full image blurred — visible top + bottom */
+#roomBg::before {
+  content: '';
+  position: absolute;
+  inset: -30px;
   background: url('https://siul98.github.io/BrickPic/eimsbudeHD.jpeg') center center / cover no-repeat;
+  filter: blur(14px);
+  transform: scale(1.05);
+}
+/* Layer 2: Sharp image — only visible in center strip via mask */
+#roomBg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('https://siul98.github.io/BrickPic/eimsbudeHD.jpeg') center center / cover no-repeat;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent   0%,
+    black        32%,
+    black        68%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent   0%,
+    black        32%,
+    black        68%,
+    transparent 100%
+  );
 }
 #roomCanvas { display: none; }
 
