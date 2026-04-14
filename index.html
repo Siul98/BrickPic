@@ -1861,22 +1861,22 @@ function initLoader(){
   const key=new THREE.DirectionalLight(0xfff4e0,2.2);key.position.set(6,10,8);key.castShadow=true;scene.add(key);
   const fill=new THREE.DirectionalLight(0xc0d8ff,.8);fill.position.set(-8,4,6);scene.add(fill);
   const rim=new THREE.DirectionalLight(0xa0c0ff,.5);rim.position.set(0,-6,-10);scene.add(rim);
-  const WANTED=['Brick_2x4_Orange_Orange_0','Brick_2x2_Brown_Brown_0','Brick_2x4_Dark_Blue_Dark_Blue_0','Plane_2x4_White_White_0','Plane_1x2_Grey_Grey_0','Brick_2x2_Dark_Yellow_Dark_Yellow_0','Brick_1x2_Yellow_Yellow_0','Brick_2x2_Dark_Red_Dark_Red_0'];
+  const WANTED=['Brick_2x4_Orange_Orange_0','Plane_1x2_Blue_Blue_0','Brick_2x2_Brown_Brown_0','Brick_2x4_Orange_Orange_0','Plane_1x2_Blue_Blue_0','Brick_1x2_Yellow_Yellow_0','Plane_2x4_White_White_0','Brick_2x2_Brown_Brown_0',];
   const LAYOUT=[
-  // ── BEHIND (Z<0, blurry) ───────────────────────────────────────────
-  {pos:[-7.0, 3.5,-5], rotAxis:[.3,1,.1],  speed:.003,scale:.70,floatAmp:.20,floatSpd:.65,delay:.3},   // orange 2x4
-  {pos:[ 7.5, 3.0,-4], rotAxis:[.1,1,.3],  speed:.002,scale:.50,floatAmp:.15,floatSpd:.55,delay:.5},   // brown 2x2
-  {pos:[-6.0,-5.0,-6], rotAxis:[.4,1,.1],  speed:.003,scale:.60,floatAmp:.10,floatSpd:.60,delay:.6},   // blue 2x4
-  {pos:[ 6.5,-3.0,-3], rotAxis:[.2,1,.5],  speed:.004,scale:.40,floatAmp:.12,floatSpd:.80,delay:.8},   // white plate
-  {pos:[ 0.5, 6.0,-5], rotAxis:[.5,1,.2],  speed:.003,scale:.55,floatAmp:.18,floatSpd:.70,delay:.45},  // gray plate
-  // ── IN FRONT (Z≥0, sharp) ──────────────────────────────────────────
-  {pos:[-7.5, 0.8, 2], rotAxis:[.2,1,-.2], speed:.005,scale:.90,floatAmp:.16,floatSpd:.75,delay:.4},   // large orange
-  {pos:[ 7.8, 1.8, 3], rotAxis:[.1,1,.4],  speed:.004,scale:.65,floatAmp:.12,floatSpd:.85,delay:.7},   // brown
-  {pos:[-6.0, 5.0, 2], rotAxis:[.5,1,.2],  speed:.006,scale:.75,floatAmp:.14,floatSpd:.70,delay:.2},   // dark yellow
-  {pos:[ 6.0,-5.0, 3], rotAxis:[.3,1,-.3], speed:.005,scale:.55,floatAmp:.10,floatSpd:.90,delay:.35},  // blue
-  {pos:[-1.5, 6.5, 2], rotAxis:[.4,1,.2],  speed:.003,scale:1.20,floatAmp:.22,floatSpd:.60,delay:.55}, // big white plate
-  {pos:[ 3.0,-6.0, 3], rotAxis:[.2,1,.6],  speed:.006,scale:.60,floatAmp:.10,floatSpd:.95,delay:.15},  // dark red
-  {pos:[-8.5,-2.0, 2], rotAxis:[.6,1,.1],  speed:.004,scale:.80,floatAmp:.18,floatSpd:.68,delay:.65},  // large gray
+  // ── BEHIND (Z<0, blurry) ─────────────────────────────────────────────
+  {pos:[-7.0, 3.5,-5], rotAxis:[.3,1,.1],  speed:.003,scale:.55,floatAmp:.20,floatSpd:.65,delay:.3},   // braun hinten
+  {pos:[ 7.5, 3.0,-4], rotAxis:[.1,1,.3],  speed:.002,scale:.40,floatAmp:.15,floatSpd:.55,delay:.5},   // blau hinten
+  {pos:[-6.0,-5.0,-6], rotAxis:[.4,1,.1],  speed:.003,scale:.50,floatAmp:.10,floatSpd:.60,delay:.6},   // orange hinten
+  {pos:[ 0.5, 6.0,-5], rotAxis:[.5,1,.2],  speed:.003,scale:.45,floatAmp:.18,floatSpd:.70,delay:.45},  // weiß hinten
+  // ── IN FRONT (Z≥0) — über dem Mosaik positioniert ────────────────────
+  // ORANGE: links oben, überlappt Mosaik-Rand
+  {pos:[-5.5, 3.5, 2.5], rotAxis:[.2,1,-.2], speed:.004,scale:1.0,floatAmp:.18,floatSpd:.75,delay:.4},
+  // HELLBLAU: rechts oben, überlappt Mosaik-Rand
+  {pos:[ 5.5, 4.0, 2.0], rotAxis:[.1,1,.4],  speed:.003,scale:0.9,floatAmp:.14,floatSpd:.85,delay:.7},
+  // ORANGE: rechts unten
+  {pos:[ 5.0,-4.5, 3.0], rotAxis:[.5,1,.2],  speed:.005,scale:0.7,floatAmp:.12,floatSpd:.70,delay:.2},
+  // HELLBLAU: links unten, überlappt Mosaik-Rand
+  {pos:[-5.0,-4.0, 2.5], rotAxis:[.3,1,-.3], speed:.004,scale:0.8,floatAmp:.10,floatSpd:.90,delay:.5},
 ];
   const loader3d=new THREE.GLTFLoader();
   loader3d.load(LEGO_GLB_DATA,(gltf)=>{
