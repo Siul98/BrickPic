@@ -576,19 +576,14 @@ input,textarea{user-select:text;-webkit-user-select:text}
 /* Scroll parallax: mosaic drifts up slightly */
 /* ── Hero Mosaic: centered, absolute ── */
 
-/* ══ LIVING ROOM BACKGROUND ═══════════════════════════════════════════ */
+/* ══ BACKGROUND IMAGE ══════════════════════════════════════════════════ */
 #roomBg {
   position: absolute;
   inset: 0;
   z-index: 0;
-  overflow: hidden;
+  background: url('https://siul98.github.io/BrickPic/eimsbudeHD.jpeg') center center / cover no-repeat;
 }
-#roomCanvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
+#roomCanvas { display: none; }
 
 /* ══ SHOP SECTION ════════════════════════════════════════════════════════ */
 .shop-grid {
@@ -913,10 +908,8 @@ html, body {
 
 <!-- HERO -->
 <div id="loader">
-  <!-- Layer 0: Living room background -->
-  <div id="roomBg">
-    <canvas id="roomCanvas"></canvas>
-  </div>
+  <!-- Layer 0: Background image -->
+  <div id="roomBg"></div>
   <!-- Layer 1: Blurry far bricks (behind mosaic) -->
   <div id="brickBack"></div>
   <!-- Layer 3<!-- Layer 3: Sharp near bricks (in front of mosaic) -->
@@ -2220,7 +2213,7 @@ function drawRoom() {
 }
 
 // Call drawRoom on load and resize
-window.addEventListener('resize', drawRoom);
+
 
 // ═══ SHOP ════════════════════════════════════════════════════════════════
 function openOrder(pkg) {
@@ -2319,7 +2312,6 @@ function openOrderFromConfig() {
   openOrder(pkg);
 }
 document.addEventListener('DOMContentLoaded',()=>{
-  drawRoom();  // Draw living room background immediately
   buildShowcaseGrids();
   goView(0);
   initLoader();
