@@ -500,10 +500,13 @@ input,textarea{user-select:text;-webkit-user-select:text}
 }
 
 /* Layer stack inside #loader:
-   z=1  #brickBack   — blurry far bricks (behind mosaic)
-   z=2
-#brickBack  { z-index: 1; }
-#brickFront { z-index: 3; }
+   z=1  #brickBack   — far bricks (behind mosaic)
+   z=2  #heroMosaic  — mosaic
+   z=3  #brickFront  — near bricks (in front)
+   z=4  #heroLogo
+*/
+#brickBack  { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+#brickFront { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
 
 #brickBack canvas, #brickFront canvas {
   position: absolute;
