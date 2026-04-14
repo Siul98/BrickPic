@@ -839,7 +839,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 #heroMosaic {
   position: absolute;
   z-index: 2;
-  top: 50%;
+  top: 56%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: min(50vh, 50vw);
@@ -875,7 +875,7 @@ html, body {
 #heroMosaic {
   position: absolute;
   z-index: 2;
-  top: 50%;
+  top: 56%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: min(50vh, 50vw);
@@ -886,6 +886,18 @@ html, body {
   pointer-events: none;
   /* Subtle shadow so it pops from blurred bg */
   filter: drop-shadow(0 20px 60px rgba(0,0,0,.6));
+}
+
+/* ── BrickPic Logo ── */
+#brickpicLogo {
+  position: absolute;
+  z-index: 5;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(280px, 55vw);
+  pointer-events: none;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,.5));
 }
 </style>
 </head>
@@ -930,6 +942,7 @@ html, body {
   <div id="brickFront"></div>
 
   <!-- Layer 4: Logo -->
+  <img id="brickpicLogo" src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic">
   <img id="heroMosaic" src="https://siul98.github.io/BrickPic/Beatles.png" alt="BrickPic Beatles Mosaic">
 
   <!-- Scroll hint -->
