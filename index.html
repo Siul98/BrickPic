@@ -894,7 +894,7 @@ html, body {
   transform: translateX(-50%);
   z-index: 5;
   width: min(250px, 48vw);
-  height: min(76px, 14.8vw);
+  height: min(90px, 17.5vw);
   object-fit: cover;
   object-position: 50% 0%;
   pointer-events: none;
@@ -1426,13 +1426,21 @@ function updateThumbCanvas(){
 
 function paintDisplay(){
   const cv=document.getElementById('mosaicDisplay');if(!cv)return;
+  const SZ=cv.offsetWidth||cv.parentElement?.offsetWidth||500;
+  if(SZ>10){cv.width=SZ;cv.height=SZ;}
+  const ctx=cv.getContext('2d');
+  // Show plain source image — no tile overlay
+  if(S.img){
+    ctx.clearRect(0,0,SZ,SZ);
+    ctx.drawImage(S.img,0,0,SZ,SZ);
+    updateThumbCanvas();
+    return;
+  }
+  // Fallback: demo image from active album
   const mc=document.getElementById('mc');if(!mc)return;
   if(!S.albums[S.active]){
     if(!scGrids)return;
     renderMosaic(mc,scGrids[scIdx],48,'round');
-    // Use offsetWidth, fallback to parent, fallback to 500
-    const SZ=cv.offsetWidth||cv.parentElement?.offsetWidth||500;
-    if(SZ>10){cv.width=SZ;cv.height=SZ;}
     cv.getContext('2d').drawImage(mc,0,0,cv.width,cv.height);
     updateThumbCanvas();
     return;
@@ -2013,68 +2021,6 @@ function animate(){
     set running(v){ animRunning = v; },
     restart(){ if(!animRunning){ animRunning=true; requestAnimationFrame(animate); } }
   };
-
-  // ═══ MINIFIGURE ════════════════════════════════════════════════════
-  function loadMinifigure() {
-    var figLoader = new THREE.GLTFLoader();
-    sharpRenderer.shadowMap.enabled = true;
-    sharpRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    var spot = new THREE.SpotLight(0xfff4e0, 3.5, 30, Math.PI/6, 0.4, 1.2);
-    spot.position.set(-4, 8, 6);
-    spot.target.position.set(-3.6, -1.8, 2.0);
-    spot.castShadow = true;
-    spot.shadow.mapSize.width = 1024;
-    spot.shadow.mapSize.height = 1024;
-    spot.shadow.camera.near = 1;
-    spot.shadow.camera.far = 25;
-    spot.shadow.bias = -0.001;
-    scene.add(spot);
-    scene.add(spot.target);
-    var shadowPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(4, 4),
-      new THREE.ShadowMaterial({ opacity: 0.45, transparent: true })
-    );
-    shadowPlane.rotation.x = -Math.PI / 2;
-    shadowPlane.position.set(-3.6, -2.6, 2.0);
-    shadowPlane.receiveShadow = true;
-    scene.add(shadowPlane);
-    figLoader.load('https://siul98.github.io/BrickPic/flame_hero_minifigure_-_free_3d_model.glb', function(gltf) {
-      var fig = gltf.scene;
-      fig.scale.setScalar(2.5);
-      fig.position.set(-3.6, -1.8, 2.0);
-      fig.rotation.y = Math.PI * 0.52;
-      var rightArm = null;
-      fig.traverse(function(node) {
-        if (node.isMesh) {
-          node.castShadow = true;
-          node.receiveShadow = true;
-          if (node.material) {
-            node.material = node.material.clone();
-            node.material.roughness = 0.6;
-          }
-        }
-        var nm = (node.name || '').toLowerCase();
-        if (!rightArm && (nm.includes('right_arm') || nm.includes('arm_r') ||
-            nm.includes('rightarm') || nm.includes('r_arm') ||
-            nm.includes('arm.r') || nm.includes('armright'))) {
-          rightArm = node;
-        }
-      });
-      if (rightArm) {
-        rightArm.rotation.x = -Math.PI * 0.88;
-        rightArm.rotation.z = -0.12;
-        console.log('[BP] arm posed:', rightArm.name);
-      } else {
-        var allNames = [];
-        fig.traverse(function(n){ if(n.name) allNames.push(n.name); });
-        console.log('[BP] node names:', allNames.join(', '));
-      }
-      scene.add(fig);
-      window._brickFig = fig;
-      console.log('[BP] Minifigure loaded');
-    }, undefined, function(e){ console.warn('[BP] fig error:', e); });
-  }
-  loadMinifigure();
 
   const onResize=()=>{const W2=window.innerWidth,H2=window.innerHeight;camera.aspect=W2/H2;camera.updateProjectionMatrix();blurRenderer.setSize(W2,H2);sharpRenderer.setSize(W2,H2);};
   window.addEventListener('resize',onResize);
