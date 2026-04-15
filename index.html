@@ -861,62 +861,8 @@ html, body {
 
 
 /* ── Logo + Slogan overlay ── */
-#heroOverlay {
-  position: absolute;
-  z-index: 5;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  pointer-events: none;
-  /* Subtle gradient behind text for readability */
-  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,0,0,.45) 0%, transparent 100%);
-  padding: 32px 48px 28px;
-  border-radius: 16px;
-  width: min(500px, 80vw);
-}
-
-#heroSlogan {
-  font-size: clamp(13px, 2.2vw, 18px);
-  font-weight: 600;
-  color: rgba(255,255,255,.85);
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  text-shadow: 0 2px 8px rgba(0,0,0,.7);
-  text-align: center;
-  font-family: 'Nunito', sans-serif;
-}
 
 /* ── Hero overlay: logo + slogan ON the mosaic ── */
-#heroOverlay {
-  position: absolute;
-  z-index: 4;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(50vh, 50vw);
-  max-width: 574px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  pointer-events: none;
-}
-#heroSlogan {
-  font-size: clamp(11px, 1.4vw, 16px);
-  font-weight: 600;
-  color: rgba(255,255,255,.88);
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  text-shadow: 0 1px 8px rgba(0,0,0,.9), 0 0 24px rgba(0,0,0,.7);
-  margin-top: 10px;
-  white-space: nowrap;
-  text-align: center;
-}
 
 /* Cover the subtagline baked into the PNG */
 
@@ -929,6 +875,7 @@ html, body {
 /* ── Hero text stack — above mosaic ── */
 
 /* ── Hero text above mosaic ── */
+
 #heroText {
   position: absolute;
   z-index: 5;
@@ -937,15 +884,15 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding-top: 10%;
+  padding-top: 8%;
   pointer-events: none;
 }
 #heroLogoText {
-  font-size: clamp(40px, 7vw, 72px);
+  font-size: clamp(44px, 8vw, 80px);
   font-weight: 900;
   letter-spacing: -.04em;
   color: #fff;
-  text-shadow: 0 3px 20px rgba(0,0,0,.5);
+  text-shadow: 0 3px 24px rgba(0,0,0,.55);
   white-space: nowrap;
   line-height: 1;
 }
@@ -998,29 +945,17 @@ html, body {
 
 <!-- HERO -->
 <div id="loader">
-  <!-- Layer 0: Background image -->
   <div id="roomBg"></div>
-  <!-- Layer 1: Blurry far bricks (behind mosaic) -->
   <div id="brickBack"></div>
-  <!-- Layer 3<!-- Layer 3: Sharp near bricks (in front of mosaic) -->
+  <div id="heroMosaicWrap">
+    <img id="heroMosaic" src="https://siul98.github.io/BrickPic/Beatles.png" alt="Beatles Mosaic" style="width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 50px 100px rgba(0,0,0,.9)) drop-shadow(0 15px 40px rgba(0,0,0,.7))">
+  </div>
   <div id="brickFront"></div>
-
-  <!-- Layer 4: Logo -->
-  <div id="heroMosaicWrap" style="position:absolute;z-index:2;top:50%;left:50%;transform:translate(-50%,-50%);width:min(50vh,50vw);max-width:574px;">
-    
-  <img id="heroMosaic" src="https://siul98.github.io/BrickPic/Beatles.png" alt="BrickPic Beatles Mosaic" style="width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 50px 100px rgba(0,0,0,.90)) drop-shadow(0 15px 40px rgba(0,0,0,.70))">
-    <!-- Logo + slogan overlaid on mosaic -->
-    <div id="heroOverlay">
-      
-      <div id="heroSlogan">Turn any photo into LEGO art.</div>
-    </div>
+  <div id="heroText">
+    <div id="heroLogoText">BRICK<span>PIC</span></div>
+    <div id="heroTagline">Art you can touch.</div>
   </div>
-
-  <!-- Scroll hint -->
-  <div id="scrollHint">
-    <span>Scroll</span>
-    <div class="scroll-arrow"></div>
-  </div>
+  <div id="scrollHint"><span>Scroll</span><div class="scroll-arrow"></div></div>
 </div>
 
 <!-- BUILD YOUR OWN -->
