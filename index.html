@@ -938,6 +938,61 @@ html, body {
   ;
   height: auto;
 }
+
+/* ── Infinite Marquee ── */
+.marquee-section {
+  width: 100%;
+  padding: 0 0 48px;
+  overflow: hidden;
+  /* Fade edges */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+.marquee-track {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  animation: marqueeScroll 35s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-card {
+  flex-shrink: 0;
+  width: 190px;
+  height: 190px;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  background: #111;
+  transition: transform .25s, box-shadow .25s;
+}
+.marquee-card:hover {
+  transform: scale(1.05) translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,.5);
+  z-index: 2;
+}
+.marquee-card canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.marquee-card .mq-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 6px 10px;
+  background: linear-gradient(to top, rgba(0,0,0,.75), transparent);
+  color: rgba(255,255,255,.9);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
 </style>
 </head>
 <body>
@@ -1145,7 +1200,12 @@ html, body {
     <div class="insp-pill" style="background:linear-gradient(135deg,rgba(168,85,247,.45),rgba(139,92,246,.35))">✨&nbsp; Abstract</div>
   </div>
   <!-- Mosaic preview canvas grid — rendered by JS -->
-  <div id="inspired-mosaic-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:960px;width:100%;position:relative;z-index:1"></div>
+  
+  <!-- Infinite Marquee -->
+  <div class="marquee-section">
+    <div class="marquee-track" id="artMarquee"></div>
+  </div>
+<div id="inspired-mosaic-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:960px;width:100%;position:relative;z-index:1"></div>
   <div style="margin-top:44px;position:relative;z-index:1">
     <div class="glass-btn" onclick="navTo('section-build',document.querySelector('[data-section=section-build]'))">Start Building yours →</div>
   </div>
@@ -2476,6 +2536,59 @@ window.addEventListener('resize', function() {
   if (window._bpLogoImg && window._bpLogoImg.complete && window._bpLogoImg.naturalWidth) {
     window._bpLogoImg.onload();
   }
+});
+
+// ═══ INFINITE MARQUEE ══════════════════════════════════════════════════
+function buildMarquee(){
+  var track = document.getElementById('artMarquee');
+  if(!track || !window.SHOWCASE_ALBUMS) return;
+  track.innerHTML = '';
+
+  var ALBUMS = window.SHOWCASE_ALBUMS;
+  // Build one set of cards, then duplicate for seamless loop
+  function makeCard(album, idx){
+    var card = document.createElement('div');
+    card.className = 'marquee-card';
+    card.title = (album.title||'') + (album.artist ? ' — '+album.artist : '');
+
+    var cv = document.createElement('canvas');
+    cv.width = 380; cv.height = 380; // 2x for sharpness
+    cv.style.width  = '190px';
+    cv.style.height = '190px';
+    card.appendChild(cv);
+
+    // Label
+    if(album.title){
+      var lbl = document.createElement('div');
+      lbl.className = 'mq-label';
+      lbl.textContent = album.title + (album.artist ? ' · ' + album.artist : '');
+      card.appendChild(lbl);
+    }
+
+    // Draw thumbnail
+    var img = new Image();
+    img.onload = function(){
+      var ctx = cv.getContext('2d');
+      ctx.drawImage(img, 0, 0, 380, 380);
+    };
+    img.src = album.thumb;
+    return card;
+  }
+
+  // First set
+  ALBUMS.forEach(function(album, i){ track.appendChild(makeCard(album, i)); });
+
+  // Duplicate for loop
+  ALBUMS.forEach(function(album, i){
+    var clone = makeCard(album, i);
+    clone.setAttribute('aria-hidden','true');
+    track.appendChild(clone);
+  });
+}
+
+// Run after buildShowcaseGrids has populated SHOWCASE_ALBUMS
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(buildMarquee, 400);
 });
 </script>
 <!-- SHOP SECTION -->
