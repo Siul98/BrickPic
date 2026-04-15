@@ -2439,7 +2439,7 @@ window._bpLogoImg.onload = function() {
   if (!cv) return;
   var dpr = window.devicePixelRatio || 1;
   var displayW = Math.min(340, Math.round(window.innerWidth * 0.63));
-  var displayH = Math.round(displayW * (0.259 * 2160) / 3840);
+  var displayH = Math.round(displayW * (0.421 * 2160) / 3840);
   cv.width  = Math.round(displayW * dpr);
   cv.height = Math.round(displayH * dpr);
   cv.style.width  = displayW + 'px';
@@ -2449,7 +2449,7 @@ window._bpLogoImg.onload = function() {
   ctx.scale(dpr, dpr);
   // Draw: srcY=27.8% of 2160, srcH=25.9% of 2160
   ctx.drawImage(window._bpLogoImg,
-    0, Math.round(2160 * 0.278), 3840, Math.round(2160 * 0.259),
+    0, Math.round(2160 * 0.278), 3840, Math.round(2160 * 0.421),
     0, 0, displayW, displayH);
 };
 window._bpLogoImg.onerror = function() {
