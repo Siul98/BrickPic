@@ -135,7 +135,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .tog-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
 .tog-lbl{font-size:12px;font-weight:700}
 .tog-sub{font-size:10px;color:var(--mut);margin-top:1px}
-.tsw{position:relative;width:40px;height:22px;cursor:pointer;display:block;flex-shrink:0}
+.tsw{position:relative;width:40px;height:34px;cursor:pointer;display:block;flex-shrink:0}
 .tsw input{opacity:0;width:0;height:0;position:absolute}
 .ttr{position:absolute;inset:0;background:var(--brd);border-radius:11px;transition:background .2s}
 .tsw input:checked~.ttr{background:var(--blue)}
@@ -565,7 +565,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   inset: -20px;
   z-index: 0;
   background: url('https://siul98.github.io/BrickPic/PaintingSpot.jpeg') center center / cover no-repeat;
-  filter: blur(10px);
+  filter: blur(5px);
   transform: scale(1.03);
 }
 /* Dark overlay to make logo + bricks pop */
@@ -907,9 +907,14 @@ html, body {
   pointer-events: none;
 }
 #brickpicLogo {
-  width: 70%;
-  max-width: 320px;
-  filter: drop-shadow(0 3px 16px rgba(0,0,0,.8));
+  position: absolute;
+  z-index: 5;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(260px, 50vw);
+  height: min(130px, 25vw);  /* crop to logo only, hide subtext */
+  pointer-events: none;
 }
 #heroSlogan {
   font-size: clamp(11px, 1.4vw, 16px);
@@ -937,13 +942,48 @@ html, body {
   text-shadow: 0 2px 12px rgba(0,0,0,.7);
   white-space: nowrap;
 }
+
+/* Cover the subtagline baked into the PNG */
+#logoSubtaglineMask {
+  position: absolute;
+  z-index: 6;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(260px, 50vw);
+  height: min(260px, 50vw);
+  pointer-events: none;
+  /* Gradient mask: top transparent (show logo text), bottom covers PNG subtext */
+  background: linear-gradient(
+    to bottom,
+    transparent 55%,
+    rgba(0,0,0,0.01) 55%
+  );
+  backdrop-filter: none;
+}
+
+/* Our clean tagline below logo */
+#heroTagline {
+  position: absolute;
+  z-index: 7;
+  top: calc(18% + min(200px, 38vw));
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(11px, 1.5vw, 15px);
+  font-weight: 600;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.8);
+  text-shadow: 0 2px 12px rgba(0,0,0,.7);
+  white-space: nowrap;
+}
 </style>
 </head>
 <body>
 
 <!-- GLASS NAV -->
 <header id="glass-nav">
-  <div class="gnav-logo" style="padding-right:12px;border-right:1px solid rgba(255,255,255,.12)"><img src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic" style="height:22px;width:auto;display:block;object-fit:contain"></div>
+  <div class="gnav-logo" style="padding-right:12px;border-right:1px solid rgba(255,255,255,.12)"><img src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic" style="height:34px;width:auto;display:block;object-fit:contain"></div>
   <nav class="gnav-pills">
     <div class="gnav-pill active" data-section="section-build" onclick="navTo('section-build',this)">
       <span class="pill-full">Build your Own</span><span class="pill-short">Build</span>
@@ -985,7 +1025,7 @@ html, body {
   <img id="heroMosaic" src="https://siul98.github.io/BrickPic/Beatles.png" alt="BrickPic Beatles Mosaic" style="width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 50px 100px rgba(0,0,0,.90)) drop-shadow(0 15px 40px rgba(0,0,0,.70))">
     <!-- Logo + slogan overlaid on mosaic -->
     <div id="heroOverlay">
-      <img id="brickpicLogo" src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic">
+      <img id="brickpicLogo" src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic" style="object-fit:cover;object-position:top">
       <div id="heroSlogan">Turn any photo into LEGO art.</div>
     </div>
   </div>
