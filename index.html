@@ -2074,7 +2074,7 @@ function animate(){
       console.log('[BP] Minifigure loaded');
     }, undefined, function(e){ console.warn('[BP] fig error:', e); });
   }
-  // loadMinifigure(); moved to configurator
+  loadMinifigure();
 
   const onResize=()=>{const W2=window.innerWidth,H2=window.innerHeight;camera.aspect=W2/H2;camera.updateProjectionMatrix();blurRenderer.setSize(W2,H2);sharpRenderer.setSize(W2,H2);};
   window.addEventListener('resize',onResize);
