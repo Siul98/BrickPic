@@ -927,31 +927,39 @@ html, body {
 /* Tagline below logo wrap */
 
 /* ── Hero text stack — above mosaic ── */
+
+/* ── Hero text above mosaic ── */
 #heroText {
   position: absolute;
   z-index: 5;
-  top: 0;
-  left: 0; right: 0;
-  height: 100%;
+  top: 0; left: 0; right: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding-top: 9%;
-  pointer-events: none;
   gap: 10px;
+  padding-top: 10%;
+  pointer-events: none;
 }
-#brickpicLogo {
-  width: min(200px, 38vw);
-  height: auto;
-  display: block;
+#heroLogoText {
+  font-size: clamp(40px, 7vw, 72px);
+  font-weight: 900;
+  letter-spacing: -.04em;
+  color: #fff;
+  text-shadow: 0 3px 20px rgba(0,0,0,.5);
+  white-space: nowrap;
+  line-height: 1;
+}
+#heroLogoText span {
+  background: linear-gradient(90deg, #818cf8, rgba(255,255,255,.9), #fb7185);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 #heroTagline {
-  font-size: clamp(9px, 1.3vw, 13px);
+  font-size: clamp(10px, 1.3vw, 13px);
   font-weight: 700;
   letter-spacing: .35em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.9);
+  color: rgba(255,255,255,.85);
   text-shadow: 0 2px 16px rgba(0,0,0,.8);
   white-space: nowrap;
 }
