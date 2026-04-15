@@ -2541,10 +2541,10 @@ window.addEventListener('resize', function() {
 // ═══ INFINITE MARQUEE ══════════════════════════════════════════════════
 function buildMarquee(){
   var track = document.getElementById('artMarquee');
-  if(!track || !window.SHOWCASE_ALBUMS) return;
+  if(!track || typeof SHOWCASE_ALBUMS === 'undefined') return;
   track.innerHTML = '';
 
-  var ALBUMS = window.SHOWCASE_ALBUMS;
+  var ALBUMS = SHOWCASE_ALBUMS;
   // Build one set of cards, then duplicate for seamless loop
   function makeCard(album, idx){
     var card = document.createElement('div');
@@ -2586,10 +2586,7 @@ function buildMarquee(){
   });
 }
 
-// Run after buildShowcaseGrids has populated SHOWCASE_ALBUMS
-document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(buildMarquee, 400);
-});
+// buildMarquee() is called from main DOMContentLoaded (correct scope)
 </script>
 <!-- SHOP SECTION -->
 <section class="dark-section" id="section-shop" style="--sec-bg:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(244,63,94,.06),transparent),radial-gradient(ellipse 50% 40% at 20% 80%,rgba(251,146,60,.05),transparent)">
