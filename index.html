@@ -919,52 +919,35 @@ html, body {
 }
 
 /* Cover the subtagline baked into the PNG */
-#logoSubtaglineMask {
-  position: absolute;
-  z-index: 6;
-  top: 18%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(260px, 50vw);
-  height: min(260px, 50vw);
-  pointer-events: none;
-  /* Gradient mask: top transparent (show logo text), bottom covers PNG subtext */
-  background: linear-gradient(
-    to bottom,
-    transparent 55%,
-    rgba(0,0,0,0.01) 55%
-  );
-  backdrop-filter: none;
-}
 
 /* Our clean tagline below logo */
 
 /* Logo wrapper clips subtext from PNG */
-#logoWrap {
+
+/* Tagline below logo wrap */
+
+/* ── Hero text stack — above mosaic ── */
+#heroText {
   position: absolute;
   z-index: 5;
-  top: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(240px, 45vw);
-  height: min(80px, 15vw);   /* show only top ~50% of PNG = logo only */
-  overflow: hidden;
+  top: 0;
+  left: 0; right: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 9%;
   pointer-events: none;
+  gap: 10px;
 }
 #brickpicLogo {
-  width: 100%;
+  width: min(200px, 38vw);
   height: auto;
   display: block;
 }
-
-/* Tagline below logo wrap */
 #heroTagline {
-  position: absolute;
-  z-index: 5;
-  top: calc(8% + min(90px, 17vw));
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: clamp(10px, 1.3vw, 13px);
+  font-size: clamp(9px, 1.3vw, 13px);
   font-weight: 700;
   letter-spacing: .35em;
   text-transform: uppercase;
@@ -1016,11 +999,11 @@ html, body {
 
   <!-- Layer 4: Logo -->
   <div id="heroMosaicWrap" style="position:absolute;z-index:2;top:50%;left:50%;transform:translate(-50%,-50%);width:min(50vh,50vw);max-width:574px;">
-    <div id="heroTagline">Art you can touch.</div>
+    
   <img id="heroMosaic" src="https://siul98.github.io/BrickPic/Beatles.png" alt="BrickPic Beatles Mosaic" style="width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 50px 100px rgba(0,0,0,.90)) drop-shadow(0 15px 40px rgba(0,0,0,.70))">
     <!-- Logo + slogan overlaid on mosaic -->
     <div id="heroOverlay">
-      <img id="brickpicLogo" src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic" style="object-fit:cover;object-position:top">
+      
       <div id="heroSlogan">Turn any photo into LEGO art.</div>
     </div>
   </div>
