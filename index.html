@@ -38,8 +38,8 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .lc-bar-wrap{width:180px;height:2px;background:rgba(255,255,255,.08);border-radius:1px;overflow:hidden;opacity:0;animation:lcFadeUp .8s .9s ease both;margin-top:6px}
 .lc-bar{height:100%;background:linear-gradient(90deg,#6366f1,#fb7185);width:0;border-radius:1px;transition:width .05s linear}
 #scrollHint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0;transition:opacity .5s;pointer-events:none;z-index:3}
-#scrollHint.show{opacity:1}
-#scrollHint span{font-size:10px;letter-spacing:.2em;color:rgba(255,255,255,.3);text-transform:uppercase}
+
+
 .scroll-arrow{width:18px;height:18px;border-right:1.5px solid rgba(255,255,255,.25);border-bottom:1.5px solid rgba(255,255,255,.25);transform:rotate(45deg);animation:arrowBounce 1.4s ease-in-out infinite}
 @keyframes arrowBounce{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(5px)}}
 @keyframes lcFadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -487,16 +487,6 @@ input,textarea{user-select:text;-webkit-user-select:text}
 }
 
 /* ══ HERO REDESIGN ═══════════════════════════════════════════════════════ */
-#loader {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  background: #0a0807;  /* matches drawRoom warm dark base */
-  display: flex; flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
 
 /* Layer stack inside #loader:
    z=1  #brickBack   — far bricks (behind mosaic)
@@ -522,20 +512,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 
 /* Hide old loader center elements */
 
-#scrollHint {
-  position: absolute;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  opacity: 0;
-  transition: opacity .5s;
-  pointer-events: none;
-}
+
 #scrollHint.show { opacity: 1; }
 #scrollHint span {
   font-size: 10px;
@@ -574,7 +551,6 @@ input,textarea{user-select:text;-webkit-user-select:text}
   inset: 0;
   background: rgba(0,0,0,.35);
 }
-#roomCanvas { display: none; }
 
 /* ══ SHOP SECTION ════════════════════════════════════════════════════════ */
 .shop-grid {
@@ -876,24 +852,10 @@ html, body {
 /* ── Hero text above mosaic ── */
 
 
-#loader {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 14px;
-}
 
 /* Logo PNG — cropped to top portion only (hides subtext) */
 
 /* ── Hero: mosaic anchored to exact center ── */
-#loader {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  display: block !important; /* reset any flex */
-}
 /* Logo: above mosaic, referenced to mosaic top */
 /* Tagline: between logo bottom and mosaic top */
 
@@ -904,7 +866,7 @@ html, body {
 /* ── Hero: all siblings, each absolutely positioned ── */
 #heroMosaicWrap {
   position: absolute;
-  top: 50%;
+  top: calc(50% + 30px);
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
@@ -926,7 +888,7 @@ html, body {
   position: absolute;
   /* bottom of logo = mosaic top - 8px gap - tagline height(~13px) - 6px gap */
   /* mosaic top = 50% - min(21vh,21vw)  */
-  bottom: calc(50% + min(21vh, 21vw) + 27px);
+  bottom: calc(50% + min(21vh, 21vw) + 57px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
@@ -940,7 +902,7 @@ html, body {
 /* Tagline: sibling, between logo and mosaic */
 #heroTagline {
   position: absolute;
-  bottom: calc(50% + min(21vh, 21vw) + 6px);
+  bottom: calc(50% + min(21vh, 21vw) + 36px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
@@ -952,6 +914,14 @@ html, body {
   text-shadow: 0 2px 16px rgba(0,0,0,.8);
   white-space: nowrap;
   pointer-events: none;
+}
+
+#loader {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: #0a0807;
+  overflow: hidden;
 }
 </style>
 </head>
