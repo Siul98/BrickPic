@@ -2009,7 +2009,7 @@ function animate(){
     sharpRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
     var spot = new THREE.SpotLight(0xfff4e0, 3.5, 30, Math.PI/6, 0.4, 1.2);
     spot.position.set(-4, 8, 6);
-    spot.target.position.set(-6.5, -5.5, 1.5);
+    spot.target.position.set(-3.6, -1.8, 2.0);
     spot.castShadow = true;
     spot.shadow.mapSize.width = 1024;
     spot.shadow.mapSize.height = 1024;
@@ -2023,14 +2023,14 @@ function animate(){
       new THREE.ShadowMaterial({ opacity: 0.45, transparent: true })
     );
     shadowPlane.rotation.x = -Math.PI / 2;
-    shadowPlane.position.set(-6.5, -6.1, 1.5);
+    shadowPlane.position.set(-3.6, -2.6, 2.0);
     shadowPlane.receiveShadow = true;
     scene.add(shadowPlane);
     figLoader.load('https://siul98.github.io/BrickPic/flame_hero_minifigure_-_free_3d_model.glb', function(gltf) {
       var fig = gltf.scene;
-      fig.scale.setScalar(0.55);
-      fig.position.set(-6.5, -5.5, 1.5);
-      fig.rotation.y = Math.PI * 0.38;
+      fig.scale.setScalar(2.5);
+      fig.position.set(-3.6, -1.8, 2.0);
+      fig.rotation.y = Math.PI * 0.52;
       var rightArm = null;
       fig.traverse(function(node) {
         if (node.isMesh) {
@@ -2049,8 +2049,8 @@ function animate(){
         }
       });
       if (rightArm) {
-        rightArm.rotation.x = -Math.PI * 0.7;
-        rightArm.rotation.z = Math.PI * 0.15;
+        rightArm.rotation.x = -Math.PI * 0.88;
+        rightArm.rotation.z = -0.12;
         console.log('[BP] arm posed:', rightArm.name);
       } else {
         var allNames = [];
