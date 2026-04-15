@@ -922,13 +922,28 @@ html, body {
   white-space: nowrap;
   text-align: center;
 }
+
+#heroTagline {
+  position: absolute;
+  z-index: 5;
+  top: calc(12% + min(280px,55vw) + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(13px, 2vw, 18px);
+  font-weight: 600;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.85);
+  text-shadow: 0 2px 12px rgba(0,0,0,.6);
+  white-space: nowrap;
+}
 </style>
 </head>
 <body>
 
 <!-- GLASS NAV -->
 <header id="glass-nav">
-  <div class="gnav-logo">BRICK<span>PIC</span></div>
+  <div class="gnav-logo" style="padding-right:12px;border-right:1px solid rgba(255,255,255,.12)"><img src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic" style="height:22px;width:auto;display:block;object-fit:contain"></div>
   <nav class="gnav-pills">
     <div class="gnav-pill active" data-section="section-build" onclick="navTo('section-build',this)">
       <span class="pill-full">Build your Own</span><span class="pill-short">Build</span>
@@ -966,7 +981,8 @@ html, body {
 
   <!-- Layer 4: Logo -->
   <div id="heroMosaicWrap" style="position:absolute;z-index:2;top:50%;left:50%;transform:translate(-50%,-50%);width:min(50vh,50vw);max-width:574px;">
-    <img id="heroMosaic" src="https://siul98.github.io/BrickPic/Beatles.png" alt="BrickPic Beatles Mosaic" style="width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 50px 100px rgba(0,0,0,.90)) drop-shadow(0 15px 40px rgba(0,0,0,.70))">
+    <div id="heroTagline">Art you can touch.</div>
+  <img id="heroMosaic" src="https://siul98.github.io/BrickPic/Beatles.png" alt="BrickPic Beatles Mosaic" style="width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 50px 100px rgba(0,0,0,.90)) drop-shadow(0 15px 40px rgba(0,0,0,.70))">
     <!-- Logo + slogan overlaid on mosaic -->
     <div id="heroOverlay">
       <img id="brickpicLogo" src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic">
