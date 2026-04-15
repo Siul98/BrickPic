@@ -909,11 +909,13 @@ html, body {
 #brickpicLogo {
   position: absolute;
   z-index: 5;
-  top: 18%;
+  top: 8%;
   left: 50%;
   transform: translateX(-50%);
-  width: min(260px, 50vw);
-  height: min(130px, 25vw);  /* crop to logo only, hide subtext */
+  width: min(220px, 40vw);
+  height: min(110px, 20vw);
+  object-fit: cover;
+  object-position: top center;
   pointer-events: none;
 }
 #heroSlogan {
@@ -931,14 +933,14 @@ html, body {
 #heroTagline {
   position: absolute;
   z-index: 5;
-  bottom: 8%;
+  top: calc(8% + min(120px, 22vw));
   left: 50%;
   transform: translateX(-50%);
-  font-size: clamp(11px, 1.6vw, 16px);
+  font-size: clamp(10px, 1.4vw, 14px);
   font-weight: 600;
   letter-spacing: .3em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.75);
+  color: rgba(255,255,255,.85);
   text-shadow: 0 2px 12px rgba(0,0,0,.7);
   white-space: nowrap;
 }
@@ -965,15 +967,15 @@ html, body {
 /* Our clean tagline below logo */
 #heroTagline {
   position: absolute;
-  z-index: 7;
-  top: calc(18% + min(200px, 38vw));
+  z-index: 5;
+  top: calc(8% + min(120px, 22vw));
   left: 50%;
   transform: translateX(-50%);
-  font-size: clamp(11px, 1.5vw, 15px);
+  font-size: clamp(10px, 1.4vw, 14px);
   font-weight: 600;
   letter-spacing: .3em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.8);
+  color: rgba(255,255,255,.85);
   text-shadow: 0 2px 12px rgba(0,0,0,.7);
   white-space: nowrap;
 }
