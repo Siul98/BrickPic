@@ -2029,63 +2029,6 @@ function animate(){
   };
 
 
-  // ── Canvas Logo: draw exact BRiCKPiC region — timing-safe ──────────────
-  function renderLogoToCanvas(){
-    var cv = document.getElementById('brickpicLogoCanvas');
-    if(!cv) return;
-    var img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = function(){
-      // rAF ensures layout is done before reading dimensions
-      requestAnimationFrame(function(){
-        var srcY = Math.round(img.height * 0.278);
-        var srcH = Math.round(img.height * (0.537 - 0.278));
-        var srcW = img.width;
-        var dpr = window.devicePixelRatio || 1;
-        // Fixed target: 340px (CSS min(340px,63vw) matches)
-        var displayW = Math.min(340, Math.round(window.innerWidth * 0.63));
-        var displayH = Math.round(displayW * srcH / srcW);
-        cv.width  = Math.round(displayW * dpr);
-        cv.height = Math.round(displayH * dpr);
-        cv.style.width  = displayW + 'px';
-        cv.style.height = displayH + 'px';
-        var ctx = cv.getContext('2d');
-        ctx.clearRect(0, 0, cv.width, cv.height);
-        ctx.scale(dpr, dpr);
-        ctx.drawImage(img, 0, srcY, srcW, srcH, 0, 0, displayW, displayH);
-      });
-    };
-    img.onerror = function(){
-      // Fallback text logo
-      var dpr = window.devicePixelRatio || 1;
-      var w = Math.min(340, Math.round(window.innerWidth * 0.63));
-      var h = 52;
-      cv.width = w * dpr; cv.height = h * dpr;
-      cv.style.width = w + 'px'; cv.style.height = h + 'px';
-      var ctx = cv.getContext('2d');
-      ctx.scale(dpr, dpr);
-      ctx.fillStyle = 'white';
-      ctx.font = 'bold ' + Math.round(w / 6.5) + 'px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('BRiCKPiC', w / 2, h / 2);
-    };
-    img.src = 'https://siul98.github.io/BrickPic/BrickPicLogo.png';
-  }
-  // Run with multiple strategies to guarantee execution
-  if (document.readyState === 'complete') {
-    // Already loaded — run immediately via rAF
-    requestAnimationFrame(renderLogoToCanvas);
-  } else {
-    window.addEventListener('load', renderLogoToCanvas);
-  }
-  // Also run on DOMContentLoaded as backup
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(renderLogoToCanvas, 200);
-  });
-  window.addEventListener('resize', function(){ setTimeout(renderLogoToCanvas, 150); });
-
-
   const onResize=()=>{const W2=window.innerWidth,H2=window.innerHeight;camera.aspect=W2/H2;camera.updateProjectionMatrix();blurRenderer.setSize(W2,H2);sharpRenderer.setSize(W2,H2);};
   window.addEventListener('resize',onResize);
 }
@@ -2486,6 +2429,53 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
   },2000);
   setTimeout(()=>{ paintDisplay(); }, 150);
+});
+
+
+// ═══ STANDALONE LOGO RENDERER (outside initLoader, no dependencies) ═════
+window._bpLogoImg = new Image(); // window ref prevents GC
+window._bpLogoImg.onload = function() {
+  var cv = document.getElementById('brickpicLogoCanvas');
+  if (!cv) return;
+  var dpr = window.devicePixelRatio || 1;
+  var displayW = Math.min(340, Math.round(window.innerWidth * 0.63));
+  var displayH = Math.round(displayW * (0.259 * 2160) / 3840);
+  cv.width  = Math.round(displayW * dpr);
+  cv.height = Math.round(displayH * dpr);
+  cv.style.width  = displayW + 'px';
+  cv.style.height = displayH + 'px';
+  var ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  ctx.scale(dpr, dpr);
+  // Draw: srcY=27.8% of 2160, srcH=25.9% of 2160
+  ctx.drawImage(window._bpLogoImg,
+    0, Math.round(2160 * 0.278), 3840, Math.round(2160 * 0.259),
+    0, 0, displayW, displayH);
+};
+window._bpLogoImg.onerror = function() {
+  // Fallback: text logo
+  var cv = document.getElementById('brickpicLogoCanvas');
+  if (!cv) return;
+  var dpr = window.devicePixelRatio || 1;
+  var w = Math.min(340, Math.round(window.innerWidth * 0.63)), h = 52;
+  cv.width = w*dpr; cv.height = h*dpr;
+  cv.style.width = w+'px'; cv.style.height = h+'px';
+  var ctx = cv.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.fillStyle = 'white';
+  ctx.font = 'bold ' + Math.round(w/6) + 'px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('BRiCKPiC', w/2, h/2);
+};
+// Set src — no crossOrigin needed (same domain)
+window._bpLogoImg.src = 'https://siul98.github.io/BrickPic/BrickPicLogo.png';
+
+// Redraw on resize
+window.addEventListener('resize', function() {
+  if (window._bpLogoImg && window._bpLogoImg.complete && window._bpLogoImg.naturalWidth) {
+    window._bpLogoImg.onload();
+  }
 });
 </script>
 <!-- SHOP SECTION -->
