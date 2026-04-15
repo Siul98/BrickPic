@@ -866,7 +866,7 @@ html, body {
 /* ── Hero: all siblings, each absolutely positioned ── */
 #heroMosaicWrap {
   position: absolute;
-  top: calc(50% + 30px);
+  top: 46%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
@@ -889,7 +889,7 @@ html, body {
   position: absolute;
   /* bottom of logo = mosaic top - 8px gap - tagline height(~13px) - 6px gap */
   /* mosaic top = 50% - min(21vh,21vw)  */
-  bottom: calc(50% + min(21vh, 21vw) + 57px);
+  bottom: calc(54% + min(21vh, 21vw) + 12px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
@@ -903,7 +903,7 @@ html, body {
 /* Tagline: sibling, between logo and mosaic */
 #heroTagline {
   position: absolute;
-  bottom: calc(50% + min(21vh, 21vw) + 36px);
+  bottom: calc(54% + min(21vh, 21vw) - 52px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
@@ -924,6 +924,17 @@ html, body {
   background: #0a0807;
   overflow: hidden;
 }
+
+#figCanvas {
+  position: absolute;
+  bottom: 0;
+  left: -55px;
+  width: 110px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 10;
+}
+#previewTop { position: relative; }
 </style>
 </head>
 <body>
@@ -981,6 +992,7 @@ html, body {
 <div id="app">
   <div id="previewPanel">
     <div id="previewTop">
+    <canvas id="figCanvas"></canvas>
       <!-- Thumbnail sidebar — left of mosaic -->
       <div id="previewSidebar">
         <!-- Mosaic thumb (active by default) -->
@@ -2062,7 +2074,7 @@ function animate(){
       console.log('[BP] Minifigure loaded');
     }, undefined, function(e){ console.warn('[BP] fig error:', e); });
   }
-  loadMinifigure();
+  // loadMinifigure(); moved to configurator
 
   const onResize=()=>{const W2=window.innerWidth,H2=window.innerHeight;camera.aspect=W2/H2;camera.updateProjectionMatrix();blurRenderer.setSize(W2,H2);sharpRenderer.setSize(W2,H2);};
   window.addEventListener('resize',onResize);
@@ -2427,6 +2439,42 @@ document.addEventListener('DOMContentLoaded',()=>{
   buildShowcaseGrids();
   goView(0);
   initLoader();
+
+  // CONFIGURATOR FIGURE
+  setTimeout(function(){
+    var cv=document.getElementById('figCanvas');
+    if(!cv||typeof THREE==='undefined')return;
+    var W=cv.offsetWidth,H=cv.offsetHeight;
+    cv.width=W;cv.height=H;
+    var fs=new THREE.Scene();
+    var fc=new THREE.PerspectiveCamera(45,W/H,0.1,100);
+    fc.position.set(0,0.5,6);
+    var fr=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+    fr.setSize(W,H);fr.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    fr.setClearColor(0,0);fr.shadowMap.enabled=true;
+    fr.shadowMap.type=THREE.PCFSoftShadowMap;
+    fs.add(new THREE.AmbientLight(0xfff4e0,1.2));
+    var kl=new THREE.DirectionalLight(0xfff4e0,2.5);kl.position.set(3,6,5);
+    kl.castShadow=true;fs.add(kl);
+    fs.add(new THREE.DirectionalLight(0xc0d8ff,0.8)).position.set(-4,2,3);
+    var sp=new THREE.Mesh(new THREE.PlaneGeometry(3,3),new THREE.ShadowMaterial({opacity:0.4,transparent:true}));
+    sp.rotation.x=-Math.PI/2;sp.position.y=-1.6;sp.receiveShadow=true;fs.add(sp);
+    var fl=new THREE.GLTFLoader();
+    fl.load('https://siul98.github.io/BrickPic/flame_hero_minifigure_-_free_3d_model.glb',function(gltf){
+      var fig=gltf.scene;
+      fig.scale.setScalar(0.85);fig.position.set(0,-1.4,0);fig.rotation.y=-0.5;
+      var ra=null;
+      fig.traverse(function(n){
+        if(n.isMesh){n.castShadow=true;n.receiveShadow=true;
+          if(n.material){n.material=n.material.clone();n.material.roughness=0.5;}}
+        if(!ra&&n.name==='RIGHT_ARM')ra=n;
+      });
+      if(ra){ra.rotation.x=-Math.PI*0.88;ra.rotation.z=-0.12;}
+      fs.add(fig);
+      var ck=new THREE.Clock();
+      (function a(){requestAnimationFrame(a);fig.rotation.y=-0.5+Math.sin(ck.getElapsedTime()*0.4)*0.06;fr.render(fs,fc);})();
+    });
+  },2000);
   setTimeout(()=>{ paintDisplay(); }, 150);
 });
 </script>
