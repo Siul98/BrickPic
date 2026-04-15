@@ -2072,8 +2072,17 @@ function animate(){
     };
     img.src = 'https://siul98.github.io/BrickPic/BrickPicLogo.png';
   }
-  // Run after load (layout guaranteed) + on resize
-  window.addEventListener('load', renderLogoToCanvas);
+  // Run with multiple strategies to guarantee execution
+  if (document.readyState === 'complete') {
+    // Already loaded — run immediately via rAF
+    requestAnimationFrame(renderLogoToCanvas);
+  } else {
+    window.addEventListener('load', renderLogoToCanvas);
+  }
+  // Also run on DOMContentLoaded as backup
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(renderLogoToCanvas, 200);
+  });
   window.addEventListener('resize', function(){ setTimeout(renderLogoToCanvas, 150); });
 
 
