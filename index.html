@@ -922,25 +922,19 @@ html, body {
 }
 #previewTop { position: relative; }
 
-/* ── BrickPic Logo: wrapper clips to show ONLY BRiCKPiC text ── */
-#brickpicLogoWrap {
+
+/* ── BrickPic Logo: canvas renders exact logo region ── */
+#brickpicLogoCanvas {
   position: absolute;
   bottom: calc(50% + min(21vh, 21vw) + 57px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
   pointer-events: none;
-  /* Width + height scaled to show only logo portion */
-  width: min(280px, 52vw);
-  height: calc(min(280px, 52vw) * 0.146);
-  overflow: hidden;
-}
-#brickpicLogoHero {
   display: block;
-  width: 100%;
+  max-width: min(280px, 52vw);
+  width: min(280px, 52vw);
   height: auto;
-  /* Shift image up so logo text aligns with top of wrapper */
-  margin-top: calc(min(280px, 52vw) * -0.156);
 }
 </style>
 </head>
@@ -981,11 +975,7 @@ html, body {
   <div id="brickBack"></div>
   <div id="brickFront"></div>
   <!-- All positioned as siblings inside loader -->
-  <div id="brickpicLogoWrap">
-    <img id="brickpicLogoHero"
-         src="https://siul98.github.io/BrickPic/BrickPicLogo.png"
-         alt="BrickPic">
-  </div>
+  <canvas id="brickpicLogoCanvas"></canvas>
   <div id="heroTagline">Art you can touch.</div>
   <div id="heroMosaicWrap">
     <img id="heroMosaic"
@@ -2035,6 +2025,42 @@ function animate(){
     set running(v){ animRunning = v; },
     restart(){ if(!animRunning){ animRunning=true; requestAnimationFrame(animate); } }
   };
+
+  // ── Canvas Logo: draw exact BRiCKPiC region from PNG ──────────────────
+  (function renderLogoToCanvas(){
+    var cv = document.getElementById('brickpicLogoCanvas');
+    if(!cv) return;
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function(){
+      // Logo region: 27.8% to 53.7% of image height (from pixel analysis)
+      var srcY = Math.round(img.height * 0.278);
+      var srcH = Math.round(img.height * (0.537 - 0.278));
+      var srcW = img.width;
+      // Canvas size: match CSS width, height proportional to logo region
+      var targetW = cv.offsetWidth || Math.min(280, window.innerWidth * 0.52);
+      var targetH = Math.round(targetW * srcH / srcW);
+      cv.width  = Math.round(targetW * (window.devicePixelRatio || 1));
+      cv.height = Math.round(targetH * (window.devicePixelRatio || 1));
+      cv.style.width  = targetW + 'px';
+      cv.style.height = targetH + 'px';
+      var ctx = cv.getContext('2d');
+      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+      ctx.drawImage(img, 0, srcY, srcW, srcH, 0, 0, targetW, targetH);
+    };
+    img.onerror = function(){
+      // Fallback: text logo if image fails
+      var targetW = cv.offsetWidth || 280;
+      cv.width = targetW; cv.height = 50;
+      cv.style.width = targetW + 'px'; cv.style.height = '50px';
+      var ctx = cv.getContext('2d');
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold ' + Math.round(targetW / 6) + 'px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('BRiCKPiC', targetW/2, 38);
+    };
+    img.src = 'https://siul98.github.io/BrickPic/BrickPicLogo.png';
+  })();
 
   const onResize=()=>{const W2=window.innerWidth,H2=window.innerHeight;camera.aspect=W2/H2;camera.updateProjectionMatrix();blurRenderer.setSize(W2,H2);sharpRenderer.setSize(W2,H2);};
   window.addEventListener('resize',onResize);
