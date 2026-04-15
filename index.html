@@ -867,12 +867,13 @@ html, body {
 #heroMosaicWrap {
   position: absolute;
   top: calc(50% + 30px);
-  left: 48%;
+  left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
   width: min(42vh, 42vw);
   max-width: 460px;
   aspect-ratio: 1 / 1;
+  overflow: visible;
 }
 #heroMosaic {
   width: 100%;
@@ -1652,13 +1653,15 @@ function navTo(sectionId,pillEl){
 }
 let _lastSection='';
 function updateScrollSpy(){
-  // Mosaic parallax on hero
-  const mosaic = document.getElementById('heroMosaic');
+  // Mosaic wrap parallax — gentle upward drift on scroll
+  const wrap = document.getElementById('heroMosaicWrap');
+  const logoEl = document.getElementById('brickpicLogoHero');
+  const tagEl = document.getElementById('heroTagline');
   const progress = Math.min(window.scrollY / window.innerHeight, 1);
-  if(mosaic) mosaic.style.transform = `translate(-50%, calc(-46% - ${progress * 80}px))`;
-  // Logo fades out
-  const logo = document.getElementById('heroLogo');
-  if(logo) logo.style.opacity = Math.max(0, 1 - progress * 3);
+  const drift = progress * 60;
+  if(wrap)    wrap.style.transform    = `translate(-50%, calc(-50% - ${drift}px))`;
+  if(logoEl)  logoEl.style.transform  = `translateX(-50%) translateY(-${drift}px)`;
+  if(tagEl)   tagEl.style.transform   = `translateX(-50%) translateY(-${drift}px)`;
   const scrollY=window.scrollY+120;
   let current=SECTIONS[0];
   for(const sec of SECTIONS){const el=document.getElementById(sec.id);if(el&&el.getBoundingClientRect().top+window.scrollY<=scrollY)current=sec;}
@@ -1683,8 +1686,6 @@ function updateScrollSpy(){
   if(typeof brickMeshes!=='undefined'){
     const progress=Math.min(window.scrollY/window.innerHeight,1);
     brickMeshes.forEach((b,idx)=>{b.scrollOffset=progress*(10+idx*1.5);});
-    const center=document.getElementById('loaderCenter');
-    if(center)center.style.opacity=Math.max(0,1-progress*3);
     const hint=document.getElementById('scrollHint');
     if(hint)hint.style.opacity=Math.max(0,1-progress*6);
   }
@@ -1893,8 +1894,7 @@ function initLoader(){
       buildShowcaseGrids();startShowcase();paintDisplay();
       // Build other section content
       setTimeout(()=>{buildInspiredGrid();buildExpandCards();},100);
-      window.addEventListener('scroll',updateScrollSpy,{passive:true});
-    },400);
+          },400);
   },undefined,()=>{clearInterval(tick);buildShowcaseGrids();startShowcase();paintDisplay();setTimeout(()=>{buildInspiredGrid();buildExpandCards();},100);});
   const clock=new THREE.Clock();
   let animRunning=true;
