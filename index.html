@@ -885,20 +885,6 @@ html, body {
 }
 
 /* Logo: sibling of heroMosaicWrap, z-index:5 > brickFront:3 */
-#brickpicLogoHero {
-  position: absolute;
-  /* bottom of logo = mosaic top - 8px gap - tagline height(~13px) - 6px gap */
-  /* mosaic top = 50% - min(21vh,21vw)  */
-  bottom: calc(54% + min(21vh, 21vw) + 12px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  width: min(250px, 48vw);
-  height: min(90px, 17.5vw);
-  object-fit: cover;
-  object-position: 50% 0%;
-  pointer-events: none;
-}
 
 /* Tagline: sibling, between logo and mosaic */
 #heroTagline {
@@ -935,6 +921,27 @@ html, body {
   z-index: 10;
 }
 #previewTop { position: relative; }
+
+/* ── BrickPic Logo: wrapper clips to show ONLY BRiCKPiC text ── */
+#brickpicLogoWrap {
+  position: absolute;
+  bottom: calc(50% + min(21vh, 21vw) + 57px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+  /* Width + height scaled to show only logo portion */
+  width: min(280px, 52vw);
+  height: calc(min(280px, 52vw) * 0.146);
+  overflow: hidden;
+}
+#brickpicLogoHero {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Shift image up so logo text aligns with top of wrapper */
+  margin-top: calc(min(280px, 52vw) * -0.156);
+}
 </style>
 </head>
 <body>
@@ -974,9 +981,11 @@ html, body {
   <div id="brickBack"></div>
   <div id="brickFront"></div>
   <!-- All positioned as siblings inside loader -->
-  <img id="brickpicLogoHero"
-       src="https://siul98.github.io/BrickPic/BrickPicLogo.png"
-       alt="BrickPic">
+  <div id="brickpicLogoWrap">
+    <img id="brickpicLogoHero"
+         src="https://siul98.github.io/BrickPic/BrickPicLogo.png"
+         alt="BrickPic">
+  </div>
   <div id="heroTagline">Art you can touch.</div>
   <div id="heroMosaicWrap">
     <img id="heroMosaic"
@@ -1436,18 +1445,17 @@ function paintDisplay(){
     updateThumbCanvas();
     return;
   }
-  // Fallback: demo image from active album
-  const mc=document.getElementById('mc');if(!mc)return;
+  // Fallback: show demo thumbnail without tile overlay
   if(!S.albums[S.active]){
-    if(!scGrids)return;
-    renderMosaic(mc,scGrids[scIdx],48,'round');
-    cv.getContext('2d').drawImage(mc,0,0,cv.width,cv.height);
-    updateThumbCanvas();
+    const thumb = SHOWCASE_ALBUMS[scIdx] && SHOWCASE_ALBUMS[scIdx].thumb;
+    if(!thumb)return;
+    const tImg=new Image();
+    tImg.onload=function(){ctx.clearRect(0,0,SZ,SZ);ctx.drawImage(tImg,0,0,SZ,SZ);updateThumbCanvas();};
+    tImg.src=thumb;
     return;
   }
-  const dg=getGrid();if(!dg)return;
-  renderMosaic(mc,dg.grid,dg.size,'round');
-  renderView(cv,mc,0,dg.size);
+  // Album loaded: S.img is set → early return above handles it
+  // Fallthrough only if S.img somehow cleared; show plain album source
   updateChips();
   updateThumbCanvas();
 }
