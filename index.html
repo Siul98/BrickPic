@@ -894,17 +894,14 @@ html, body {
   overflow: hidden;
   display: block !important; /* reset any flex */
 }
-#heroMosaic {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-  filter: drop-shadow(0 50px 100px rgba(0,0,0,.9)) drop-shadow(0 15px 40px rgba(0,0,0,.7));
-}
 /* Logo: above mosaic, referenced to mosaic top */
 /* Tagline: between logo bottom and mosaic top */
 
 /* ── Hero: single absolute anchor, everything inside ── */
+/* Logo: above wrap top edge */
+/* Tagline: between logo and mosaic */
+
+/* ── Hero: all siblings, each absolutely positioned ── */
 #heroMosaicWrap {
   position: absolute;
   top: 50%;
@@ -914,7 +911,6 @@ html, body {
   width: min(42vh, 42vw);
   max-width: 460px;
   aspect-ratio: 1 / 1;
-  overflow: visible;       /* allow logo to protrude above */
 }
 #heroMosaic {
   width: 100%;
@@ -924,25 +920,30 @@ html, body {
   filter: drop-shadow(0 50px 100px rgba(0,0,0,.9))
           drop-shadow(0 15px 40px rgba(0,0,0,.7));
 }
-/* Logo: above wrap top edge */
+
+/* Logo: sibling of heroMosaicWrap, z-index:5 > brickFront:3 */
 #brickpicLogoHero {
   position: absolute;
-  bottom: calc(100% + 26px);
+  /* bottom of logo = mosaic top - 8px gap - tagline height(~13px) - 6px gap */
+  /* mosaic top = 50% - min(21vh,21vw)  */
+  bottom: calc(50% + min(21vh, 21vw) + 27px);
   left: 50%;
   transform: translateX(-50%);
+  z-index: 5;
   width: min(230px, 44vw);
   height: min(70px, 13.5vw);
   object-fit: cover;
   object-position: 50% 0%;
   pointer-events: none;
-  z-index: 5;
 }
-/* Tagline: between logo and mosaic */
+
+/* Tagline: sibling, between logo and mosaic */
 #heroTagline {
   position: absolute;
-  bottom: calc(100% + 6px);
+  bottom: calc(50% + min(21vh, 21vw) + 6px);
   left: 50%;
   transform: translateX(-50%);
+  z-index: 5;
   font-size: clamp(9px, 1.2vw, 12px);
   font-weight: 700;
   letter-spacing: .35em;
@@ -951,7 +952,6 @@ html, body {
   text-shadow: 0 2px 16px rgba(0,0,0,.8);
   white-space: nowrap;
   pointer-events: none;
-  z-index: 5;
 }
 </style>
 </head>
@@ -991,12 +991,12 @@ html, body {
   <div id="roomBg"></div>
   <div id="brickBack"></div>
   <div id="brickFront"></div>
-  <!-- Single centered anchor: logo + tagline + mosaic move as one unit -->
+  <!-- All positioned as siblings inside loader -->
+  <img id="brickpicLogoHero"
+       src="https://siul98.github.io/BrickPic/BrickPicLogo.png"
+       alt="BrickPic">
+  <div id="heroTagline">Art you can touch.</div>
   <div id="heroMosaicWrap">
-    <img id="brickpicLogoHero"
-         src="https://siul98.github.io/BrickPic/BrickPicLogo.png"
-         alt="BrickPic">
-    <div id="heroTagline">Art you can touch.</div>
     <img id="heroMosaic"
          src="https://siul98.github.io/BrickPic/Beatles.png"
          alt="Beatles Mosaic">
