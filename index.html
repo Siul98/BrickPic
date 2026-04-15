@@ -1423,14 +1423,27 @@ function goView(v){S.view=0;paintDisplay();}
 
 function updateThumbCanvas(){
   const tc=document.getElementById('thumbCanvas');if(!tc)return;
-  const mc=document.getElementById('mc');
-  if(!mc||!mc.width)return;
   tc.width=54;tc.height=54;
   const ctx=tc.getContext('2d');
-  // Crop out the frame border (36px at 768px scale) — draw only tile area
-  const border = Math.round(mc.width * 36/768);
-  const inner  = mc.width - 2*border;
-  ctx.drawImage(mc, border, border, inner, inner, 0, 0, 54, 54);
+  // Thumbnail: show plain source image (no tile overlay)
+  if(S.img){
+    ctx.drawImage(S.img,0,0,54,54);
+    return;
+  }
+  // Fallback: showcase thumbnail photo
+  const thumb=SHOWCASE_ALBUMS[scIdx]&&SHOWCASE_ALBUMS[scIdx].thumb;
+  if(thumb){
+    const tImg=new Image();
+    tImg.onload=function(){ctx.drawImage(tImg,0,0,54,54);};
+    tImg.src=thumb;
+    return;
+  }
+  // Last resort: copy mc with border crop
+  const mc=document.getElementById('mc');
+  if(!mc||!mc.width)return;
+  const border=Math.round(mc.width*36/768);
+  const inner=mc.width-2*border;
+  ctx.drawImage(mc,border,border,inner,inner,0,0,54,54);
 }
 
 function paintDisplay(){
@@ -1438,24 +1451,17 @@ function paintDisplay(){
   const SZ=cv.offsetWidth||cv.parentElement?.offsetWidth||500;
   if(SZ>10){cv.width=SZ;cv.height=SZ;}
   const ctx=cv.getContext('2d');
-  // Show plain source image — no tile overlay
-  if(S.img){
-    ctx.clearRect(0,0,SZ,SZ);
-    ctx.drawImage(S.img,0,0,SZ,SZ);
+  const mc=document.getElementById('mc');if(!mc)return;
+  if(!S.albums[S.active]){
+    if(!scGrids)return;
+    renderMosaic(mc,scGrids[scIdx],48,'round');
+    cv.getContext('2d').drawImage(mc,0,0,cv.width,cv.height);
     updateThumbCanvas();
     return;
   }
-  // Fallback: show demo thumbnail without tile overlay
-  if(!S.albums[S.active]){
-    const thumb = SHOWCASE_ALBUMS[scIdx] && SHOWCASE_ALBUMS[scIdx].thumb;
-    if(!thumb)return;
-    const tImg=new Image();
-    tImg.onload=function(){ctx.clearRect(0,0,SZ,SZ);ctx.drawImage(tImg,0,0,SZ,SZ);updateThumbCanvas();};
-    tImg.src=thumb;
-    return;
-  }
-  // Album loaded: S.img is set → early return above handles it
-  // Fallthrough only if S.img somehow cleared; show plain album source
+  const dg=getGrid();if(!dg)return;
+  renderMosaic(mc,dg.grid,dg.size,'round');
+  renderView(cv,mc,0,dg.size);
   updateChips();
   updateThumbCanvas();
 }
