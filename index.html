@@ -1231,19 +1231,20 @@ html, body {
     <div class="sec step" id="step2">
       <div class="sec-title"><b>Format.</b> <span class="gray">Welches ist das richtige für dich?</span></div>
       <div class="size-grid" style="margin-top:10px">
-        <div class="sc" id="sz-32" onclick="setSize(32)">
-          <div class="sc-n">32×32</div><div class="sc-tag">SMALL</div>
-          <div class="sc-info">~25×25 cm<br>1.024 Round Tiles<br>4× 16×16 Panel</div>
-          <div class="sc-price">~€50–65</div>
-        </div>
         <div class="sc on" id="sz-48" onclick="setSize(48)">
-          <div class="sc-badge">ORIGINAL ★</div>
-          <div class="sc-n">48×48</div><div class="sc-tag">ORIGINAL</div>
+          <div class="sc-badge">STANDARD ★</div>
+          <div class="sc-n">48×48</div><div class="sc-tag">STANDARD</div>
           <div class="sc-info">~38×38 cm<br>2.304 Round Tiles<br>9× 16×16 Panel</div>
-          <div class="sc-price">~€115–135</div>
+          <div class="sc-price">~€89–109</div>
+        </div>
+        <div class="sc" id="sz-64" onclick="setSize(64)">
+          <div class="sc-badge">XL</div>
+          <div class="sc-n">64×64</div><div class="sc-tag">XL FORMAT</div>
+          <div class="sc-info">~51×51 cm<br>4.096 Round Tiles<br>16× 16×16 Panel</div>
+          <div class="sc-price">~€179–219</div>
         </div>
       </div>
-      <div class="premium-box" style="margin-top:8px"><b>PREMIUM TECHNIK-FUNDAMENT</b><br>9 Module, jedes einzeln baubar. Mehrere Personen gleichzeitig. Am Ende zusammenstecken.</div>
+      <div class="premium-box"<div class="premium-box" style="margin-top:8px"><b>PREMIUM TECHNIK-FUNDAMENT</b><br>9 Module, jedes einzeln baubar. Mehrere Personen gleichzeitig. Am Ende zusammenstecken.</div>
     </div>
     <div class="sec step" id="step4">
       <div class="sec-title"><b>Palette.</b> <span class="gray">Mehr Farben = mehr Detail.</span></div>
@@ -1760,20 +1761,22 @@ function updateSummary(){
 
 // ═══ SETTINGS ════════════════════════════════════════════════════════════
 function setSize(n){
-  S.N=n;[32,48].forEach(s=>{
+  S.N=n;[48,64].forEach(s=>{
     const el=document.getElementById('sz-'+s);if(!el)return;
     el.classList.toggle('on',s===n);
-    if(s===n){el.style.borderColor='#0066CC';el.style.background='#EBF2FA';}
-    else{el.style.removeProperty('border-color');el.style.removeProperty('background');}
+    el.style.borderColor=s===n?'#0066CC':'';
+    el.style.background=s===n?'#EBF2FA':'';
   });
-  if(S.albums[S.active])processImage(S.active,S.albums[S.active].src);else paintDisplay();
+  if(S.albums[S.active])processImage(S.active,S.albums[S.active].src);
+  else paintDisplay();
 }
+
 function setTier(t){
   S.tier=t;[1,2,3,4].forEach(i=>{
     const el=document.getElementById('dt-'+i);if(!el)return;
     el.classList.toggle('on',i===t);
     if(i===t){el.style.borderColor='#0066CC';el.style.background='#0066CC';el.style.color='#fff';}
-    else{el.style.removeProperty('border-color');el.style.removeProperty('background');el.style.removeProperty('color');}
+    else{el.style.borderColor='';el.style.background='';el.style.color='';}
   });
   if(S.albums[S.active])processImage(S.active,S.albums[S.active].src);
 }
@@ -2752,43 +2755,7 @@ function buildMarquee(){
   <!-- Product Cards -->
   <div class="shop-grid">
 
-    <!-- Small 32×32 -->
-    <div class="shop-card">
-      <div class="shop-size">Small</div>
-      <div class="shop-name">32×32</div>
-      <div class="shop-dim">~25 × 25 cm &nbsp;·&nbsp; 1.024 Tiles</div>
-      <div class="shop-price">€49</div>
-      <div class="shop-price-sub">inkl. MwSt. + Versand</div>
-      <ul class="shop-includes">
-        <li>1.024 Round Tiles, sortiert nach Farbe</li>
-        <li>4× 16×16 Technik-Panel</li>
-        <li>Schritt-für-Schritt Bauanleitung</li>
-        <li>Farbige Pixelkarte deines Motivs</li>
-        <li>Lieferzeit 7–12 Werktage</li>
-      </ul>
-      <button class="shop-btn shop-btn-secondary" onclick="openOrder('small')">Jetzt bestellen</button>
-    </div>
-
-    <!-- Original 48×48 -->
-    <div class="shop-card featured">
-      <div class="shop-size">Original</div>
-      <div class="shop-name">48×48</div>
-      <div class="shop-dim">~38 × 38 cm &nbsp;·&nbsp; 2.304 Tiles</div>
-      <div class="shop-price">€129</div>
-      <div class="shop-price-sub">inkl. MwSt. + Versand</div>
-      <ul class="shop-includes">
-        <li>2.304 Round Tiles, sortiert nach Farbe</li>
-        <li>9× 16×16 Technik-Panel</li>
-        <li>Mehrere Personen gleichzeitig baubar</li>
-        <li>Schritt-für-Schritt Bauanleitung</li>
-        <li>Farbige Pixelkarte deines Motivs</li>
-        <li>Premium Box-Verpackung</li>
-        <li>Lieferzeit 7–14 Werktage</li>
-      </ul>
-      <button class="shop-btn shop-btn-primary" onclick="openOrder('original')">🛒 Jetzt bestellen</button>
-    </div>
-
-  </div>
+    
 
   <!-- Trust badges -->
   <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;position:relative;z-index:1">
