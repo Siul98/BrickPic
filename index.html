@@ -1533,11 +1533,6 @@ html, body {
     0 -3px 16px rgba(237,233,134,.3),
     0 0 0 1.5px rgba(200,192,50,.18) !important;
 }
-#glass-nav.nav-ci.nav-light .gnav-logo { border-right-color: rgba(147,171,217,.3) !important; display: block !important; }
-#glass-nav.nav-ci.nav-light .gnav-logo img { filter: invert(1) !important; }
-#glass-nav.nav-ci.nav-light .gnav-pill { color: #93ABD9 !important; }
-#glass-nav.nav-ci.nav-light .gnav-pill.active { background: #F2619C !important; color: #fff !important; }
-#glass-nav.nav-ci.nav-light .gnav-pill[data-section="section-shop"] { background: #93ABD9 !important; color: #1a1220 !important; }
 </style>
 </head>
 <body>
@@ -3263,4 +3258,90 @@ function buildMarquee(){
 </div>
 
 </body>
-</html>
+</html>/* ══ NAV CI REDESIGN — non-destructive, remove .nav-ci to revert ══════════
+   CI: Blue #93ABD9 bar · Yellow #EDE986 text · White logo · Scale-only active
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Give nav vertical room so glow isn't clipped ── */
+#glass-nav { top: 20px !important; }
+
+/* ── Base: Blueberry Milk (#93ABD9) bar ── */
+#glass-nav.nav-ci {
+  background: #93ABD9 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow:
+    0 8px 32px rgba(147,171,217,.55),
+    0 -4px 20px rgba(147,171,217,.3),
+    0 0 0 1.5px rgba(100,140,190,.25) !important;
+}
+
+/* ── Logo divider ── */
+#glass-nav.nav-ci .gnav-logo {
+  border-right-color: rgba(237,233,134,.35) !important;
+}
+
+/* ── Logo image: white ── */
+#glass-nav.nav-ci .gnav-logo img {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* ── All pill text: Lemon Cream (#EDE986) ── */
+#glass-nav.nav-ci .gnav-pill {
+  color: #EDE986 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  font-weight: 600 !important;
+  transition: transform .2s ease, color .15s !important;
+}
+
+/* ── Hover: scale up + white text ── */
+#glass-nav.nav-ci .gnav-pill:hover {
+  background: transparent !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  transform: scale(1.08) translateY(-1px) !important;
+}
+
+/* ── Active: ONLY scale — no background, no color change ── */
+#glass-nav.nav-ci .gnav-pill.active {
+  background: transparent !important;
+  color: #EDE986 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  transform: scale(1.12) !important;
+  font-weight: 800 !important;
+}
+#glass-nav.nav-ci .gnav-pill.active::before { background: none !important; }
+
+/* ── Shop: hidden ── */
+.gnav-pill[data-section="section-shop"] { display: none !important; }
+
+/* ── Scrolled past hero (nav-light): SAME blue, logo stays ── */
+#glass-nav.nav-ci.nav-light {
+  background: #93ABD9 !important;
+  border-color: transparent !important;
+  box-shadow:
+    0 6px 28px rgba(147,171,217,.5),
+    0 -3px 16px rgba(147,171,217,.3),
+    0 0 0 1.5px rgba(100,140,190,.2) !important;
+}
+/* Logo always visible — override the hide rule from nav-light base CSS */
+#glass-nav.nav-ci.nav-light .gnav-logo {
+  display: flex !important;
+  border-right-color: rgba(237,233,134,.35) !important;
+}
+#glass-nav.nav-ci.nav-light .gnav-logo img {
+  filter: brightness(0) invert(1) !important;
+}
+#glass-nav.nav-ci.nav-light .gnav-pill {
+  color: #EDE986 !important;
+}
+#glass-nav.nav-ci.nav-light .gnav-pill.active {
+  background: transparent !important;
+  color: #EDE986 !important;
+  transform: scale(1.12) !important;
+  font-weight: 800 !important;
+}
