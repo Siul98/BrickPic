@@ -77,10 +77,10 @@ input,textarea{user-select:text;-webkit-user-select:text}
 #previewBottom{padding:12px 0 14px;display:flex;align-items:center;justify-content:center;gap:8px;border-top:1px solid var(--brd);background:#FBFBFD;flex-shrink:0}
 .cdot{width:7px;height:7px;border-radius:50%;background:var(--brd);cursor:pointer;transition:all .2s}
 .cdot.on{background:var(--txt);width:20px;border-radius:4px}
-#config{width:340px;flex-shrink:0;height:100vh;background:var(--white);border-left:1px solid var(--brd);overflow-y:auto}
+#config{width:340px;flex-shrink:0;height:100vh;background:var(--white);border-left:1px solid var(--brd);overflow:hidden;display:flex;flex-direction:column}
 #config::-webkit-scrollbar{width:3px}
 #config::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px}
-#topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px;position:sticky;top:0;z-index:100;background:var(--white);}
+#topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px;flex-shrink:0;z-index:100;background:var(--white);}
 .logo span{color:#0066CC}
 .navlinks{display:flex;gap:1px}
 .navlink{padding:4px 9px;border-radius:14px;font-size:11px;font-weight:700;color:var(--mut);border:none;background:transparent;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s}
@@ -1134,8 +1134,7 @@ html, body {
 
 /* ── Sticky bottom action bar ── */
 #config-footer {
-  position: sticky;
-  bottom: 0;
+  flex-shrink: 0;
   background: var(--white);
   border-top: 1px solid var(--brd);
   padding: 12px 16px;
@@ -1439,23 +1438,16 @@ html, body {
 }
 
 /* ── Config: center content vertically when minimal ── */
-#config {
-  display: flex !important;
-  flex-direction: column !important;
-}
 #config-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-bottom: 8px;
+  min-height: 0; /* critical for flex children to scroll */
 }
-/* When content is tall (after upload), allow natural scroll */
-@media (max-height: 700px) {
-  #config-content { justify-content: flex-start; }
-}
-
 /* ── Hide Shop pill from nav ── */
 .gnav-pill[data-section="section-shop"] {
   display: none !important;
