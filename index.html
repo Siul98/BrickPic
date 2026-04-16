@@ -1407,38 +1407,42 @@ const LIFESTYLE_IMGS = [
 ];
 
 const COLORS=[
-  {id:"black",     name:"Black",              bl:11, hex:"#212121",rgb:[33,33,33],   t:1},
-  {id:"white",     name:"White",              bl:1,  hex:"#F4F4F4",rgb:[244,244,244],t:1},
-  {id:"red",       name:"Red",                bl:5,  hex:"#C91A09",rgb:[201,26,9],   t:1},
-  {id:"blue",      name:"Blue",               bl:7,  hex:"#0055BF",rgb:[0,85,191],   t:1},
-  {id:"yellow",    name:"Yellow",             bl:3,  hex:"#FFCF00",rgb:[255,207,0],  t:1},
-  {id:"green",     name:"Green",              bl:6,  hex:"#257A3E",rgb:[37,122,62],  t:1},
-  {id:"lt-gray",   name:"Light Bluish Gray",  bl:86, hex:"#9BA19D",rgb:[155,161,157],t:1},
-  {id:"dk-gray",   name:"Dark Bluish Gray",   bl:85, hex:"#595D60",rgb:[89,93,96],   t:1},
-  {id:"orange",    name:"Orange",             bl:4,  hex:"#FE8A18",rgb:[254,138,24], t:2},
-  {id:"brown",     name:"Brown",              bl:8,  hex:"#6C4E2A",rgb:[108,78,42],  t:2},
-  {id:"tan",       name:"Tan",                bl:2,  hex:"#E4CD9E",rgb:[228,205,158],t:2},
-  {id:"dk-blue",   name:"Dark Blue",          bl:63, hex:"#003369",rgb:[0,51,105],   t:2},
-  {id:"dk-red",    name:"Dark Red",           bl:59, hex:"#720E0F",rgb:[114,14,15],  t:2},
-  {id:"dk-green",  name:"Dark Green",         bl:80, hex:"#184632",rgb:[24,70,50],   t:2},
-  {id:"lime",      name:"Lime",               bl:34, hex:"#A4BD47",rgb:[164,189,71], t:2},
-  {id:"r-brown",   name:"Reddish Brown",      bl:70, hex:"#82422A",rgb:[130,66,42],  t:2},
-  {id:"med-blue",  name:"Medium Blue",        bl:72, hex:"#5A93DB",rgb:[90,147,219], t:3},
-  {id:"dk-orange", name:"Dark Orange",        bl:68, hex:"#A95500",rgb:[169,85,0],   t:3},
-  {id:"dk-tan",    name:"Dark Tan",           bl:69, hex:"#958A73",rgb:[149,138,115],t:3},
-  {id:"sand-grn",  name:"Sand Green",         bl:48, hex:"#789082",rgb:[120,144,130],t:3},
-  {id:"dk-purple", name:"Dark Purple",        bl:89, hex:"#3F3691",rgb:[63,54,145],  t:3},
-  {id:"magenta",   name:"Magenta",            bl:71, hex:"#923978",rgb:[146,57,120], t:3},
-  {id:"pink",      name:"Pink",               bl:23, hex:"#F7969B",rgb:[247,150,155],t:3},
-  {id:"lt-blue",   name:"Light Blue",         bl:62, hex:"#9FC3E0",rgb:[159,195,224],t:3},
-  {id:"sand-blue", name:"Sand Blue",          bl:55, hex:"#6074A1",rgb:[96,116,161], t:4},
-  {id:"med-lav",   name:"Medium Lavender",    bl:157,hex:"#AC78BA",rgb:[172,120,186],t:4},
-  {id:"lavender",  name:"Lavender",           bl:154,hex:"#CDC1DE",rgb:[205,213,222],t:4},
-  {id:"coral",     name:"Coral",              bl:220,hex:"#FF6D77",rgb:[255,109,119],t:4},
-  {id:"br-green",  name:"Bright Green",       bl:36, hex:"#4B9E4B",rgb:[75,158,75],  t:4},
-  {id:"br-lblue",  name:"Bright Light Blue",  bl:105,hex:"#9DC3DB",rgb:[157,195,219],t:4},
-  {id:"br-yellow", name:"Bright Yellow",      bl:103,hex:"#FFE001",rgb:[255,224,1],  t:4},
-  {id:"br-orange", name:"Bright Lt Orange",   bl:110,hex:"#F9A22B",rgb:[249,162,43], t:4},
+  // Tier 1 — Basis (8 Farben)
+  {id:"black",     name:"Schwarz",          bl:11, hex:"#1C1C1C",rgb:[28,28,28],    t:1},
+  {id:"white",     name:"Weiß",             bl:1,  hex:"#F0F0EE",rgb:[240,240,238], t:1},
+  {id:"red",       name:"Rot",              bl:5,  hex:"#C91A09",rgb:[201,26,9],    t:1},
+  {id:"blue",      name:"Blau",             bl:7,  hex:"#0055BF",rgb:[0,85,191],    t:1},
+  {id:"yellow",    name:"Gelb",             bl:3,  hex:"#FFCF00",rgb:[255,207,0],   t:1},
+  {id:"green",     name:"Grün",             bl:6,  hex:"#257A3E",rgb:[37,122,62],   t:1},
+  {id:"lt-gray",   name:"Hellgrau",         bl:86, hex:"#9BA19D",rgb:[155,161,157], t:1},
+  {id:"dk-gray",   name:"Dunkelgrau",       bl:85, hex:"#595D60",rgb:[89,93,96],    t:1},
+  // Tier 2 — Erweitert (8 Farben)
+  {id:"orange",    name:"Orange",           bl:4,  hex:"#FE8A18",rgb:[254,138,24],  t:2},
+  {id:"brown",     name:"Braun",            bl:8,  hex:"#6C4E2A",rgb:[108,78,42],   t:2},
+  {id:"tan",       name:"Sand",             bl:2,  hex:"#E4CD9E",rgb:[228,205,158], t:2},
+  {id:"dk-blue",   name:"Dunkelblau",       bl:63, hex:"#003369",rgb:[0,51,105],    t:2},
+  {id:"dk-red",    name:"Dunkelrot",        bl:59, hex:"#720E0F",rgb:[114,14,15],   t:2},
+  {id:"dk-green",  name:"Dunkelgrün",       bl:80, hex:"#184632",rgb:[24,70,50],    t:2},
+  {id:"lime",      name:"Limette",          bl:34, hex:"#A4BD47",rgb:[164,189,71],  t:2},
+  {id:"r-brown",   name:"Rotbraun",         bl:70, hex:"#82422A",rgb:[130,66,42],   t:2},
+  // Tier 3 — Detail (8 Farben)
+  {id:"med-blue",  name:"Mittelblau",       bl:72, hex:"#5A93DB",rgb:[90,147,219],  t:3},
+  {id:"dk-orange", name:"Dunkelorange",     bl:68, hex:"#A95500",rgb:[169,85,0],    t:3},
+  {id:"dk-tan",    name:"Khaki",            bl:69, hex:"#9E8F72",rgb:[158,143,114], t:3},
+  {id:"sand-grn",  name:"Salbeigrün",       bl:48, hex:"#789082",rgb:[120,144,130], t:3},
+  {id:"dk-purple", name:"Dunkellila",       bl:89, hex:"#3F3691",rgb:[63,54,145],   t:3},
+  {id:"magenta",   name:"Magenta",          bl:71, hex:"#923978",rgb:[146,57,120],  t:3},
+  {id:"pink",      name:"Rosa",             bl:23, hex:"#F7969B",rgb:[247,150,155], t:3},
+  {id:"lt-blue",   name:"Hellblau",         bl:62, hex:"#9FC3E0",rgb:[159,195,224], t:3},
+  // Tier 4 — Maximum (8 Farben)
+  {id:"sand-blue", name:"Stahlblau",        bl:55, hex:"#6B7FA8",rgb:[107,127,168], t:4},
+  {id:"med-lav",   name:"Flieder",          bl:157,hex:"#AC78BA",rgb:[172,120,186], t:4},
+  {id:"lavender",  name:"Lavendel",         bl:154,hex:"#BEB8D0",rgb:[190,184,208], t:4},
+  {id:"coral",     name:"Koralle",          bl:220,hex:"#FF6D77",rgb:[255,109,119], t:4},
+  {id:"br-green",  name:"Grasgrün",         bl:36, hex:"#4B9E4B",rgb:[75,158,75],   t:4},
+  {id:"br-lblue",  name:"Himmelblau",       bl:105,hex:"#9DC3DB",rgb:[157,195,219], t:4},
+  {id:"br-yellow", name:"Zitronengelb",     bl:103,hex:"#FFE001",rgb:[255,224,1],   t:4},
+  {id:"br-orange", name:"Pfirsich",         bl:110,hex:"#F9A22B",rgb:[249,162,43],  t:4},
 ];
 const PARTS={stud:{id:'3024',name:'Plate mit Noppe'},flat:{id:'3070b',name:'Tile glatt'},round:{id:'98138',name:'Round Tile'}};
 const CFG={
@@ -1821,8 +1825,8 @@ function exportTXT(){
   const total=m.reduce((s,{count})=>s+count,0),cfg=CFG[S.N];
   const base=calcBase(cfg),tl=calcTiles(total,cfg);
   dl('brickpic.txt',[
-    'BRICKPIC Einkaufsliste','='.repeat(44),`${S.N}×${S.N} · ${cfg.cm} · ${m.length} Farben`,'',
-    ...m.map(({color:c,count})=>`${c.name.padEnd(24)} ${String(count).padStart(6)}  BL #${c.bl}`),
+    'BrickPic Farbliste','='.repeat(44),`${S.N}×${S.N} · ${cfg.cm} · ${m.length} Farben`,'',
+    ...m.map(({color:c,count})=>`${c.name.padEnd(24)} ${String(count).padStart(6)}`),
     '—'.repeat(44),`GESAMT: ${total.toLocaleString()} Tiles  |  ~€${tl.lo+Math.round(base)}–${tl.hi+Math.round(base*1.3)}`
   ].join('\n'),'text/plain');
 }
