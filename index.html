@@ -2704,7 +2704,9 @@ function animate(){
       const cursorDX=_mx-(_pmx||_mx), cursorDY=_my-(_pmy||_my);
       const cursorSpd=Math.sqrt(cursorDX*cursorDX+cursorDY*cursorDY);
       if(dist<60 && dist>1 && cursorSpd>5){
-        const f=0.02*(1-dist/60)*Math.min(cursorSpd/30,1);
+        // Depth factor: front bricks (z≈3) hit harder, back bricks (z≈-6) barely move
+        const depthFactor = (b.cfg.pos[2] + 6) / 9; // 0.0 at z=-6 → 1.0 at z=3
+        const f=0.02*depthFactor*(1-dist/60)*Math.min(cursorSpd/30,1);
         b.rvx+=(dx/dist)*f;
         b.rvy+=-(dy/dist)*f;
       }
