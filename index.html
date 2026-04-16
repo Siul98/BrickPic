@@ -2425,7 +2425,7 @@ function initLoader(){
       const cfg=LAYOUT[i%LAYOUT.length];
       const mesh=src.clone();
       // CI color palette — one color per brick, applied to ALL sub-meshes
-      const CI=[0xF2619C,0xE7BEF8,0x93ABD9,0xEDE986,0xF2619C,0xE7BEF8,0x93ABD9,0xEDE986];
+      const CI=[0xF2619C,0xB855D4,0x5B8EC4,0xC8C020,0xF2619C,0xB855D4,0x5B8EC4,0xC8C020];
       const ciColor=CI[i%CI.length];
       mesh.traverse(child=>{
         if(!child.isMesh)return;
