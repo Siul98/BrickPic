@@ -1533,14 +1533,6 @@ html, body {
   transform: translateY(-1px) !important;
 }
 
-/* ── Active pill: Raspberry Rose ── */
-#glass-nav.nav-ci .gnav-pill.active {
-  background: #F2619C !important;
-  color: #fff !important;
-  border-color: transparent !important;
-  box-shadow: 0 4px 16px rgba(242,97,156,.45) !important;
-}
-#glass-nav.nav-ci .gnav-pill.active::before { background: none !important; }
 
 /* ── Shop CTA: Blueberry Milk bg, dark text ── */
 #glass-nav.nav-ci .gnav-pill[data-section="section-shop"] {
@@ -1569,7 +1561,7 @@ html, body {
 /* ── Grindela secondary font ── */
 @font-face {
   font-family: 'Grindela';
-  src: url('https://siul98.github.io/BrickPic/Grindela.otf') format('opentype');
+  src: url('/Grindela.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -3357,9 +3349,7 @@ function buildMarquee(){
   transform: scale(1.14) !important;
   font-weight: normal !important;
 }
-#glass-nav.nav-ci .gnav-pill.active::before { background: none !important; }
-
-/* ── Light theme (over white/bright sections) ── */
+#glass-nav.nav-ci .gnav-pill.active::before { content: '' !important; background: none !important; opacity: 0 !important; }
 #glass-nav.nav-ci.nav-light {
   background: rgba(255, 255, 255, 0.55) !important;
   backdrop-filter: blur(24px) saturate(180%) !important;
