@@ -2433,9 +2433,11 @@ function initLoader(){
         mats.forEach(m=>{
           m=m.clone();
           m.vertexColors=false;
-          m.roughness=.2;m.metalness=.05;
+          m.roughness=.25;m.metalness=.05;
           m.map=null;m.normalMap=null;
           m.color.setHex(ciColor);
+          m.emissive.setHex(ciColor);
+          m.emissiveIntensity=0.22;
           child.material=m;
         });
       });
