@@ -1565,6 +1565,16 @@ html, body {
     0 -3px 16px rgba(237,233,134,.3),
     0 0 0 1.5px rgba(200,192,50,.18) !important;
 }
+
+/* ── Grindela secondary font ── */
+@font-face {
+  font-family: 'Grindela';
+  src: url('https://siul98.github.io/BrickPic/Grindela.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 </style>
 </head>
 <body>
@@ -3291,84 +3301,93 @@ function buildMarquee(){
 
 </body>
 </html>/* ══ NAV CI REDESIGN — non-destructive, remove .nav-ci to revert ══════════
-   CI: Rose #F2619C · Lilac #E7BEF8 · Blue #93ABD9 · Yellow #EDE986
-   Blue bar · Yellow text · White logo · Scale-only active highlight
+   Liquid glass · White text on dark · Black text on light · Grindela ALL CAPS pills
    ═══════════════════════════════════════════════════════════════════════════ */
 
 #glass-nav { top: 20px; }
 
-/* ── Blue bar ── */
+/* ── Liquid glass: default (dark/hero bg) ── */
 #glass-nav.nav-ci {
-  background: #93ABD9 !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: none !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  backdrop-filter: blur(24px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
   box-shadow:
-    0 8px 32px rgba(147,171,217,.6),
-    0 -4px 20px rgba(147,171,217,.35),
-    0 0 0 1.5px rgba(100,140,190,.25) !important;
+    0 8px 32px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06) !important;
 }
 
-/* ── Logo: white ── */
+/* ── Logo: white divider ── */
 #glass-nav.nav-ci .gnav-logo {
-  border-right-color: rgba(237,233,134,.3) !important;
+  border-right-color: rgba(255, 255, 255, 0.20) !important;
 }
 #glass-nav.nav-ci .gnav-logo img {
   filter: brightness(0) invert(1) !important;
 }
 
-/* ── Inactive pills: Lemon Cream text ── */
+/* ── Pills: Grindela ALL CAPS, white ── */
 #glass-nav.nav-ci .gnav-pill {
-  color: #EDE986 !important;
+  font-family: 'Grindela', sans-serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.07em !important;
+  font-size: 11px !important;
+  font-weight: normal !important;
+  color: rgba(255, 255, 255, 0.90) !important;
   background: transparent !important;
   border-color: transparent !important;
-  font-weight: 600 !important;
-  transition: transform .18s ease, color .18s ease !important;
+  transition: transform .18s ease, color .18s ease, background .18s ease !important;
 }
 
-/* ── Hover: scale + white ── */
+/* ── Hover: subtle glass tint ── */
 #glass-nav.nav-ci .gnav-pill:hover {
-  background: transparent !important;
   color: #fff !important;
+  background: rgba(255, 255, 255, 0.15) !important;
   border-color: transparent !important;
+  transform: scale(1.06) !important;
   box-shadow: none !important;
-  transform: scale(1.08) !important;
 }
 
-/* ── Active: scale only, no color fill ── */
+/* ── Active: scale only, stays white ── */
 #glass-nav.nav-ci .gnav-pill.active {
+  color: #fff !important;
   background: transparent !important;
-  color: #EDE986 !important;
   border-color: transparent !important;
   box-shadow: none !important;
-  transform: scale(1.12) !important;
-  font-weight: 800 !important;
+  transform: scale(1.14) !important;
+  font-weight: normal !important;
 }
 #glass-nav.nav-ci .gnav-pill.active::before { background: none !important; }
 
-/* ── Light theme (scrolled): same blue bar, logo stays ── */
+/* ── Light theme (over white/bright sections) ── */
 #glass-nav.nav-ci.nav-light {
-  background: #93ABD9 !important;
-  border-color: transparent !important;
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
   box-shadow:
-    0 6px 28px rgba(147,171,217,.55),
-    0 -3px 16px rgba(147,171,217,.3),
-    0 0 0 1.5px rgba(100,140,190,.2) !important;
+    0 4px 24px rgba(0, 0, 0, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.80) !important;
 }
 #glass-nav.nav-ci.nav-light .gnav-logo {
   display: flex !important;
-  border-right-color: rgba(237,233,134,.3) !important;
+  border-right-color: rgba(0, 0, 0, 0.12) !important;
 }
 #glass-nav.nav-ci.nav-light .gnav-logo img {
-  filter: brightness(0) invert(1) !important;
+  filter: invert(1) !important;
 }
-#glass-nav.nav-ci.nav-light .gnav-pill { color: #EDE986 !important; }
-#glass-nav.nav-ci.nav-light .gnav-pill:hover { color: #fff !important; transform: scale(1.08) !important; }
+#glass-nav.nav-ci.nav-light .gnav-pill {
+  color: rgba(0, 0, 0, 0.75) !important;
+}
+#glass-nav.nav-ci.nav-light .gnav-pill:hover {
+  color: rgba(0, 0, 0, 0.95) !important;
+  background: rgba(0, 0, 0, 0.06) !important;
+  transform: scale(1.06) !important;
+}
 #glass-nav.nav-ci.nav-light .gnav-pill.active {
+  color: rgba(0, 0, 0, 0.95) !important;
   background: transparent !important;
-  color: #EDE986 !important;
-  transform: scale(1.12) !important;
-  font-weight: 800 !important;
+  transform: scale(1.14) !important;
 }
 
 
