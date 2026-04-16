@@ -2671,6 +2671,9 @@ function drawBrickShadows(camera){
   // Add repel state to each brick
   brickMeshes.forEach(b => { b.rx=0; b.ry=0; b.rvx=0; b.rvy=0; });
 
+  // NaN guard: reset any brick with NaN state each frame
+  const _safeB = b => { if(isNaN(b.rx)||isNaN(b.ry)||isNaN(b.rvx)||isNaN(b.rvy)){b.rx=0;b.ry=0;b.rvx=0;b.rvy=0;} };
+
 function animate(){
     if(!animRunning)return;requestAnimationFrame(animate);
     const elapsed=clock.getElapsedTime(),now=performance.now()*.001;
@@ -2683,6 +2686,7 @@ function animate(){
     const SPRING  = 0.12;  // spring back to origin
 
     brickMeshes.forEach(b=>{
+      _safeB(b);
       // Project brick world pos → screen px
       const wPos = b.mesh.position.clone();
       const ndc = wPos.project(window._brickCamera||camera);
