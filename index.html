@@ -1438,7 +1438,30 @@ html, body {
   }
 }
 
-/* ══ NAV CI REDESIGN — non-destructive, remove .nav-ci to revert ══════════
+/* ── Config: center content vertically when minimal ── */
+#config {
+  display: flex !important;
+  flex-direction: column !important;
+}
+#config-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+  padding-bottom: 8px;
+}
+/* When content is tall (after upload), allow natural scroll */
+@media (max-height: 700px) {
+  #config-content { justify-content: flex-start; }
+}
+
+/* ── Hide Shop pill from nav ── */
+.gnav-pill[data-section="section-shop"] {
+  display: none !important;
+}
+
+ — non-destructive, remove .nav-ci to revert ══════════
    CI: Rose #F2619C · Lilac #E7BEF8 · Blueberry Milk #93ABD9 · Lemon Cream #EDE986
    Bar = Lemon Cream · Links = Blueberry Milk · Active = Raspberry Rose · Shop = Blueberry Milk
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -1609,6 +1632,7 @@ html, body {
       </div>
     </div>
     <div id="albumPills" style="display:none"></div>
+    <div id="config-content">
     <div class="sec">
       <div class="sec-title"><b>Bild.</b> <span class="gray">Lade dein Motiv hoch.</span></div>
       <div class="sec-sub" style="margin-bottom:10px">Album, Haustier, Gemälde, Portrait — alles geht.</div>
@@ -1676,6 +1700,7 @@ html, body {
       </div>
     </div>
 
+    </div><!-- /config-content -->
   <!-- Sticky action footer -->
   <div id="config-footer">
     <button class="btn-restart" onclick="resetToHome()">↺ Restart</button>
