@@ -90,7 +90,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 #config{width:340px;flex-shrink:0;height:100vh;background:var(--white);border-left:1px solid var(--brd);overflow-y:auto}
 #config::-webkit-scrollbar{width:3px}
 #config::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px}
-#topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--brd);position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(12px)}
+#topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px;border-bottom:1px solid var(--brd);position:sticky;top:0;z-index:100;background:var(--white);}
 .logo span{color:#0066CC}
 .navlinks{display:flex;gap:1px}
 .navlink{padding:4px 9px;border-radius:14px;font-size:11px;font-weight:700;color:var(--mut);border:none;background:transparent;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s}
@@ -428,7 +428,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   }
 
   /* Topbar stays at top of config */
-  #topbar { position: sticky; top: 0; }
+  
 
   /* Size grid 2 cols already, fine */
 
@@ -992,6 +992,129 @@ html, body {
   letter-spacing: .05em;
   text-transform: uppercase;
 }
+
+/* ── Generator: LEGO-inspired CI ── */
+#topbar .logo {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -.04em;
+  color: #000;
+  cursor: pointer;
+  user-select: none;
+}
+#topbar .logo span {
+  color: #000;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: #000;
+}
+
+/* ── Topbar nav ── */
+#topbar .navlinks {
+  display: flex;
+  gap: 4px;
+}
+.navlink {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mut);
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.navlink.on, .navlink:hover {
+  background: var(--blue);
+  color: #fff;
+}
+
+/* ── Upload Zone — LEGO-style ── */
+.uz {
+  border: 2px dashed var(--brd);
+  border-radius: 16px;
+  padding: 36px 24px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--white);
+  transition: border-color .2s, background .2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.uz:hover {
+  border-color: var(--blue);
+  background: var(--blue-bg);
+}
+.uz .uz-icon {
+  font-size: 40px;
+  line-height: 1;
+}
+.uz .uz-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--txt);
+}
+.uz .uz-sub {
+  font-size: 12px;
+  color: var(--mut);
+}
+.uz .uz-btn {
+  margin-top: 6px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  pointer-events: none;
+}
+
+/* ── Action buttons: Restart + Done ── */
+#topbar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.btn-restart {
+  background: none;
+  border: 1.5px solid var(--brd);
+  color: var(--txt);
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-restart:hover {
+  border-color: #999;
+  background: #f5f5f5;
+}
+.btn-done {
+  background: #FFD700;
+  border: none;
+  color: #000;
+  padding: 9px 20px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all .15s;
+  letter-spacing: -.01em;
+}
+.btn-done:hover {
+  background: #FFC300;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255,215,0,.4);
+}
 </style>
 </head>
 <body>
@@ -1077,9 +1200,13 @@ html, body {
   </div>
   <div id="config">
     <div id="topbar">
-      <div class="logo" onclick="resetToHome()">BRICK<span>PIC</span></div>
+      <div class="logo" onclick="resetToHome()">BRICK<span>PiC</span></div>
       <div class="navlinks">
         <button class="navlink on" onclick="">Generator</button>
+      </div>
+      <div id="topbar-actions">
+        <button class="btn-restart" onclick="resetToHome()" title="Von vorne anfangen">↺ Restart</button>
+        <button class="btn-done" onclick="openOrderFromConfig()">Bestellen →</button>
       </div>
     </div>
     <div id="prodhead">
@@ -1092,7 +1219,11 @@ html, body {
       <div class="sec-sub" style="margin-bottom:10px">Album, Haustier, Gemälde, Portrait — alles geht.</div>
       <div class="uz" id="uz" onclick="document.getElementById('fi').click()">
         <input type="file" id="fi" accept="image/*" style="display:none" onchange="handleFile(this)">
-        <div class="uz-icon">🎵</div>
+        <div class="uz-icon">🖼️</div>
+        <div class="uz-title">Foto hierher ziehen oder klicken</div>
+        <div class="uz-sub">JPG · PNG · WEBP</div>
+        <div class="uz-btn">Bild auswählen</div>
+      </div>
         <div class="uz-title">Bild hochladen</div>
         <div class="uz-sub">JPG · PNG · WEBP</div>
       </div>
