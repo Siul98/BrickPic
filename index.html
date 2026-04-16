@@ -2424,7 +2424,7 @@ function initLoader(){
       const src=meshMap[name];if(!src)return;
       const cfg=LAYOUT[i%LAYOUT.length];
       const mesh=src.clone();
-      const mat=src.material.clone();mat.roughness=.18;mat.metalness=0;mesh.material=mat;
+      const mat=src.material.clone();mat.roughness=.18;mat.metalness=0;mat.vertexColors=false;mesh.material=mat;
       // CI color palette — one color per brick
       const CI=[0xF2619C,0xE7BEF8,0x93ABD9,0xEDE986,0xF2619C,0xE7BEF8,0x93ABD9,0xEDE986];
       mat.color.setHex(CI[i%CI.length]);
