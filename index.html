@@ -2665,10 +2665,9 @@ function drawBrickShadows(camera){
 // ── Cursor repulsion: track mouse in hero ──────────────────────
   const heroEl = document.getElementById('loader');
   let _mx = -9999, _my = -9999;
-  (heroEl||document).addEventListener('mousemove', e => {
+  document.addEventListener('mousemove', e => {
     _mx = e.clientX; _my = e.clientY;
   }, {passive:true});
-  (heroEl||document).addEventListener('mouseleave', () => { _mx=-9999; _my=-9999; });
   // Add repel state to each brick
   brickMeshes.forEach(b => { b.rx=0; b.ry=0; b.rvx=0; b.rvy=0; });
 
@@ -2686,7 +2685,7 @@ function animate(){
     brickMeshes.forEach(b=>{
       // Project brick world pos → screen px
       const wPos = b.mesh.position.clone();
-      const ndc = wPos.project(camera);
+      const ndc = wPos.project(window._brickCamera||camera);
       const sx = (ndc.x * .5 + .5) * W;
       const sy = (-ndc.y * .5 + .5) * H;
       const dx = sx - _mx, dy = sy - _my;
@@ -2736,6 +2735,7 @@ function animate(){
     set running(v){ animRunning = v; },
     restart(){ if(!animRunning){ animRunning=true; requestAnimationFrame(animate); } }
   };
+  window._brickCamera = camera; // expose for cursor repulsion
 
 
   const onResize=()=>{const W2=window.innerWidth,H2=window.innerHeight;camera.aspect=W2/H2;camera.updateProjectionMatrix();blurRenderer.setSize(W2,H2);sharpRenderer.setSize(W2,H2);};
