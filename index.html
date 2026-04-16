@@ -357,7 +357,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 }
 .gnav-pill.active {
   color: #fff;
-  background: linear-gradient(135deg,#F2619C,#93ABD9);
+  background: linear-gradient(135deg,#F2619C,#93ABD9) !important;
   border-color: rgba(255,255,255,.2);
   box-shadow: 0 4px 20px rgba(242,97,156,.6), inset 0 1px 0 rgba(255,255,255,.2);
 }
@@ -745,7 +745,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   gap: 8px;
 }
 .shop-btn-primary {
-  background: linear-gradient(135deg,#F2619C,#93ABD9);
+  background: linear-gradient(135deg,#F2619C,#93ABD9) !important;
   color: #fff;
   box-shadow: 0 8px 32px rgba(242,97,156,.35), inset 0 1px 0 rgba(255,255,255,.2);
 }
@@ -1166,7 +1166,7 @@ html, body {
 }
 #config-footer .btn-order {
   flex: 2;
-  background: linear-gradient(135deg,#F2619C,#93ABD9);
+  background: linear-gradient(135deg,#F2619C,#93ABD9) !important;
   border: none;
   color: #fff;
   padding: 11px 0;
@@ -2395,10 +2395,10 @@ function initLoader(){
     brickFront.appendChild(sharpRenderer.domElement);
   }
 
-  scene.add(new THREE.AmbientLight(0xffffff,.15));
-  const key=new THREE.DirectionalLight(0xffffff,1.2);key.position.set(6,10,8);key.castShadow=true;scene.add(key);
-  const fill=new THREE.DirectionalLight(0xffffff,.4);fill.position.set(-8,4,6);scene.add(fill);
-  const rim=new THREE.DirectionalLight(0xffffff,.2);rim.position.set(0,-6,-10);scene.add(rim);
+  scene.add(new THREE.AmbientLight(0xffffff,.08));
+  const key=new THREE.DirectionalLight(0xffffff,.6);key.position.set(6,10,8);key.castShadow=true;scene.add(key);
+  const fill=new THREE.DirectionalLight(0xffffff,.2);fill.position.set(-8,4,6);scene.add(fill);
+  const rim=new THREE.DirectionalLight(0xffffff,.1);rim.position.set(0,-6,-10);scene.add(rim);
   const WANTED=['Brick_2x4_Orange_Orange_0','Plane_1x2_Blue_Blue_0','Brick_2x2_Brown_Brown_0','Brick_2x4_Orange_Orange_0','Plane_1x2_Blue_Blue_0','Brick_1x2_Yellow_Yellow_0','Plane_2x4_White_White_0','Brick_2x2_Brown_Brown_0',];
   const LAYOUT=[
   // ── BEHIND (Z<0, blurry) ─────────────────────────────────────────────
@@ -2433,11 +2433,11 @@ function initLoader(){
         mats.forEach(m=>{
           m=m.clone();
           m.vertexColors=false;
-          m.roughness=.25;m.metalness=.05;
+          m.roughness=.15;m.metalness=0;
           m.map=null;m.normalMap=null;
           m.color.setHex(ciColor);
           m.emissive.setHex(ciColor);
-          m.emissiveIntensity=0.65;
+          m.emissiveIntensity=1.0;
           child.material=m;
         });
       });
