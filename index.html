@@ -2395,10 +2395,10 @@ function initLoader(){
     brickFront.appendChild(sharpRenderer.domElement);
   }
 
-  scene.add(new THREE.AmbientLight(0xffffff,.02));
-  const key=new THREE.DirectionalLight(0xffffff,.05);key.position.set(6,10,8);key.castShadow=true;scene.add(key);
-  const fill=new THREE.DirectionalLight(0xffffff,.03);fill.position.set(-8,4,6);scene.add(fill);
-  const rim=new THREE.DirectionalLight(0xffffff,.02);rim.position.set(0,-6,-10);scene.add(rim);
+  scene.add(new THREE.AmbientLight(0xffffff,.25));
+  const key=new THREE.DirectionalLight(0xffffff,.9);key.position.set(6,10,8);key.castShadow=true;scene.add(key);
+  const fill=new THREE.DirectionalLight(0xffffff,.3);fill.position.set(-8,4,6);scene.add(fill);
+  const rim=new THREE.DirectionalLight(0xffffff,.15);rim.position.set(0,-6,-10);scene.add(rim);
   const WANTED=['Brick_2x4_Orange_Orange_0','Plane_1x2_Blue_Blue_0','Brick_2x2_Brown_Brown_0','Brick_2x4_Orange_Orange_0','Plane_1x2_Blue_Blue_0','Brick_1x2_Yellow_Yellow_0','Plane_2x4_White_White_0','Brick_2x2_Brown_Brown_0',];
   const LAYOUT=[
   // ── BEHIND (Z<0, blurry) ─────────────────────────────────────────────
@@ -2425,17 +2425,17 @@ function initLoader(){
       const cfg=LAYOUT[i%LAYOUT.length];
       const mesh=src.clone();
       // Exact CI palette: black diffuse + emissive=1.0 = renders pixel-perfect as CI hex
-      const CI=[0xF2619C,0xB855D4,0x5B8EC4,0xC8C020,0xF2619C,0xB855D4,0x5B8EC4,0xC8C020];
+      const CI=[0xF2619C,0xB855D4,0x7BA0CC,0xC8C020,0xF2619C,0xB855D4,0x7BA0CC,0xC8C020];
       const ciColor=CI[i%CI.length];
       mesh.traverse(child=>{
         if(!child.isMesh)return;
         const count=Array.isArray(child.material)?child.material.length:1;
         const newMats=Array.from({length:count},()=>{
           const m=new THREE.MeshStandardMaterial();
-          m.color.set(0x111111);      // near-black diffuse, no lighting blowout
-          m.emissive.setHex(ciColor); // exact CI color
-          m.emissiveIntensity=1.0;    // renders exactly as ciColor
-          m.roughness=0.45;
+          m.color.setHex(ciColor); // CI color as diffuse for proper 3D shading
+          m.emissive.setHex(ciColor); // CI emissive to keep color visible in shadows
+          m.emissiveIntensity=0.2;  // subtle — shadows stay visible, color stays vivid
+          m.roughness=0.3;m.metalness=0;
           m.metalness=0;
           return m;
         });
