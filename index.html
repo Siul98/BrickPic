@@ -1451,34 +1451,33 @@ html, body {
 /* ── Minimal config: hide all labels, lines, descriptions ── */
 .sec-title,
 .sec-sub,
-.premium-box {
+.premium-box,
+#config .legal {
   display: none !important;
 }
 
 /* Remove dividing lines, compress padding */
-.sec {
+#config-content .sec {
   border-top: none !important;
-  padding: 8px 20px !important;
-}
-
-/* First sec: a bit more top padding */
-.sec:first-of-type {
-  padding-top: 12px !important;
+  padding: 6px 20px !important;
 }
 
 /* Tighten up the upload zone */
 .uz {
   padding: 18px 14px !important;
-}
-
-/* Tighten format grid */
-.size-grid {
   margin-top: 0 !important;
 }
 
-/* Tighten palette */
+/* Tighten format grid and palette */
+.size-grid,
 .tp-minimal {
   margin-top: 0 !important;
+}
+
+/* section-build fills exactly the viewport so #app snap-fits */
+#section-build {
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* ── Hide Shop pill from nav ── */
