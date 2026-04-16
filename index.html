@@ -107,7 +107,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .size-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .sc{border:1.5px solid var(--brd);border-radius:var(--radius);padding:14px 12px;cursor:pointer;transition:all .15s;background:var(--white);position:relative;text-align:center}
 .sc:hover{border-color:#888}
-.sc.on{border-color:#F2619C;background:rgba(242,97,156,.06)}
+.sc.on{border-color:#F2619C;background:rgba(242,97,156,.15)}
 .sc.on::after{content:'';position:absolute;top:7px;right:7px;width:13px;height:13px;border-radius:50%;background:#F2619C url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 8'%3E%3Cpath d='M1 4l2.5 2.5L9 1' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/7px no-repeat}
 .sc-badge{position:absolute;top:-1px;left:-1px;background:#0066CC;color:#fff;font-size:6px;font-weight:900;padding:2px 7px;border-radius:10px 0 7px 0;letter-spacing:.8px}
 .sc-n{font-size:20px;font-weight:900;letter-spacing:-1px;color:var(--txt);margin:6px 0 1px}
@@ -192,7 +192,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .sec-
 
 /* Glass button */
-.glass-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:100px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:linear-gradient(135deg,rgba(242,97,156,.8),rgba(147,171,217,.7));box-shadow:0 8px 32px rgba(242,97,156,.3),inset 0 1px 0 rgba(255,255,255,.2);transition:all .2s;position:relative;z-index:1}
+.glass-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:100px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:linear-gradient(135deg,#F2619C,#93ABD9);box-shadow:0 8px 32px rgba(242,97,156,.3),inset 0 1px 0 rgba(255,255,255,.2);transition:all .2s;position:relative;z-index:1}
 .glass-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(242,97,156,.4),inset 0 1px 0 rgba(255,255,255,.3)}
 
 /* ── INSPIRED: Pill badges ── */
@@ -357,9 +357,9 @@ input,textarea{user-select:text;-webkit-user-select:text}
 }
 .gnav-pill.active {
   color: #fff;
-  background: linear-gradient(135deg,rgba(242,97,156,.75),rgba(147,171,217,.65));
+  background: linear-gradient(135deg,#F2619C,#93ABD9);
   border-color: rgba(255,255,255,.2);
-  box-shadow: 0 2px 16px rgba(242,97,156,.3), inset 0 1px 0 rgba(255,255,255,.2);
+  box-shadow: 0 4px 20px rgba(242,97,156,.6), inset 0 1px 0 rgba(255,255,255,.2);
 }
 .gnav-pill.active::before {
   content:'';position:absolute;inset:0;border-radius:100px;
@@ -645,7 +645,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   border-radius: 24px;
 }
 .shop-card.featured {
-  border-color: rgba(242,97,156,.4);
+  border-color: #F2619C;
   background: rgba(242,97,156,.07);
 }
 .shop-card.featured::after {
@@ -1213,7 +1213,7 @@ html, body {
 }
 .tp-minimal .tp.on {
   border-color: #F2619C;
-  background: rgba(242,97,156,.08);
+  background: rgba(242,97,156,.18);
   color: #F2619C;
 }
 .tp-minimal .tp.on small { color: #F2619C; }
@@ -1457,7 +1457,7 @@ html, body {
     <div class="gnav-pill" data-section="section-about" onclick="navTo('section-about',this)">
       <span class="pill-full">About us</span><span class="pill-short">About</span>
     </div>
-    <div class="gnav-pill" data-section="section-shop" onclick="navTo('section-shop',this)" style="background:linear-gradient(135deg,rgba(242,97,156,.65),rgba(147,171,217,.55));color:#fff;border-color:rgba(255,255,255,.25)">
+    <div class="gnav-pill" data-section="section-shop" onclick="navTo('section-shop',this)" style="background:linear-gradient(135deg,#F2619C,#93ABD9);color:#fff;border-color:rgba(255,255,255,.25)">
       <span class="pill-full">🛒 Shop</span><span class="pill-short">Shop</span>
     </div>
   </nav>
@@ -1613,8 +1613,8 @@ html, body {
   <h2 class="sec-headline">Every Photo.<br>Every Memory.</h2>
   <p class="sec-body">From album covers to family portraits — if you can photograph it, you can brick it.</p>
   <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:52px;position:relative;z-index:1">
-    <div class="insp-pill" style="background:linear-gradient(135deg,rgba(242,97,156,.5),rgba(139,92,246,.4))">🎵&nbsp; Album Art</div>
-    <div class="insp-pill" style="background:linear-gradient(135deg,rgba(242,97,156,.45),rgba(239,68,68,.35))">🐾&nbsp; Pets</div>
+    <div class="insp-pill" style="background:linear-gradient(135deg,#F2619C,#E7BEF8)">🎵&nbsp; Album Art</div>
+    <div class="insp-pill" style="background:linear-gradient(135deg,#F2619C,#93ABD9)">🐾&nbsp; Pets</div>
     <div class="insp-pill" style="background:linear-gradient(135deg,rgba(16,185,129,.45),rgba(5,150,105,.35))">👤&nbsp; Portraits</div>
     <div class="insp-pill" style="background:linear-gradient(135deg,rgba(251,191,36,.45),rgba(249,115,22,.35))">🖼️&nbsp; Fine Art</div>
     <div class="insp-pill" style="background:linear-gradient(135deg,rgba(59,130,246,.45),rgba(37,99,235,.35))">🏙️&nbsp; Skylines</div>
@@ -2395,10 +2395,10 @@ function initLoader(){
     brickFront.appendChild(sharpRenderer.domElement);
   }
 
-  scene.add(new THREE.AmbientLight(0xffffff,.35));
-  const key=new THREE.DirectionalLight(0xfff4e0,2.2);key.position.set(6,10,8);key.castShadow=true;scene.add(key);
-  const fill=new THREE.DirectionalLight(0xc0d8ff,.8);fill.position.set(-8,4,6);scene.add(fill);
-  const rim=new THREE.DirectionalLight(0xa0c0ff,.5);rim.position.set(0,-6,-10);scene.add(rim);
+  scene.add(new THREE.AmbientLight(0xffffff,.15));
+  const key=new THREE.DirectionalLight(0xffffff,1.2);key.position.set(6,10,8);key.castShadow=true;scene.add(key);
+  const fill=new THREE.DirectionalLight(0xffffff,.4);fill.position.set(-8,4,6);scene.add(fill);
+  const rim=new THREE.DirectionalLight(0xffffff,.2);rim.position.set(0,-6,-10);scene.add(rim);
   const WANTED=['Brick_2x4_Orange_Orange_0','Plane_1x2_Blue_Blue_0','Brick_2x2_Brown_Brown_0','Brick_2x4_Orange_Orange_0','Plane_1x2_Blue_Blue_0','Brick_1x2_Yellow_Yellow_0','Plane_2x4_White_White_0','Brick_2x2_Brown_Brown_0',];
   const LAYOUT=[
   // ── BEHIND (Z<0, blurry) ─────────────────────────────────────────────
@@ -2437,7 +2437,7 @@ function initLoader(){
           m.map=null;m.normalMap=null;
           m.color.setHex(ciColor);
           m.emissive.setHex(ciColor);
-          m.emissiveIntensity=0.22;
+          m.emissiveIntensity=0.65;
           child.material=m;
         });
       });
