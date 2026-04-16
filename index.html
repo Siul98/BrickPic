@@ -2599,6 +2599,7 @@ function drawBrickShadows(camera){
 // ── Cursor repulsion: track mouse in hero ──────────────────────
   const heroEl = document.getElementById('loader');
   let _mx = -9999, _my = -9999;
+  let _prevMx = -9999, _prevMy = -9999;
   document.addEventListener('mousemove', e => {
     _mx = e.clientX; _my = e.clientY;
   }, {passive:true});
@@ -2612,38 +2613,58 @@ function animate(){
     if(!animRunning)return;requestAnimationFrame(animate);
     const elapsed=clock.getElapsedTime(),now=performance.now()*.001;
 
-    // ── Cursor repulsion per brick ──────────────────────────────
+    // ── Cursor impulse: pencil in zero-g ────────────────────────
+    // Cursor velocity gives a one-time nudge; bricks drift freely after
     const W=window.innerWidth, H=window.innerHeight;
-    const REPEL_R = 180;   // screen-pixel radius
-    const REPEL_F = 0.6;   // force strength (world units)
-    const DAMP    = 0.999;  // velocity damping per frame
-    const SPRING  = 0.0;  // spring back to origin
+    const CONTACT_R = 100;  // px — only react when cursor is very close
+    const IMPULSE_F = 0.18; // tiny impulse magnitude
+    const DAMP      = 0.9997; // near-zero friction: drift for seconds
+    const MAX_V     = 1.8;  // world units/frame cap — slow, dreamy
+    const MAX_D     = 22;   // how far they can drift
+
+    // Cursor velocity (how fast cursor is moving)
+    const cursorDX = _mx - (_prevMx||_mx);
+    const cursorDY = _my - (_prevMy||_my);
+    const cursorSpeed = Math.sqrt(cursorDX*cursorDX + cursorDY*cursorDY);
+    _prevMx = _mx; _prevMy = _my;
 
     brickMeshes.forEach(b=>{
       _safeB(b);
-      // Project brick world pos → screen px
       const wPos = b.mesh.position.clone();
       const ndc = wPos.project(window._brickCamera||camera);
       const sx = (ndc.x * .5 + .5) * W;
       const sy = (-ndc.y * .5 + .5) * H;
       const dx = sx - _mx, dy = sy - _my;
       const dist = Math.sqrt(dx*dx + dy*dy);
-      if(dist < REPEL_R && dist > 1){
-        const strength = (1 - dist/REPEL_R) * REPEL_F;
+
+      // Only nudge if cursor is close AND moving — like brushing past a pencil
+      if(dist < CONTACT_R && dist > 1 && cursorSpeed > 2){
+        // Force scales with cursor speed (capped) and proximity
+        const proximity = (1 - dist/CONTACT_R);
+        const speedFactor = Math.min(cursorSpeed / 30, 1.0);
+        const strength = IMPULSE_F * proximity * speedFactor;
         b.rvx += (dx/dist) * strength;
-        b.rvy += -(dy/dist) * strength; // Y flipped (screen vs world)
+        b.rvy += -(dy/dist) * strength;
       }
-      // Dampen + spring back
-      b.rvx = (b.rvx - b.rx * SPRING) * DAMP;
-      b.rvy = (b.rvy - b.ry * SPRING) * DAMP;
-      // Cap velocity so bricks don't fly off screen
-      const MAX_V = 8;
-      b.rvx = Math.max(-MAX_V, Math.min(MAX_V, b.rvx));
-      b.rvy = Math.max(-MAX_V, Math.min(MAX_V, b.rvy));
-      // Cap offset so bricks don't drift too far
-      const MAX_D = 12;
+
+      // Near-zero drag — drifts like an object in space
+      b.rvx *= DAMP;
+      b.rvy *= DAMP;
+
+      // Soft velocity cap
+      const spd = Math.sqrt(b.rvx*b.rvx + b.rvy*b.rvy);
+      if(spd > MAX_V){ const s = MAX_V/spd; b.rvx*=s; b.rvy*=s; }
+
+      // Soft position cap — gentle invisible wall at the edges
+      const softWall = (v, cap) => {
+        if(Math.abs(v) > cap * 0.8) return v * 0.97;
+        return v + (v > 0 ? b.rvx : -b.rvx > 0 ? b.rvx : 0);
+      };
       b.rx = Math.max(-MAX_D, Math.min(MAX_D, b.rx + b.rvx));
       b.ry = Math.max(-MAX_D, Math.min(MAX_D, b.ry + b.rvy));
+      // Gently nudge back when near boundary
+      if(Math.abs(b.rx) > MAX_D * 0.85) b.rvx *= -0.3;
+      if(Math.abs(b.ry) > MAX_D * 0.85) b.rvy *= -0.3;
     });
 
     brickMeshes.forEach(b=>{
@@ -3318,12 +3339,12 @@ function buildMarquee(){
   transition: transform .22s cubic-bezier(.34,1.56,.64,1), color .18s ease, background .18s ease !important;
 }
 
-/* ── Hover: subtle glass tint ── */
+/* ── Hover: scale only ── */
 #glass-nav.nav-ci .gnav-pill:hover {
-  color: #fff !important;
-  background: rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255,255,255,.92) !important;
+  background: transparent !important;
   border-color: transparent !important;
-  transform: scale(1.06) !important;
+  transform: scale(1.12) !important;
   box-shadow: none !important;
 }
 
@@ -3357,9 +3378,9 @@ function buildMarquee(){
   color: rgba(0, 0, 0, 0.75) !important;
 }
 #glass-nav.nav-ci.nav-light .gnav-pill:hover {
-  color: rgba(0, 0, 0, 0.95) !important;
-  background: rgba(0, 0, 0, 0.06) !important;
-  transform: scale(1.06) !important;
+  color: rgba(0, 0, 0, 0.92) !important;
+  background: transparent !important;
+  transform: scale(1.12) !important;
 }
 #glass-nav.nav-ci.nav-light .gnav-pill.active {
   color: rgba(0, 0, 0, 0.95) !important;
