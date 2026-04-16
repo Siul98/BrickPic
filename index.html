@@ -80,7 +80,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
 #config{width:340px;flex-shrink:0;height:100vh;background:var(--white);border-left:1px solid var(--brd);overflow-y:auto}
 #config::-webkit-scrollbar{width:3px}
 #config::-webkit-scrollbar-thumb{background:var(--brd);border-radius:2px}
-#topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px;border-bottom:1px solid var(--brd);position:sticky;top:0;z-index:100;background:var(--white);}
+#topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px;position:sticky;top:0;z-index:100;background:var(--white);}
 .logo span{color:#0066CC}
 .navlinks{display:flex;gap:1px}
 .navlink{padding:4px 9px;border-radius:14px;font-size:11px;font-weight:700;color:var(--mut);border:none;background:transparent;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .15s}
@@ -374,6 +374,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   box-shadow: 0 4px 24px rgba(0,0,0,.12);
 }
 #glass-nav.nav-light .gnav-logo {
+  display: none;
   border-right-color: rgba(0,0,0,.10);
 }
 #glass-nav.nav-light .gnav-logo img {
