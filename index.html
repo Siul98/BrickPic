@@ -2424,10 +2424,21 @@ function initLoader(){
       const src=meshMap[name];if(!src)return;
       const cfg=LAYOUT[i%LAYOUT.length];
       const mesh=src.clone();
-      const mat=src.material.clone();mat.roughness=.18;mat.metalness=0;mat.vertexColors=false;mesh.material=mat;
-      // CI color palette — one color per brick
+      // CI color palette — one color per brick, applied to ALL sub-meshes
       const CI=[0xF2619C,0xE7BEF8,0x93ABD9,0xEDE986,0xF2619C,0xE7BEF8,0x93ABD9,0xEDE986];
-      mat.color.setHex(CI[i%CI.length]);
+      const ciColor=CI[i%CI.length];
+      mesh.traverse(child=>{
+        if(!child.isMesh)return;
+        const mats=Array.isArray(child.material)?child.material:[child.material];
+        mats.forEach(m=>{
+          m=m.clone();
+          m.vertexColors=false;
+          m.roughness=.2;m.metalness=.05;
+          m.map=null;m.normalMap=null;
+          m.color.setHex(ciColor);
+          child.material=m;
+        });
+      });
       mesh.castShadow=true;
       mesh.position.set(cfg.pos[0],cfg.pos[1]+18,cfg.pos[2]);
       mesh.scale.setScalar(cfg.scale);
