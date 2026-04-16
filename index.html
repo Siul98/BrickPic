@@ -374,7 +374,6 @@ input,textarea{user-select:text;-webkit-user-select:text}
   box-shadow: 0 4px 24px rgba(0,0,0,.12);
 }
 #glass-nav.nav-light .gnav-logo {
-  display: none;
   border-right-color: rgba(0,0,0,.10);
 }
 #glass-nav.nav-light .gnav-logo img {
@@ -3259,53 +3258,51 @@ function buildMarquee(){
 
 </body>
 </html>/* ══ NAV CI REDESIGN — non-destructive, remove .nav-ci to revert ══════════
-   CI: Blue #93ABD9 bar · Yellow #EDE986 text · White logo · Scale-only active
+   CI: Rose #F2619C · Lilac #E7BEF8 · Blue #93ABD9 · Yellow #EDE986
+   Blue bar · Yellow text · White logo · Scale-only active highlight
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Give nav vertical room so glow isn't clipped ── */
-#glass-nav { top: 20px !important; }
+#glass-nav { top: 20px; }
 
-/* ── Base: Blueberry Milk (#93ABD9) bar ── */
+/* ── Blue bar ── */
 #glass-nav.nav-ci {
   background: #93ABD9 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border: none !important;
   box-shadow:
-    0 8px 32px rgba(147,171,217,.55),
-    0 -4px 20px rgba(147,171,217,.3),
+    0 8px 32px rgba(147,171,217,.6),
+    0 -4px 20px rgba(147,171,217,.35),
     0 0 0 1.5px rgba(100,140,190,.25) !important;
 }
 
-/* ── Logo divider ── */
+/* ── Logo: white ── */
 #glass-nav.nav-ci .gnav-logo {
-  border-right-color: rgba(237,233,134,.35) !important;
+  border-right-color: rgba(237,233,134,.3) !important;
 }
-
-/* ── Logo image: white ── */
 #glass-nav.nav-ci .gnav-logo img {
   filter: brightness(0) invert(1) !important;
 }
 
-/* ── All pill text: Lemon Cream (#EDE986) ── */
+/* ── Inactive pills: Lemon Cream text ── */
 #glass-nav.nav-ci .gnav-pill {
   color: #EDE986 !important;
   background: transparent !important;
   border-color: transparent !important;
   font-weight: 600 !important;
-  transition: transform .2s ease, color .15s !important;
+  transition: transform .18s ease, color .18s ease !important;
 }
 
-/* ── Hover: scale up + white text ── */
+/* ── Hover: scale + white ── */
 #glass-nav.nav-ci .gnav-pill:hover {
   background: transparent !important;
   color: #fff !important;
   border-color: transparent !important;
   box-shadow: none !important;
-  transform: scale(1.08) translateY(-1px) !important;
+  transform: scale(1.08) !important;
 }
 
-/* ── Active: ONLY scale — no background, no color change ── */
+/* ── Active: scale only, no color fill ── */
 #glass-nav.nav-ci .gnav-pill.active {
   background: transparent !important;
   color: #EDE986 !important;
@@ -3316,32 +3313,29 @@ function buildMarquee(){
 }
 #glass-nav.nav-ci .gnav-pill.active::before { background: none !important; }
 
-/* ── Shop: hidden ── */
-.gnav-pill[data-section="section-shop"] { display: none !important; }
-
-/* ── Scrolled past hero (nav-light): SAME blue, logo stays ── */
+/* ── Light theme (scrolled): same blue bar, logo stays ── */
 #glass-nav.nav-ci.nav-light {
   background: #93ABD9 !important;
   border-color: transparent !important;
   box-shadow:
-    0 6px 28px rgba(147,171,217,.5),
+    0 6px 28px rgba(147,171,217,.55),
     0 -3px 16px rgba(147,171,217,.3),
     0 0 0 1.5px rgba(100,140,190,.2) !important;
 }
-/* Logo always visible — override the hide rule from nav-light base CSS */
 #glass-nav.nav-ci.nav-light .gnav-logo {
   display: flex !important;
-  border-right-color: rgba(237,233,134,.35) !important;
+  border-right-color: rgba(237,233,134,.3) !important;
 }
 #glass-nav.nav-ci.nav-light .gnav-logo img {
   filter: brightness(0) invert(1) !important;
 }
-#glass-nav.nav-ci.nav-light .gnav-pill {
-  color: #EDE986 !important;
-}
+#glass-nav.nav-ci.nav-light .gnav-pill { color: #EDE986 !important; }
+#glass-nav.nav-ci.nav-light .gnav-pill:hover { color: #fff !important; transform: scale(1.08) !important; }
 #glass-nav.nav-ci.nav-light .gnav-pill.active {
   background: transparent !important;
   color: #EDE986 !important;
   transform: scale(1.12) !important;
   font-weight: 800 !important;
 }
+
+
