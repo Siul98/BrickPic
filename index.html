@@ -50,7 +50,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:998;
   display:flex;align-items:center;gap:6px;padding:5px 16px;border-radius:100px;
   font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.05em;
-  background:rgba(0,0,0,.25);backdrop-
+  background:rgba(0,0,0,.25);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.07);transition:opacity .3s;opacity:0;
 }
 #breadcrumb-bar .bc-home{color:rgba(255,255,255,.35);cursor:pointer}
@@ -1216,23 +1216,7 @@ html, body {
    ═══════════════════════════════════════════════════════════ */
 
 /* ── Hero: responsive logo + mosaic on small screens ── */
-@media (max-width: 480px) {
-  #heroMosaicWrap {
-    width: min(78vw, 78vw) !important;
-    max-width: 340px !important;
-  }
-  #brickpicLogoCanvas {
-    width: min(220px, 56vw) !important;
-    max-width: min(220px, 56vw) !important;
-  }
-  #brickpicLogoWrap {
-    width: min(220px, 56vw) !important;
-  }
-  #heroTagline {
-    font-size: 9px !important;
-    letter-spacing: .22em;
-  }
-}
+
 
 /* ── Generator: full-column layout ── */
 @media (max-width: 860px) {
@@ -1354,6 +1338,61 @@ html, body {
   .dark-section { padding: 80px 20px 60px !important; }
   .sec-headline { font-size: clamp(28px, 8vw, 48px) !important; }
 }
+
+/* ── Mobile hero: stack logo → tagline → mosaic vertically ── */
+@media (max-width: 600px) {
+  #loader {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    padding-top: 70px !important; /* account for fixed nav */
+  }
+
+  /* Canvas logo: reset absolute positioning, flow in flex */
+  #brickpicLogoCanvas {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: min(220px, 58vw) !important;
+    max-width: min(220px, 58vw) !important;
+    margin-bottom: 6px;
+    z-index: 5;
+  }
+
+  /* Tagline: flow in flex */
+  #heroTagline {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    font-size: 9px !important;
+    letter-spacing: .25em;
+    margin-bottom: 14px;
+    z-index: 5;
+  }
+
+  /* Mosaic: flow in flex, not absolute */
+  #heroMosaicWrap {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: min(80vw, 80vw) !important;
+    max-width: 340px !important;
+    z-index: 2;
+  }
+
+  /* scrollHint */
+  #scrollHint {
+    position: absolute !important;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
 </style>
 </head>
 <body>
@@ -1450,7 +1489,7 @@ html, body {
     </div>
     <div id="prodhead">
       <div class="prod-name" id="prodName">Pixel Mosaik</div>
-      <div class="prod-sub" id="prodSub">Premium Klemmbausteine</div>
+      
       <div class="album-pills" id="albumPills"></div>
     </div>
     <div class="sec">
