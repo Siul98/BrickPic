@@ -2424,22 +2424,22 @@ function initLoader(){
       const src=meshMap[name];if(!src)return;
       const cfg=LAYOUT[i%LAYOUT.length];
       const mesh=src.clone();
-      // CI color palette — one color per brick, applied to ALL sub-meshes
+      // CI palette — saturated hues for vivid 3D rendering
       const CI=[0xF2619C,0xB855D4,0x5B8EC4,0xC8C020,0xF2619C,0xB855D4,0x5B8EC4,0xC8C020];
       const ciColor=CI[i%CI.length];
       mesh.traverse(child=>{
         if(!child.isMesh)return;
-        const mats=Array.isArray(child.material)?child.material:[child.material];
-        mats.forEach(m=>{
-          m=m.clone();
-          m.vertexColors=false;
-          m.roughness=.15;m.metalness=0;
-          m.map=null;m.normalMap=null;
+        const count=Array.isArray(child.material)?child.material.length:1;
+        const newMats=Array.from({length:count},()=>{
+          const m=new THREE.MeshStandardMaterial();
           m.color.setHex(ciColor);
           m.emissive.setHex(ciColor);
-          m.emissiveIntensity=1.0;
-          child.material=m;
+          m.emissiveIntensity=0.75;
+          m.roughness=0.4;
+          m.metalness=0;
+          return m;
         });
+        child.material=count===1?newMats[0]:newMats;
       });
       mesh.castShadow=true;
       mesh.position.set(cfg.pos[0],cfg.pos[1]+18,cfg.pos[2]);
