@@ -151,9 +151,22 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .sbl{color:var(--mut);font-weight:600}
 .sbv{font-weight:700}
 .sbv.big{font-size:16px;font-weight:900;color:var(--blue)}
-.pb{font-size:9px;color:var(--mut);line-height:1.9;margin-top:8px;display:grid;grid-template-columns:1fr auto;gap:1px 10px}
-.pb-sep{border-top:1px solid var(--brd);padding-top:3px;margin-top:2px;font-weight:800;color:var(--txt)}
-.pb-sep-v{border-top:1px solid var(--brd);padding-top:3px;margin-top:2px;font-weight:900;color:var(--blue)}
+.pb {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0;
+  font-size: 12px;
+  color: var(--mut);
+}
+.pb span {
+  display: block;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--brd);
+}
+.pb span:last-child { border-bottom: none; }
+
+
 .cml{margin-top:8px;max-height:140px;overflow-y:auto}
 .cmlr{display:flex;align-items:center;gap:6px;font-size:10px;padding:2px 0}
 .cmlsw{width:11px;height:11px;border-radius:3px;border:1px solid rgba(0,0,0,.1);flex-shrink:0}
@@ -1457,13 +1470,13 @@ html, body {
           <div class="sc-badge">STANDARD ★</div>
           <div class="sc-n">48×48</div><div class="sc-tag">STANDARD</div>
           <div class="sc-info">~38×38 cm</div>
-          <div class="sc-price">~€89–109</div>
+
         </div>
         <div class="sc" id="sz-64" onclick="setSize(64)">
           <div class="sc-badge">XL</div>
           <div class="sc-n">64×64</div><div class="sc-tag">XL FORMAT</div>
           <div class="sc-info">~51×51 cm</div>
-          <div class="sc-price">~€179–219</div>
+
         </div>
       </div>
       <div class="premium-box" style="margin-top:8px"><b>PREMIUM TECHNIK-FUNDAMENT</b><br>9 Module, jedes einzeln baubar. Mehrere Personen gleichzeitig. Am Ende zusammenstecken.</div>
@@ -1487,29 +1500,20 @@ html, body {
           <div class="sbr"><span class="sbl">Farben</span><span class="sbv" id="sbCol">—</span></div>
           <div class="sbr"><span class="sbl">Tiles gesamt</span><span class="sbv" id="sbTot">—</span></div>
         </div>
-        <!-- Collapsible parts list -->
-        <div class="parts-toggle" id="partsToggle" onclick="toggleParts()">
-          <span>Teileübersicht</span>
-          <span class="pt-arrow">▼</span>
-        </div>
-        <div class="parts-content" id="partsContent">
-          <div class="pb" id="pb"></div>
-          <div class="cml" id="cml"></div>
-        </div>
+      </div>
+
+      <!-- Teileübersicht: always-visible dropdown, separate from summary -->
+      <div class="parts-toggle" id="partsToggle" onclick="toggleParts()">
+        <span>Teileübersicht</span>
+        <span class="pt-arrow">▼</span>
+      </div>
+      <div class="parts-content" id="partsContent">
+        <div class="pb" id="pb"></div>
+        <div class="cml" id="cml"></div>
       </div>
 
       <!-- ORDER CTA CARD -->
       <div id="orderCta" style="display:none;margin-top:14px;padding:16px;background:linear-gradient(135deg,rgba(244,63,94,.1),rgba(251,146,60,.08));border:1.5px solid rgba(244,63,94,.3);border-radius:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:.1em;color:rgba(244,63,94,.8);text-transform:uppercase;margin-bottom:3px">Dein Kit</div>
-            <div style="font-size:18px;font-weight:900;color:var(--txt)" id="ctaPackageName">—</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:28px;font-weight:900;color:#f43f5e;letter-spacing:-.04em" id="ctaPrice">—</div>
-          </div>
-        </div>
-        <div style="font-size:11px;color:var(--mut);margin-bottom:14px;line-height:1.7" id="ctaIncludes">—</div>
         <button onclick="openOrderFromConfig()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#f43f5e,#fb923c);color:#fff;font-size:14px;font-weight:800;border:none;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 6px 24px rgba(244,63,94,.35);transition:all .15s;letter-spacing:.01em">
           Jetzt bestellen →
         </button>
@@ -1971,33 +1975,31 @@ function startShowcase(){
 function updateSummary(){
   const dg=getGrid();if(!dg)return;
   const{grid,size}=dg,counts=getCounts(grid,size),total=counts.reduce((s,{count})=>s+count,0);
-  const cfg=CFG[S.N],base=calcBase(cfg),tl=calcTiles(total,cfg);
-  const lo=tl.lo+Math.round(base),hi=tl.hi+Math.round(base*1.3);
+  const cfg=CFG[S.N];
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-  set('sbTot',total.toLocaleString());set('sbSz',`${cfg.cm} (${size}×${size})`);
-  set('sbCol',counts.length+' Farben');set('sbPr',`€${lo}–${hi}`);
+  set('sbTot',total.toLocaleString());
+  set('sbSz',`${cfg.cm}`);
+  set('sbCol',counts.length+' Farben');
   document.getElementById('sumBox').style.display='block';
   document.getElementById('step6')?.classList.add('show');
-  document.getElementById('pb').innerHTML=
-    `<span>${total.toLocaleString()}× Round Tile 98138</span><span>€${tl.lo}–${tl.hi}</span>`+
-    `<span>${cfg.modules}× Technik-Panel ${cfg.modulePart}</span><span>~€${Math.round(cfg.modules*cfg.modulePrice)}</span>`+
-    cfg.connParts.map(p=>`<span>${p.qty}× ${p.desc}</span><span>~€${(p.qty*p.price).toFixed(2)}</span>`).join('')+
-    `<span class="pb-sep">Gesamt BrickLink</span><span class="pb-sep-v">€${lo}–${hi}</span>`;
-  document.getElementById('cml').innerHTML=
-    counts.slice(0,12).map(({color:c,count})=>`<div class="cmlr"><div class="cmlsw" style="background:${c.hex}"></div><div class="cmln">${c.name}</div><div class="cmlc">${count}</div></div>`).join('')+
-    (counts.length>12?`<div style="font-size:9px;color:var(--mut)">+${counts.length-12} weitere</div>`:'');
 
-  // ── Update order CTA card ────────────────────────────────────────────
-  const isOrig = S.N===48;
-  const el2 = (id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=v; };
-  el2('ctaPackageName', isOrig ? '48×48 Original' : '32×32 Small');
-  el2('ctaPrice',       isOrig ? '€129' : '€49');
-  el2('ctaIncludes',    isOrig
-    ? '2.304 Round Tiles · 9× Technik-Panel · Bauanleitung · Premium Box'
-    : '1.024 Round Tiles · 4× Technik-Panel · Bauanleitung');
+  // Parts list (Teileübersicht)
+  document.getElementById('pb').innerHTML=
+    `<span>${total.toLocaleString()}× Runde Tile 1×1</span>` +
+    `<span>${cfg.modules}× Technik-Panel</span>` +
+    cfg.connParts.map(p=>`<span>${p.qty}× ${p.desc}</span>`).join('');
+  document.getElementById('cml').innerHTML=
+    counts.slice(0,16).map(({color:c,count})=>
+      `<div class="cmlr"><div class="cmlsw" style="background:${c.hex}"></div><div class="cmln">${c.name}</div><div class="cmlc">${count}</div></div>`
+    ).join('') +
+    (counts.length>16?`<div style="font-size:9px;color:var(--mut)">+${counts.length-16} weitere</div>`:'');
+
+  // Show order CTA
+  const is48 = S.N===48;
   const ctaEl = document.getElementById('orderCta');
   if(ctaEl) ctaEl.style.display = 'block';
 }
+
 
 // ═══ SETTINGS ════════════════════════════════════════════════════════════
 function setSize(n){
@@ -2785,14 +2787,14 @@ ${firstName}`
 }
 
 function openOrderFromConfig() {
-  const pkg = S.N === 48 ? 'original' : 'small';
+  const pkg = S.N === 48 ? 'standard' : 'xl';
 
   // Pre-fill modal
   const pkgSel = document.getElementById('oPackage');
   const title  = document.getElementById('orderTitle');
   const sub    = document.getElementById('orderSubtitle');
   if(pkgSel) pkgSel.value = pkg;
-  if(title)  title.textContent = S.N===48 ? '48×48 Original bestellen' : '32×32 Small bestellen';
+  if(title)  title.textContent = S.N===48 ? '48×48 Standard bestellen' : '64×64 XL bestellen';
   if(sub)    sub.textContent = 'Wir bauen dein Mosaic nach deiner Konfiguration. Bezahlung per PayPal oder Überweisung nach Bestätigung.';
 
   // Attach mosaic thumbnail to modal
@@ -2807,7 +2809,7 @@ function openOrderFromConfig() {
     thumbCv.style.cssText = 'border-radius:6px;flex-shrink:0;image-rendering:pixelated';
     thumbCv.getContext('2d').drawImage(mc, 0, 0, 60, 60);
     const thumbInfo = document.createElement('div');
-    thumbInfo.innerHTML = `<div style="font-size:12px;font-weight:800;color:rgba(255,255,255,.8)">${S.N}×${S.N} Mosaic</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">${S.N===48?'48×48 Original · €129':'32×32 Small · €49'}</div>`;
+    thumbInfo.innerHTML = `<div style="font-size:12px;font-weight:800;color:rgba(255,255,255,.8)">${S.N}×${S.N} Mosaic</div><div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">${S.N===48?'48×48 Standard':'64×64 XL'}</div>`;
     thumbDiv.appendChild(thumbCv);
     thumbDiv.appendChild(thumbInfo);
     const box = document.getElementById('orderBox');
