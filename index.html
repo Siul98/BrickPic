@@ -2424,7 +2424,7 @@ function initLoader(){
       const src=meshMap[name];if(!src)return;
       const cfg=LAYOUT[i%LAYOUT.length];
       const mesh=src.clone();
-      // CI palette — saturated hues for vivid 3D rendering
+      // Exact CI palette: black diffuse + emissive=1.0 = renders pixel-perfect as CI hex
       const CI=[0xF2619C,0xE7BEF8,0x93ABD9,0xEDE986,0xF2619C,0xE7BEF8,0x93ABD9,0xEDE986];
       const ciColor=CI[i%CI.length];
       mesh.traverse(child=>{
@@ -2432,10 +2432,10 @@ function initLoader(){
         const count=Array.isArray(child.material)?child.material.length:1;
         const newMats=Array.from({length:count},()=>{
           const m=new THREE.MeshStandardMaterial();
-          m.color.setHex(ciColor);
-          m.emissive.setHex(ciColor);
-          m.emissiveIntensity=3.0;
-          m.roughness=0.4;
+          m.color.set(0x111111);      // near-black diffuse, no lighting blowout
+          m.emissive.setHex(ciColor); // exact CI color
+          m.emissiveIntensity=1.0;    // renders exactly as ciColor
+          m.roughness=0.45;
           m.metalness=0;
           return m;
         });
