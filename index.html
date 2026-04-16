@@ -1490,73 +1490,7 @@ html, body {
    Bar = Lemon Cream · Links = Blueberry Milk · Active = Raspberry Rose · Shop = Blueberry Milk
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Fix glow clipping: more vertical breathing room ── */
-#glass-nav {
-  top: 20px !important;
-}
 
-/* ── Base: Lemon Cream bar, no backdrop blur ── */
-#glass-nav.nav-ci {
-  background: #EDE986 !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  border: none !important;
-  box-shadow:
-    0 8px 32px rgba(237,233,134,.55),
-    0 2px 8px rgba(237,233,134,.35),
-    0 -4px 20px rgba(237,233,134,.3),
-    0 0 0 1.5px rgba(200,192,50,.2) !important;
-}
-
-/* ── Logo: dark on yellow ── */
-#glass-nav.nav-ci .gnav-logo {
-  border-right-color: rgba(147,171,217,.35) !important;
-}
-#glass-nav.nav-ci .gnav-logo img {
-  filter: invert(1) !important;
-}
-
-/* ── Inactive pills: Blueberry Milk text ── */
-#glass-nav.nav-ci .gnav-pill {
-  color: #93ABD9 !important;
-  background: transparent !important;
-  border-color: transparent !important;
-  font-weight: 600 !important;
-}
-
-/* ── Hover: Raspberry Rose bg, white text ── */
-#glass-nav.nav-ci .gnav-pill:hover {
-  background: #F2619C !important;
-  color: #fff !important;
-  border-color: transparent !important;
-  box-shadow: 0 4px 14px rgba(242,97,156,.45) !important;
-  transform: translateY(-1px) !important;
-}
-
-
-/* ── Shop CTA: Blueberry Milk bg, dark text ── */
-#glass-nav.nav-ci .gnav-pill[data-section="section-shop"] {
-  background: #93ABD9 !important;
-  color: #1a1220 !important;
-  border-color: transparent !important;
-  font-weight: 700 !important;
-  box-shadow: 0 3px 12px rgba(147,171,217,.4) !important;
-}
-#glass-nav.nav-ci .gnav-pill[data-section="section-shop"]:hover {
-  background: #7ba0cc !important;
-  color: #fff !important;
-  box-shadow: 0 5px 18px rgba(147,171,217,.55) !important;
-}
-
-/* ── Light theme (scrolled): same yellow ── */
-#glass-nav.nav-ci.nav-light {
-  background: #EDE986 !important;
-  border-color: transparent !important;
-  box-shadow:
-    0 6px 28px rgba(237,233,134,.5),
-    0 -3px 16px rgba(237,233,134,.3),
-    0 0 0 1.5px rgba(200,192,50,.18) !important;
-}
 
 /* ── Grindela secondary font ── */
 @font-face {
@@ -2681,9 +2615,9 @@ function animate(){
     // ── Cursor repulsion per brick ──────────────────────────────
     const W=window.innerWidth, H=window.innerHeight;
     const REPEL_R = 180;   // screen-pixel radius
-    const REPEL_F = 3.2;   // force strength (world units)
-    const DAMP    = 0.78;  // velocity damping per frame
-    const SPRING  = 0.12;  // spring back to origin
+    const REPEL_F = 0.6;   // force strength (world units)
+    const DAMP    = 0.999;  // velocity damping per frame
+    const SPRING  = 0.0;  // spring back to origin
 
     brickMeshes.forEach(b=>{
       _safeB(b);
@@ -2702,8 +2636,14 @@ function animate(){
       // Dampen + spring back
       b.rvx = (b.rvx - b.rx * SPRING) * DAMP;
       b.rvy = (b.rvy - b.ry * SPRING) * DAMP;
-      b.rx += b.rvx;
-      b.ry += b.rvy;
+      // Cap velocity so bricks don't fly off screen
+      const MAX_V = 8;
+      b.rvx = Math.max(-MAX_V, Math.min(MAX_V, b.rvx));
+      b.rvy = Math.max(-MAX_V, Math.min(MAX_V, b.rvy));
+      // Cap offset so bricks don't drift too far
+      const MAX_D = 12;
+      b.rx = Math.max(-MAX_D, Math.min(MAX_D, b.rx + b.rvx));
+      b.ry = Math.max(-MAX_D, Math.min(MAX_D, b.ry + b.rvy));
     });
 
     brickMeshes.forEach(b=>{
