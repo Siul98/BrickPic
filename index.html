@@ -1439,93 +1439,90 @@ html, body {
 }
 
 /* ══ NAV CI REDESIGN — non-destructive, remove .nav-ci to revert ══════════
-   CI Palette: Raspberry Rose #F2619C · Soft Lilac #E7BEF8 · Blueberry Milk #93ABD9 · Lemon Cream #EDE986
-   Contrast logic from CI sheet: dark text on Lilac/Blue/Yellow · white text on Rose
+   CI: Rose #F2619C · Lilac #E7BEF8 · Blueberry Milk #93ABD9 · Lemon Cream #EDE986
+   Bar = Lemon Cream · Links = Blueberry Milk · Active = Raspberry Rose · Shop = Blueberry Milk
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Base nav: solid dark bg, no backdrop-bleed ── */
+/* ── Fix glow clipping: more vertical breathing room ── */
+#glass-nav {
+  top: 20px !important;
+}
+
+/* ── Base: Lemon Cream bar, no backdrop blur ── */
 #glass-nav.nav-ci {
-  background: rgba(18, 12, 16, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(242, 97, 156, 0.18);
-  box-shadow: 0 4px 24px rgba(0,0,0,.5), 0 0 0 1px rgba(242,97,156,.08);
+  background: #EDE986 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow:
+    0 8px 32px rgba(237,233,134,.55),
+    0 2px 8px rgba(237,233,134,.35),
+    0 -4px 20px rgba(237,233,134,.3),
+    0 0 0 1.5px rgba(200,192,50,.2) !important;
 }
 
-/* ── Logo divider ── */
+/* ── Logo: dark on yellow ── */
 #glass-nav.nav-ci .gnav-logo {
-  border-right-color: rgba(231, 190, 248, 0.2);
+  border-right-color: rgba(147,171,217,.35) !important;
+}
+#glass-nav.nav-ci .gnav-logo img {
+  filter: invert(1) !important;
 }
 
-/* ── Inactive pills: Soft Lilac text ── */
+/* ── Inactive pills: Blueberry Milk text ── */
 #glass-nav.nav-ci .gnav-pill {
-  color: #E7BEF8;
-  background: transparent;
-  border-color: transparent;
-  transition: all .18s ease;
+  color: #93ABD9 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  font-weight: 600 !important;
 }
 
-/* ── Hover: Blueberry Milk bg, dark text ── */
+/* ── Hover: Raspberry Rose bg, white text ── */
 #glass-nav.nav-ci .gnav-pill:hover {
-  background: #93ABD9;
-  color: #1a1220;
-  border-color: transparent;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(147,171,217,.4);
+  background: #F2619C !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 14px rgba(242,97,156,.45) !important;
+  transform: translateY(-1px) !important;
 }
 
-/* ── Active pill: Raspberry Rose, white text ── */
+/* ── Active pill: Raspberry Rose ── */
 #glass-nav.nav-ci .gnav-pill.active {
   background: #F2619C !important;
   color: #fff !important;
   border-color: transparent !important;
-  box-shadow: 0 4px 16px rgba(242,97,156,.45), inset 0 1px 0 rgba(255,255,255,.15) !important;
+  box-shadow: 0 4px 16px rgba(242,97,156,.45) !important;
 }
-#glass-nav.nav-ci .gnav-pill.active::before {
-  background: linear-gradient(180deg, rgba(255,255,255,.12) 0%, transparent 55%);
-}
+#glass-nav.nav-ci .gnav-pill.active::before { background: none !important; }
 
-/* ── Shop CTA: Lemon Cream, dark text ── */
+/* ── Shop CTA: Blueberry Milk bg, dark text ── */
 #glass-nav.nav-ci .gnav-pill[data-section="section-shop"] {
-  background: #EDE986 !important;
+  background: #93ABD9 !important;
   color: #1a1220 !important;
   border-color: transparent !important;
-  font-weight: 700;
-  box-shadow: 0 4px 14px rgba(237,233,134,.35) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 3px 12px rgba(147,171,217,.4) !important;
 }
 #glass-nav.nav-ci .gnav-pill[data-section="section-shop"]:hover {
-  background: #d6d171 !important;
-  color: #1a1220 !important;
-  box-shadow: 0 6px 20px rgba(237,233,134,.5) !important;
+  background: #7ba0cc !important;
+  color: #fff !important;
+  box-shadow: 0 5px 18px rgba(147,171,217,.55) !important;
 }
 
-/* ── Light theme (scrolled past hero): invert ── */
+/* ── Light theme (scrolled): same yellow ── */
 #glass-nav.nav-ci.nav-light {
-  background: rgba(255,255,255,.95);
-  border-color: rgba(242,97,156,.15);
-  box-shadow: 0 2px 20px rgba(0,0,0,.1);
-}
-#glass-nav.nav-ci.nav-light .gnav-logo {
-  border-right-color: rgba(242,97,156,.2);
-}
-#glass-nav.nav-ci.nav-light .gnav-logo img {
-  filter: invert(1);
-}
-#glass-nav.nav-ci.nav-light .gnav-pill {
-  color: #6b3d8a;
-}
-#glass-nav.nav-ci.nav-light .gnav-pill:hover {
-  background: #93ABD9;
-  color: #1a1220;
-}
-#glass-nav.nav-ci.nav-light .gnav-pill.active {
-  background: #F2619C !important;
-  color: #fff !important;
-}
-#glass-nav.nav-ci.nav-light .gnav-pill[data-section="section-shop"] {
   background: #EDE986 !important;
-  color: #1a1220 !important;
+  border-color: transparent !important;
+  box-shadow:
+    0 6px 28px rgba(237,233,134,.5),
+    0 -3px 16px rgba(237,233,134,.3),
+    0 0 0 1.5px rgba(200,192,50,.18) !important;
 }
+#glass-nav.nav-ci.nav-light .gnav-logo { border-right-color: rgba(147,171,217,.3) !important; display: block !important; }
+#glass-nav.nav-ci.nav-light .gnav-logo img { filter: invert(1) !important; }
+#glass-nav.nav-ci.nav-light .gnav-pill { color: #93ABD9 !important; }
+#glass-nav.nav-ci.nav-light .gnav-pill.active { background: #F2619C !important; color: #fff !important; }
+#glass-nav.nav-ci.nav-light .gnav-pill[data-section="section-shop"] { background: #93ABD9 !important; color: #1a1220 !important; }
 </style>
 </head>
 <body>
