@@ -1447,6 +1447,40 @@ html, body {
   padding-bottom: 8px;
   min-height: 0; /* critical for flex children to scroll */
 }
+
+/* ── Minimal config: hide all labels, lines, descriptions ── */
+.sec-title,
+.sec-sub,
+.premium-box {
+  display: none !important;
+}
+
+/* Remove dividing lines, compress padding */
+.sec {
+  border-top: none !important;
+  padding: 8px 20px !important;
+}
+
+/* First sec: a bit more top padding */
+.sec:first-of-type {
+  padding-top: 12px !important;
+}
+
+/* Tighten up the upload zone */
+.uz {
+  padding: 18px 14px !important;
+}
+
+/* Tighten format grid */
+.size-grid {
+  margin-top: 0 !important;
+}
+
+/* Tighten palette */
+.tp-minimal {
+  margin-top: 0 !important;
+}
+
 /* ── Hide Shop pill from nav ── */
 .gnav-pill[data-section="section-shop"] {
   display: none !important;
