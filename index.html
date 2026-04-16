@@ -14,6 +14,8 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/BokehShader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/BokehPass.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F5F5F7;--white:#fff;--txt:#1D1D1F;--mut:#6E6E73;
@@ -46,18 +48,6 @@ input,textarea{user-select:text;-webkit-user-select:text}
 /* ── GLASS NAV ── */
 
 /* ── BREADCRUMB ── */
-#breadcrumb-bar{
-  position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:998;
-  display:flex;align-items:center;gap:6px;padding:5px 16px;border-radius:100px;
-  font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.05em;
-  background:rgba(0,0,0,.25);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,.07);transition:opacity .3s;opacity:0;
-}
-#breadcrumb-bar .bc-home{color:rgba(255,255,255,.35);cursor:pointer}
-#breadcrumb-bar .bc-home:hover{color:rgba(255,255,255,.7)}
-#breadcrumb-bar .bc-sep{opacity:.4;font-size:10px}
-#breadcrumb-bar .bc-current{color:rgba(255,255,255,.75);font-weight:600}
-
 /* ── BUILD YOUR OWN section ── */
 #section-build{background:var(--bg);scroll-margin-top:80px}
 #app::-webkit-scrollbar{width:4px}
@@ -315,8 +305,8 @@ input,textarea{user-select:text;-webkit-user-select:text}
   padding: 9px 10px 9px 20px;
   border-radius: 100px;
   background: rgba(255,255,255,.08);
-  backdrop-
-  -webkit-backdrop-
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255,255,255,.15);
   box-shadow: 0 8px 32px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.18);
   white-space: nowrap;
@@ -375,6 +365,62 @@ input,textarea{user-select:text;-webkit-user-select:text}
   content:'';position:absolute;inset:0;border-radius:100px;
   background:linear-gradient(180deg,rgba(255,255,255,.15) 0%,transparent 60%);
   pointer-events:none;
+}
+
+/* ── Nav: light theme when scrolled past hero ── */
+#glass-nav.nav-light {
+  background: rgba(255,255,255,.92);
+  border-color: rgba(0,0,0,.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,.12);
+}
+#glass-nav.nav-light .gnav-logo {
+  border-right-color: rgba(0,0,0,.10);
+}
+#glass-nav.nav-light .gnav-logo img {
+  filter: invert(1);
+}
+#glass-nav.nav-light .gnav-pill {
+  color: rgba(0,0,0,.55);
+}
+#glass-nav.nav-light .gnav-pill:hover {
+  color: rgba(0,0,0,.85);
+  background: rgba(0,0,0,.06);
+  border-color: rgba(0,0,0,.08);
+}
+#glass-nav.nav-light .gnav-pill.active {
+  color: #fff;
+}
+
+/* ── Topbar collab header ── */
+.prod-collab-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+}
+.prod-collab-logo {
+  height: 28px;
+  width: auto;
+  filter: invert(1);
+  opacity: 0.9;
+}
+.prod-collab-x {
+  font-family: 'Caveat', cursive;
+  font-size: 26px;
+  font-weight: 700;
+  color: #f43f5e;
+  line-height: 1;
+  margin: 0 -2px;
+  transform: rotate(-6deg);
+  display: inline-block;
+}
+.prod-collab-diy {
+  font-family: 'Caveat', cursive;
+  font-size: 22px;
+  font-weight: 600;
+  color: rgba(0,0,0,.75);
+  line-height: 1;
+  letter-spacing: .01em;
 }
 
 /* ── Mobile: show 3-letter abbreviations, hide full labels ── */
@@ -447,11 +493,6 @@ input,textarea{user-select:text;-webkit-user-select:text}
 
   /* Size grid 2 cols already, fine */
 
-  /* Breadcrumb: smaller on mobile */
-  #breadcrumb-bar {
-    font-size: 10px;
-    top: 60px;
-  }
 }
 
 @media (max-width: 420px) {
@@ -894,8 +935,9 @@ html, body {
   height: 100%;
   display: block;
   object-fit: contain;
-  filter: drop-shadow(0 50px 100px rgba(0,0,0,.9))
-          drop-shadow(0 15px 40px rgba(0,0,0,.7));
+  filter: drop-shadow(0 60px 120px rgba(0,0,0,.55))
+          drop-shadow(0 25px 50px rgba(0,0,0,.35))
+          drop-shadow(0 8px 18px rgba(0,0,0,.25));
 }
 
 /* Logo: sibling of heroMosaicWrap, z-index:5 > brickFront:3 */
@@ -1419,13 +1461,6 @@ html, body {
   </nav>
 </header>
 
-<!-- BREADCRUMB -->
-<div id="breadcrumb-bar">
-  <span class="bc-home" onclick="navTo('section-build',document.querySelector('[data-section=section-build]'))">BrickPic</span>
-  <span class="bc-sep">›</span>
-  <span class="bc-current" id="bc-current">Build your Own</span>
-</div>
-
 <!-- HERO -->
 <div id="loader">
   <div id="roomBg"></div>
@@ -1479,19 +1514,13 @@ html, body {
   </div>
   <div id="config">
     <div id="topbar">
-      <img id="topbar-logo"
-           src="https://siul98.github.io/BrickPic/BrickPicLogo.png"
-           alt="BrickPic"
-           onclick="resetToHome()">
-      <div class="navlinks">
-        <button class="navlink on" onclick="">Generator</button>
+      <div class="prod-collab-header" onclick="resetToHome()" style="cursor:pointer;padding:0">
+        <img class="prod-collab-logo" src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic">
+        <span class="prod-collab-x">×</span>
+        <span class="prod-collab-diy">Do it yourself</span>
       </div>
     </div>
-    <div id="prodhead">
-      <div class="prod-name" id="prodName">Pixel Mosaik</div>
-      
-      <div class="album-pills" id="albumPills"></div>
-    </div>
+    <div id="albumPills" style="display:none"></div>
     <div class="sec">
       <div class="sec-title"><b>Bild.</b> <span class="gray">Lade dein Motiv hoch.</span></div>
       <div class="sec-sub" style="margin-bottom:10px">Album, Haustier, Gemälde, Portrait — alles geht.</div>
@@ -1526,7 +1555,7 @@ html, body {
         <button class="tp on" id="dt-3" onclick="setTier(3)">Detail ★<small>Foto-realistisch</small></button>
         <button class="tp" id="dt-1" onclick="setTier(1)">Two Tone<small>Schwarz &amp; Weiß</small></button>
       </div>
-    </div>v>
+    </div>
     <div class="sec step" id="step6">
       <!-- Collapsible summary header -->
       <div id="sumToggle" onclick="toggleSum()">
@@ -2187,6 +2216,23 @@ function updateScrollSpy(){
   }
 }
 window.addEventListener('scroll',updateScrollSpy,{passive:true});
+
+// ── Nav theme: switch to light when past hero ──
+(function(){
+  const nav = document.getElementById('glass-nav');
+  const hero = document.getElementById('loader');
+  function updateNavTheme(){
+    if(!nav||!hero) return;
+    const heroBottom = hero.getBoundingClientRect().bottom;
+    if(heroBottom < 60){
+      nav.classList.add('nav-light');
+    } else {
+      nav.classList.remove('nav-light');
+    }
+  }
+  window.addEventListener('scroll', updateNavTheme, {passive:true});
+  updateNavTheme();
+})();
   // Resume bricks animation when scrolled back to hero
   window.addEventListener('scroll',()=>{
     if(!window._brickAnim)return;
