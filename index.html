@@ -1437,12 +1437,101 @@ html, body {
     transform: translateX(-50%);
   }
 }
+
+/* ══ NAV CI REDESIGN — non-destructive, remove .nav-ci to revert ══════════
+   CI Palette: Raspberry Rose #F2619C · Soft Lilac #E7BEF8 · Blueberry Milk #93ABD9 · Lemon Cream #EDE986
+   Contrast logic from CI sheet: dark text on Lilac/Blue/Yellow · white text on Rose
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Base nav: solid dark bg, no backdrop-bleed ── */
+#glass-nav.nav-ci {
+  background: rgba(18, 12, 16, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(242, 97, 156, 0.18);
+  box-shadow: 0 4px 24px rgba(0,0,0,.5), 0 0 0 1px rgba(242,97,156,.08);
+}
+
+/* ── Logo divider ── */
+#glass-nav.nav-ci .gnav-logo {
+  border-right-color: rgba(231, 190, 248, 0.2);
+}
+
+/* ── Inactive pills: Soft Lilac text ── */
+#glass-nav.nav-ci .gnav-pill {
+  color: #E7BEF8;
+  background: transparent;
+  border-color: transparent;
+  transition: all .18s ease;
+}
+
+/* ── Hover: Blueberry Milk bg, dark text ── */
+#glass-nav.nav-ci .gnav-pill:hover {
+  background: #93ABD9;
+  color: #1a1220;
+  border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(147,171,217,.4);
+}
+
+/* ── Active pill: Raspberry Rose, white text ── */
+#glass-nav.nav-ci .gnav-pill.active {
+  background: #F2619C !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 16px rgba(242,97,156,.45), inset 0 1px 0 rgba(255,255,255,.15) !important;
+}
+#glass-nav.nav-ci .gnav-pill.active::before {
+  background: linear-gradient(180deg, rgba(255,255,255,.12) 0%, transparent 55%);
+}
+
+/* ── Shop CTA: Lemon Cream, dark text ── */
+#glass-nav.nav-ci .gnav-pill[data-section="section-shop"] {
+  background: #EDE986 !important;
+  color: #1a1220 !important;
+  border-color: transparent !important;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(237,233,134,.35) !important;
+}
+#glass-nav.nav-ci .gnav-pill[data-section="section-shop"]:hover {
+  background: #d6d171 !important;
+  color: #1a1220 !important;
+  box-shadow: 0 6px 20px rgba(237,233,134,.5) !important;
+}
+
+/* ── Light theme (scrolled past hero): invert ── */
+#glass-nav.nav-ci.nav-light {
+  background: rgba(255,255,255,.95);
+  border-color: rgba(242,97,156,.15);
+  box-shadow: 0 2px 20px rgba(0,0,0,.1);
+}
+#glass-nav.nav-ci.nav-light .gnav-logo {
+  border-right-color: rgba(242,97,156,.2);
+}
+#glass-nav.nav-ci.nav-light .gnav-logo img {
+  filter: invert(1);
+}
+#glass-nav.nav-ci.nav-light .gnav-pill {
+  color: #6b3d8a;
+}
+#glass-nav.nav-ci.nav-light .gnav-pill:hover {
+  background: #93ABD9;
+  color: #1a1220;
+}
+#glass-nav.nav-ci.nav-light .gnav-pill.active {
+  background: #F2619C !important;
+  color: #fff !important;
+}
+#glass-nav.nav-ci.nav-light .gnav-pill[data-section="section-shop"] {
+  background: #EDE986 !important;
+  color: #1a1220 !important;
+}
 </style>
 </head>
 <body>
 
 <!-- GLASS NAV -->
-<header id="glass-nav">
+<header id="glass-nav" class="nav-ci">
   <div class="gnav-logo" style="padding-right:14px;border-right:1px solid rgba(255,255,255,.15)"><img src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic" style="height:42px;width:auto;display:block;object-fit:contain"></div>
   <nav class="gnav-pills">
     <div class="gnav-pill active" data-section="section-build" onclick="navTo('section-build',this)">
