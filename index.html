@@ -2395,10 +2395,10 @@ function initLoader(){
     brickFront.appendChild(sharpRenderer.domElement);
   }
 
-  scene.add(new THREE.AmbientLight(0xffffff,.08));
-  const key=new THREE.DirectionalLight(0xffffff,.6);key.position.set(6,10,8);key.castShadow=true;scene.add(key);
-  const fill=new THREE.DirectionalLight(0xffffff,.2);fill.position.set(-8,4,6);scene.add(fill);
-  const rim=new THREE.DirectionalLight(0xffffff,.1);rim.position.set(0,-6,-10);scene.add(rim);
+  scene.add(new THREE.AmbientLight(0xffffff,.02));
+  const key=new THREE.DirectionalLight(0xffffff,.05);key.position.set(6,10,8);key.castShadow=true;scene.add(key);
+  const fill=new THREE.DirectionalLight(0xffffff,.03);fill.position.set(-8,4,6);scene.add(fill);
+  const rim=new THREE.DirectionalLight(0xffffff,.02);rim.position.set(0,-6,-10);scene.add(rim);
   const WANTED=['Brick_2x4_Orange_Orange_0','Plane_1x2_Blue_Blue_0','Brick_2x2_Brown_Brown_0','Brick_2x4_Orange_Orange_0','Plane_1x2_Blue_Blue_0','Brick_1x2_Yellow_Yellow_0','Plane_2x4_White_White_0','Brick_2x2_Brown_Brown_0',];
   const LAYOUT=[
   // ── BEHIND (Z<0, blurry) ─────────────────────────────────────────────
@@ -2425,7 +2425,7 @@ function initLoader(){
       const cfg=LAYOUT[i%LAYOUT.length];
       const mesh=src.clone();
       // CI palette — saturated hues for vivid 3D rendering
-      const CI=[0xF2619C,0xB855D4,0x5B8EC4,0xC8C020,0xF2619C,0xB855D4,0x5B8EC4,0xC8C020];
+      const CI=[0xF2619C,0xE7BEF8,0x93ABD9,0xEDE986,0xF2619C,0xE7BEF8,0x93ABD9,0xEDE986];
       const ciColor=CI[i%CI.length];
       mesh.traverse(child=>{
         if(!child.isMesh)return;
