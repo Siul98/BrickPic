@@ -2543,7 +2543,7 @@ function improveGrid(){
   if(a.gridImproved){
     S.albums[S.active]={...a,grid:a.gridOriginal.map(r=>[...r]),gridImproved:false,gridOriginal:null};
     renderAll();updateSummary();
-    if(btn){btn.textContent='✦ Verbessern';btn.style.borderColor='';btn.style.color='';}
+    if(btn){btn.innerHTML='✦ KI-Verbessern<small style="display:block;font-size:10px;opacity:.7;font-weight:400;margin-top:2px">Einzelne Ausreißer-Pixel werden durch ihre häufigste Nachbarfarbe ersetzt.</small>';btn.style.borderColor='';btn.style.color='';}
     return;
   }
   // Save original before improving
@@ -2614,7 +2614,7 @@ function switchAlbum(i){
   const btn=document.getElementById('improveBtn');
   if(btn){
     const improved=S.albums[i]?.gridImproved;
-    btn.textContent=improved?'↺ Original':'✦ Verbessern';
+    btn.innerHTML=improved?'↺ Original zurücksetzen<small style="display:block;font-size:10px;opacity:.7;font-weight:400;margin-top:2px">Einzelne Ausreißer-Pixel werden durch ihre häufigste Nachbarfarbe ersetzt.</small>':'✦ KI-Verbessern<small style="display:block;font-size:10px;opacity:.7;font-weight:400;margin-top:2px">Einzelne Ausreißer-Pixel werden durch ihre häufigste Nachbarfarbe ersetzt.</small>';
     btn.style.borderColor=improved?'#888':'';
     btn.style.color=improved?'#888':'';
   }
