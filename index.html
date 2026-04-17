@@ -1853,45 +1853,58 @@ const LIFESTYLE_IMGS = [
 ];
 
 const COLORS=[
-  // Tier 1 — Basis (8 Farben)
-  {id:"black",     name:"Schwarz",          bl:11, hex:"#1B2A34",rgb:[27,42,52],    t:1},
-  {id:"white",     name:"Weiß",             bl:1,  hex:"#F2F3F2",rgb:[242,243,242], t:1},
-  {id:"red",       name:"Rot",              bl:5,  hex:"#B40000",rgb:[180,0,0],    t:1},
-  {id:"blue",      name:"Blau",             bl:7,  hex:"#1E5AA8",rgb:[30,90,168],    t:1},
-  {id:"yellow",    name:"Gelb",             bl:3,  hex:"#FAC80A",rgb:[250,200,10],   t:1},
-  {id:"green",     name:"Grün",             bl:6,  hex:"#00852B",rgb:[0,133,43],   t:1},
-  {id:"lt-gray",   name:"Hellgrau",         bl:86, hex:"#AFB5B2",rgb:[175,181,178], t:1},
-  {id:"dk-gray",   name:"Dunkelgrau",       bl:85, hex:"#6C6E68",rgb:[108,110,104],    t:1},
-  // Tier 2 — Erweitert (8 Farben)
-  {id:"orange",    name:"Orange",           bl:4,  hex:"#FE8A18",rgb:[254,138,24],  t:2},
-  {id:"brown",     name:"Braun",            bl:8,  hex:"#582A12",rgb:[88,42,18],   t:2},
-  {id:"tan",       name:"Sand",             bl:2,  hex:"#D4B28C",rgb:[212,178,140], t:2},
-  {id:"dk-blue",   name:"Dunkelblau",       bl:63, hex:"#003369",rgb:[0,51,105],    t:2},
-  {id:"dk-red",    name:"Dunkelrot",        bl:59, hex:"#720E0F",rgb:[114,14,15],   t:2},
-  {id:"dk-green",  name:"Dunkelgrün",       bl:80, hex:"#184632",rgb:[24,70,50],    t:3},
-  {id:"lime",      name:"Limette",          bl:34, hex:"#A4BD47",rgb:[164,189,71],  t:2},
-  {id:"r-brown",   name:"Rotbraun",         bl:70, hex:"#88421D",rgb:[136,66,29],   t:2},
-  // Tier 3 — Detail (8 Farben)
-  {id:"med-blue",  name:"Mittelblau",       bl:72, hex:"#5F8DB4",rgb:[95,141,180],  t:3},
-  {id:"dk-orange", name:"Dunkelorange",     bl:68, hex:"#A05F35",rgb:[160,95,53],    t:3},
-  {id:"dk-tan",    name:"Khaki",            bl:69, hex:"#958A73",rgb:[149,138,115], t:3},
-  {id:"sand-grn",  name:"Salbeigrün",       bl:48, hex:"#789082",rgb:[120,144,130], t:3},
-  {id:"dk-purple", name:"Dunkellila",       bl:89, hex:"#3624A6",rgb:[54,36,166],   t:3},
-  {id:"magenta",   name:"Magenta",          bl:71, hex:"#923978",rgb:[146,57,120],  t:3},
-  {id:"pink",      name:"Rosa",             bl:23, hex:"#F7969B",rgb:[247,150,155], t:3},
-  {id:"lt-blue",   name:"Hellblau",         bl:62, hex:"#BED7E8",rgb:[190,215,232], t:3},
-  // Tier 4 — Maximum (8 Farben)
-  {id:"sand-blue", name:"Stahlblau",        bl:55, hex:"#5D7B99",rgb:[93,123,153], t:4},
-  {id:"med-lav",   name:"Flieder",          bl:157,hex:"#C398CF",rgb:[195,152,207], t:4},
-  {id:"lavender",  name:"Lavendel",         bl:154,hex:"#BEB8D0",rgb:[190,184,208], t:4},
-  {id:"coral",     name:"Koralle",          bl:220,hex:"#FF5E69",rgb:[255,94,105], t:4},
-  {id:"br-green",  name:"Grasgrün",         bl:36, hex:"#4B9E4B",rgb:[75,158,75],   t:4},
-  {id:"br-lblue",  name:"Himmelblau",       bl:105,hex:"#B3D7EE",rgb:[179,215,238], t:4},
-  {id:"br-yellow", name:"Zitronengelb",     bl:103,hex:"#FFE001",rgb:[255,224,1],   t:4},
-  {id:"br-orange", name:"Pfirsich",         bl:110,hex:"#F9A22B",rgb:[249,162,43],  t:4},
-  {id:"nougat",    name:"Nougat",            bl:28, hex:"#D09168",rgb:[208,145,104], t:3},
-  {id:"lt-nougat", name:"Hellnougat",        bl:90, hex:"#F6D7B3",rgb:[246,215,179], t:3},
-  {id:"med-nougat",name:"Mittelnougat",      bl:150,hex:"#AA7D55",rgb:[170,125,85],  t:3},
+  {id:"white", name:"Weiß", hex:"#f2f3f2", rgb:[242,243,242], t:1},
+  {id:"lt-lt-gray", name:"Hellgrau", hex:"#c8c8c8", rgb:[200,200,200], t:1},
+  {id:"lt-gray", name:"Hellblaugrau", hex:"#a5a5a5", rgb:[165,165,165], t:1},
+  {id:"dk-gray", name:"Dunkelblaugrau", hex:"#696969", rgb:[105,105,105], t:1},
+  {id:"dk-dk-gray", name:"Dunkelgrau", hex:"#545454", rgb:[84,84,84], t:1},
+  {id:"black", name:"Schwarz", hex:"#1b2a34", rgb:[27,42,52], t:1},
+  {id:"blue-gray", name:"Blaugrau", hex:"#868591", rgb:[134,133,145], t:2},
+  {id:"dk-blue-gray", name:"Dunkelblaugrau2", hex:"#42414c", rgb:[66,65,76], t:2},
+  {id:"cream", name:"Eierschale", hex:"#ccb9aa", rgb:[204,185,170], t:2},
+  {id:"lt-lt-flesh", name:"Hellhaut", hex:"#c9b29e", rgb:[201,178,158], t:2},
+  {id:"lt-flesh", name:"Hautton hell", hex:"#c8997a", rgb:[200,153,122], t:2},
+  {id:"flesh", name:"Hautton", hex:"#c19e70", rgb:[193,158,112], t:2},
+  {id:"rose-gray", name:"Rosagrau", hex:"#c58a68", rgb:[197,138,104], t:3},
+  {id:"pink-fuchsia", name:"Rosa-Fuchsia", hex:"#d47f53", rgb:[212,127,83], t:3},
+  {id:"med-flesh", name:"Fleischfarbe", hex:"#ce765a", rgb:[206,118,90], t:2},
+  {id:"french-brn", name:"Franz. Braun", hex:"#b74d29", rgb:[183,77,41], t:2},
+  {id:"brown", name:"Braun", hex:"#6d4737", rgb:[109,71,55], t:2},
+  {id:"dk-brown", name:"Dunkelbraun", hex:"#4d3024", rgb:[77,48,36], t:2},
+  {id:"sandy", name:"Sandfarbe", hex:"#b5a67a", rgb:[181,166,122], t:2},
+  {id:"olive-brown", name:"Braun-Oliv", hex:"#74643c", rgb:[116,100,60], t:3},
+  {id:"lt-yellow", name:"Hellgelb", hex:"#e5c444", rgb:[229,196,68], t:3},
+  {id:"yellow", name:"Gelb", hex:"#cd9b05", rgb:[205,155,5], t:2},
+  {id:"dk-yellow", name:"Dunkelgelb", hex:"#9a5b0f", rgb:[154,91,15], t:3},
+  {id:"mid-yellow", name:"Mittelgelb", hex:"#d47d05", rgb:[212,125,5], t:3},
+  {id:"orange", name:"Orange", hex:"#d2591e", rgb:[210,89,30], t:2},
+  {id:"lt-pink", name:"Hellrosa", hex:"#ebd0da", rgb:[235,208,218], t:3},
+  {id:"bright-pink", name:"Leuchtpink", hex:"#e189b4", rgb:[225,137,180], t:3},
+  {id:"dk-pink", name:"Dunkelrosa", hex:"#de5390", rgb:[222,83,144], t:3},
+  {id:"rose", name:"Rosé", hex:"#902053", rgb:[144,32,83], t:4},
+  {id:"red", name:"Rot", hex:"#c82314", rgb:[200,35,20], t:1},
+  {id:"dk-red", name:"Dunkelrot", hex:"#80190d", rgb:[128,25,13], t:2},
+  {id:"sandy-red", name:"Sandrot", hex:"#97645b", rgb:[151,100,91], t:3},
+  {id:"purple", name:"Lila", hex:"#8f74ad", rgb:[143,116,173], t:3},
+  {id:"lt-purple", name:"Hellviolett", hex:"#834d94", rgb:[131,77,148], t:3},
+  {id:"dk-purple", name:"Dunkelviolett", hex:"#3d2d82", rgb:[61,45,130], t:2},
+  {id:"candy-blue", name:"Candy Blau", hex:"#659ec1", rgb:[101,158,193], t:3},
+  {id:"sky-blue", name:"Himmelblau", hex:"#3d6997", rgb:[61,105,151], t:3},
+  {id:"lt-blue", name:"Hellblau", hex:"#20809d", rgb:[32,128,157], t:3},
+  {id:"dk-blue", name:"Dunkelblau", hex:"#255ba8", rgb:[37,91,168], t:2},
+  {id:"lt-blue2", name:"Hellblau2", hex:"#0980ba", rgb:[9,128,186], t:3},
+  {id:"blue", name:"Blau", hex:"#0e40a5", rgb:[14,64,165], t:1},
+  {id:"tibet-blue", name:"Tibet Blau", hex:"#244576", rgb:[36,69,118], t:3},
+  {id:"sand-blue", name:"Sandblau", hex:"#657990", rgb:[101,121,144], t:2},
+  {id:"yellow-grn", name:"Gelbgrün", hex:"#83a84b", rgb:[131,168,75], t:3},
+  {id:"fruit-grn", name:"Fruchtgrün", hex:"#668e14", rgb:[102,142,20], t:3},
+  {id:"olive-grn", name:"Olivgrün", hex:"#7b7c48", rgb:[123,124,72], t:3},
+  {id:"sand-grn", name:"Sandgrün", hex:"#658c80", rgb:[101,140,128], t:3},
+  {id:"teal", name:"Blaugrün", hex:"#108383", rgb:[16,131,131], t:3},
+  {id:"grass-grn", name:"Grasgrün", hex:"#149928", rgb:[20,153,40], t:2},
+  {id:"green", name:"Grün", hex:"#066d28", rgb:[6,109,40], t:1},
+  {id:"dk-green", name:"Dunkelgrün", hex:"#2b6344", rgb:[43,99,68], t:2},
+  {id:"army-grn", name:"Armeegrün", hex:"#4a4c32", rgb:[74,76,50], t:3}
 ];
 const PARTS={stud:{id:'3024',name:'Plate mit Noppe'},flat:{id:'3070b',name:'Tile glatt'},round:{id:'98138',name:'Round Tile'}};
 const CFG={
@@ -1971,7 +1984,7 @@ function calcTiles(t,c){return{lo:Math.round(t*c.bL),hi:Math.round(t*c.bH)};}
 const S={albums:[null,null,null],active:0,N:48,tier:3,partType:'round',sig:false,sigL1:'',sigL2:'',view:0,frameCol:'black'};
 
 // ═══ HELPERS ═════════════════════════════════════════════════════════════
-const GRAYS=new Set(['black','white','lt-gray','dk-gray']);
+const GRAYS=new Set(['black','white','lt-lt-gray','lt-gray','dk-gray','dk-dk-gray','blue-gray','dk-blue-gray']);
 function pal(){return S.tier===1?COLORS.filter(c=>GRAYS.has(c.id)):COLORS.filter(c=>c.t<=S.tier);}
 function boostSat(r,g,b,k){
   const rr=r/255,gg=g/255,bb=b/255;
