@@ -1721,14 +1721,6 @@ html, body {
         <div class="cml" id="cml"></div>
       </div>
 
-      <!-- ORDER CTA CARD -->
-      <div id="orderCta" style="display:none;margin-top:14px;padding:16px;background:linear-gradient(135deg,rgba(242,97,156,.1),rgba(147,171,217,.08));border:1.5px solid rgba(242,97,156,.3);border-radius:14px">
-        <button onclick="openOrderFromConfig()" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#F2619C,#93ABD9);color:#fff;font-size:14px;font-weight:800;border:none;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 6px 24px rgba(242,97,156,.35);transition:all .15s;letter-spacing:.01em">
-          Jetzt bestellen →
-        </button>
-      </div>
-    </div>
-
       <!-- Action buttons - shown after image upload -->
       <div id="actionBtns" style="display:none;padding:16px 0 4px">
         <div style="display:flex;gap:10px">
@@ -2224,10 +2216,6 @@ function updateSummary(){
     ).join('') +
     (counts.length>16?`<div style="font-size:9px;color:var(--mut)">+${counts.length-16} weitere</div>`:'');
 
-  // Show order CTA
-  const is48 = S.N===48;
-  const ctaEl = document.getElementById('orderCta');
-  if(ctaEl) ctaEl.style.display = 'block';
 }
 
 
