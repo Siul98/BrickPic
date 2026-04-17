@@ -1703,6 +1703,7 @@ html, body {
         <button class="tp on" id="dt-3" onclick="setTier(3)">Detail ★<small>Foto-realistisch</small></button>
         <button class="tp" id="dt-1" onclick="setTier(1)">Two Tone<small>Schwarz &amp; Weiß</small></button>
       </div>
+      <button id="improveBtn" onclick="improveGrid()" style="margin-top:10px;width:100%;padding:10px;border-radius:10px;border:1.5px solid var(--brd);background:var(--bg);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--txt);transition:all .15s;display:none">✦ Verbessern</button>
     </div>
     <div class="sec step" id="step6">
       <!-- Collapsible summary header -->
@@ -2025,6 +2026,7 @@ function processImage(idx,src){
       }}
     }
     S.albums[idx]={src,grid,N,thumb:src};
+    const ib=document.getElementById('improveBtn');if(ib)ib.style.display='block';
     revealSteps();updateSummary();updateAlbumPills();renderAll();
   };img.src=src;
 }
@@ -2257,6 +2259,33 @@ function setTier(t){
   if(S.albums[S.active])processImage(S.active,S.albums[S.active].src);
 }
 function getFrameBg(){return S.frameCol==='white'?'#f5f5f5':'#0a0a0a';}
+function improveGrid(){
+  const a=S.albums[S.active];if(!a)return;
+  const grid=a.grid.map(r=>[...r]);const N=a.N;
+  // 3 passes: remove isolated + small-cluster noise
+  for(let pass=0;pass<3;pass++){
+    const snap=grid.map(r=>[...r]);
+    for(let y=0;y<N;y++){for(let x=0;x<N;x++){
+      const curr=snap[y][x].id;
+      const nb=[];
+      if(y>0)nb.push(snap[y-1][x]);if(y<N-1)nb.push(snap[y+1][x]);
+      if(x>0)nb.push(snap[y][x-1]);if(x<N-1)nb.push(snap[y][x+1]);
+      const sameCount=nb.filter(c=>c.id===curr).length;
+      // Replace if isolated (0 same) or lone pair with ≥3 diff neighbors
+      if(nb.length>=3&&sameCount<=1&&(nb.length-sameCount)>=3){
+        const freq={};let best=nb[0],bestN=0;
+        for(const c of nb){const n=(freq[c.id]=(freq[c.id]||0)+1);if(n>bestN){bestN=n;best=c;}}
+        grid[y][x]=best;
+      }
+    }}
+  }
+  S.albums[S.active]={...a,grid};
+  renderAll();updateSummary();
+  // Flash button feedback
+  const btn=document.getElementById('improveBtn');
+  if(btn){btn.textContent='✓ Verbessert';btn.style.borderColor='#0066CC';btn.style.color='#0066CC';
+    setTimeout(()=>{btn.textContent='✦ Verbessern';btn.style.borderColor='';btn.style.color='';},1500);}
+}
 function setFrameColor(c){
   S.frameCol=c;
   ['black','white'].forEach(v=>{
@@ -2333,6 +2362,7 @@ function closeFS(){document.getElementById('fsm')?.classList.remove('open');}
 // ═══ RESET ═══════════════════════════════════════════════════════════════
 function resetToHome(){
   S.albums=[null,null,null];S.active=0;S.sig=false;S.sigL1='';S.sigL2='';S.frameCol='black';
+  const ib=document.getElementById('improveBtn');if(ib)ib.style.display='none';
   // Reset frame color UI
   ['black','white'].forEach(v=>{const el=document.getElementById('fc-'+v);if(!el)return;el.classList.toggle('on',v==='black');el.style.borderColor='';el.style.background='';el.style.color='';});
   const fo=document.getElementById('frameOverlay');if(fo){fo.style.filter='none';fo.style.mixBlendMode='';}
