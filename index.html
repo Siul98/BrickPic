@@ -1781,14 +1781,25 @@ html, body {
         </div>
       </div>
 
-      <!-- Teileübersicht: always-visible dropdown, separate from summary -->
+      <!-- Teileübersicht: behind email gate -->
       <div class="parts-toggle" id="partsToggle" onclick="toggleParts()">
         <span>Teileübersicht</span>
         <span class="pt-arrow">▼</span>
       </div>
       <div class="parts-content" id="partsContent">
-        <div class="pb" id="pb"></div>
-        <div class="cml" id="cml"></div>
+        <!-- Blurred teaser (visible before unlock) -->
+        <div id="partsTeaser" style="position:relative;border-radius:10px;overflow:hidden">
+          <div id="pb" style="filter:blur(5px);pointer-events:none;user-select:none;opacity:.6"></div>
+          <div id="cml" style="filter:blur(5px);pointer-events:none;user-select:none;opacity:.6"></div>
+          <!-- Gate overlay -->
+          <div id="partsGate" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(255,255,255,.7);backdrop-filter:blur(2px);padding:16px;text-align:center;border-radius:10px">
+            <div style="font-size:22px">🔒</div>
+            <div style="font-size:13px;font-weight:700;color:var(--txt)">Teileübersicht freischalten</div>
+            <div style="font-size:12px;color:var(--mut);max-width:220px">Trag deine E-Mail ein und erhalte die vollständige Liste + Bauanleitung.</div>
+            <input id="gateEmail" type="email" placeholder="deine@email.de" style="width:100%;padding:10px 14px;border-radius:100px;border:1.5px solid var(--brd);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box">
+            <button onclick="unlockParts()" style="width:100%;padding:11px;border-radius:100px;background:linear-gradient(135deg,#F2619C,#93ABD9);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Freischalten →</button>
+          </div>
+        </div>
       </div>
 
       <!-- Action buttons - shown after image upload -->
@@ -2120,6 +2131,32 @@ function nearest(r,g,b){
   for(const c of p){const[L2,a2,b2]=colorLab(c);const dd=ciede2000(L1,a1,b1,L2,a2,b2);if(dd<dist){dist=dd;best=c;}}
   return best;
 }
+// ── Email gate for Teileübersicht ─────────────────────────────────────
+function isUnlocked(){return localStorage.getItem('bp_unlocked')==='1';}
+function unlockParts(){
+  const email=document.getElementById('gateEmail')?.value.trim();
+  if(!email||!email.includes('@')){
+    const inp=document.getElementById('gateEmail');
+    if(inp){inp.style.borderColor='#F2619C';inp.placeholder='Bitte gültige E-Mail eingeben';}
+    return;
+  }
+  // Store lead
+  localStorage.setItem('bp_unlocked','1');
+  localStorage.setItem('bp_email',email);
+  // Try to ping a webhook/form (fire-and-forget)
+  try{fetch('https://formspree.io/f/brickpic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,source:'teileübersicht_gate'})}).catch(()=>{});}catch(e){}
+  applyUnlock();
+}
+function applyUnlock(){
+  const gate=document.getElementById('partsGate');
+  if(gate)gate.style.display='none';
+  const pb=document.getElementById('pb'),cml=document.getElementById('cml');
+  if(pb){pb.style.filter='';pb.style.pointerEvents='';pb.style.opacity='';}
+  if(cml){cml.style.filter='';cml.style.pointerEvents='';cml.style.opacity='';}
+}
+// Check on load if already unlocked
+document.addEventListener('DOMContentLoaded',()=>{if(isUnlocked())applyUnlock();});
+
 function dl(name,content,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();}
 
 // ═══ GRID ════════════════════════════════════════════════════════════════
@@ -2131,7 +2168,7 @@ function getGrid(){
 }
 function getCounts(g,sz){
   const c={};for(let y=0;y<sz;y++)for(let x=0;x<sz;x++){const cl=g[y][x];if(!c[cl.id])c[cl.id]={color:cl,count:0};c[cl.id].count++;}
-  return Object.values(c).sort((a,b)=>b.count-a.count);
+  return Object.values(c).sort((a,b)=>{const na=parseInt(a.color.name)||99,nb=parseInt(b.color.name)||99;return na-nb;});
 }
 
 // ═══ IMAGE PROCESSING ════════════════════════════════════════════════════
