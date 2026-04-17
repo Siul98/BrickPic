@@ -5,6 +5,27 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BrickPic — Pixel Mosaic Builder</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Crop Modal -->
+<div id="cropModal">
+  <div id="cropWrap">
+    <h3>Ausschnitt wählen</h3>
+    <div id="cropStage">
+      <img id="cropImg" src="" alt="">
+      <div id="cropOverlay"></div>
+    </div>
+    <div id="cropControls">
+      <span style="font-size:12px;color:var(--mut)">🔍</span>
+      <input type="range" id="cropZoomSlider" min="100" max="400" value="100" step="1">
+      <span id="cropZoomLabel">100%</span>
+    </div>
+    <div id="cropActions">
+      <button id="cropCancel" onclick="closeCrop()">Abbrechen</button>
+      <button id="cropConfirm" onclick="confirmCrop()">Mosaic erstellen →</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -1088,7 +1109,7 @@ html, body {
   align-items: center;
   gap: 10px;
 }
-.uz:hover {
+.uz:hover, .uz.drag-over {
   border-color: var(--blue);
   background: var(--blue-bg);
 }
@@ -1574,6 +1595,54 @@ html, body {
 /* Hide Shop pill */
 .gnav-pill[data-section="section-shop"] { display: none !important; }
 
+
+/* ── Crop Modal ─────────────────────────────────── */
+#cropModal {
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+}
+#cropModal.open { display:flex; }
+#cropWrap {
+  background:var(--bg);border-radius:20px;padding:20px;
+  display:flex;flex-direction:column;gap:14px;
+  width:min(480px,92vw);box-shadow:0 24px 80px rgba(0,0,0,.4);
+}
+#cropWrap h3 { font-size:15px;font-weight:700;margin:0;color:var(--txt); }
+#cropStage {
+  position:relative;width:100%;aspect-ratio:1;
+  background:#111;border-radius:12px;overflow:hidden;cursor:grab;
+  touch-action:none;user-select:none;
+}
+#cropStage.grabbing { cursor:grabbing; }
+#cropImg {
+  position:absolute;transform-origin:0 0;pointer-events:none;
+  image-rendering:auto;
+}
+#cropOverlay {
+  position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);border-radius:12px;
+}
+#cropControls {
+  display:flex;align-items:center;gap:10px;
+}
+#cropZoomSlider {
+  flex:1;-webkit-appearance:none;height:4px;border-radius:2px;
+  background:var(--brd);outline:none;cursor:pointer;
+}
+#cropZoomSlider::-webkit-slider-thumb {
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--blue);cursor:pointer;
+}
+#cropZoomLabel { font-size:12px;color:var(--mut);min-width:36px;text-align:right; }
+#cropActions { display:flex;gap:8px; }
+#cropActions button {
+  flex:1;padding:11px;border-radius:100px;border:none;
+  font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s;
+}
+#cropActions button:hover { opacity:.85; }
+#cropCancel { background:var(--brd);color:var(--txt); }
+#cropConfirm { background:var(--blue);color:#fff; }
 </style>
 </head>
 <body>
@@ -2087,17 +2156,173 @@ function processImage(idx,src){
     revealSteps();updateSummary();updateAlbumPills();renderAll();
   };img.src=src;
 }
+// ── Drag & Drop on upload zone ──────────────────────────────────────────
+(function(){
+  function initDnd(){
+    const uz=document.getElementById('uz');
+    if(!uz||uz._dnd)return;
+    uz._dnd=true;
+    uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('drag-over');});
+    uz.addEventListener('dragleave',e=>{if(!uz.contains(e.relatedTarget))uz.classList.remove('drag-over');});
+    uz.addEventListener('drop',e=>{
+      e.preventDefault();uz.classList.remove('drag-over');
+      const f=e.dataTransfer.files[0];
+      if(f&&f.type.startsWith('image/'))loadFileIntoCrop(f);
+    });
+  }
+  // re-init after uz is replaced
+  const orig=Element.prototype.insertAdjacentHTML;
+  document.addEventListener('DOMContentLoaded',initDnd);
+  setTimeout(initDnd,500);
+  const obs=new MutationObserver(()=>setTimeout(initDnd,50));
+  document.addEventListener('DOMContentLoaded',()=>obs.observe(document.getElementById('uz')||document.body,{childList:true,subtree:true}));
+})();
+
+// ── Crop state ───────────────────────────────────────────────────────────
+const _crop={src:null,x:0,y:0,scale:1,dragging:false,startX:0,startY:0,imgW:0,imgH:0,stageW:0};
+
+function loadFileIntoCrop(f){
+  const rd=new FileReader();
+  rd.onload=e=>openCrop(e.target.result);
+  rd.readAsDataURL(f);
+}
+
+function openCrop(src){
+  _crop.src=src;
+  const modal=document.getElementById('cropModal');
+  const ci=document.getElementById('cropImg');
+  const stage=document.getElementById('cropStage');
+  ci.onload=()=>{
+    _crop.imgW=ci.naturalWidth;_crop.imgH=ci.naturalHeight;
+    _crop.stageW=stage.offsetWidth;
+    // Initial scale: fit the shorter side to fill the square
+    const fillScale=_crop.stageW/Math.min(_crop.imgW,_crop.imgH);
+    _crop.scale=fillScale;
+    document.getElementById('cropZoomSlider').min=Math.round(fillScale*100);
+    document.getElementById('cropZoomSlider').value=Math.round(fillScale*100);
+    document.getElementById('cropZoomLabel').textContent=Math.round(fillScale*100)+'%';
+    centerCrop();
+    updateCropTransform();
+  };
+  ci.src=src;
+  modal.classList.add('open');
+  initCropDrag();
+}
+
+function closeCrop(){document.getElementById('cropModal').classList.remove('open');}
+
+function confirmCrop(){
+  const stage=document.getElementById('cropStage');
+  const ci=document.getElementById('cropImg');
+  const sz=stage.offsetWidth;
+  // _crop.x/_crop.y are the image offset in px on screen
+  // scale: each screen px = 1/scale image px
+  const cv=document.createElement('canvas');cv.width=sz;cv.height=sz;
+  const ctx=cv.getContext('2d');
+  // draw: the image is displayed at scale _crop.scale, offset _crop.x/_crop.y
+  // to canvas coords: destX=_crop.x, destY=_crop.y, destW=imgW*scale, destH=imgH*scale
+  ctx.drawImage(ci,0,0,_crop.imgW,_crop.imgH,
+    _crop.x,_crop.y,_crop.imgW*_crop.scale,_crop.imgH*_crop.scale);
+  closeCrop();
+  processImage(S.active,cv.toDataURL('image/jpeg',.92));
+  revealBuild();
+}
+
+function centerCrop(){
+  const sz=_crop.stageW;
+  _crop.x=(sz-_crop.imgW*_crop.scale)/2;
+  _crop.y=(sz-_crop.imgH*_crop.scale)/2;
+}
+
+function updateCropTransform(){
+  const ci=document.getElementById('cropImg');
+  ci.style.width=(_crop.imgW*_crop.scale)+'px';
+  ci.style.height=(_crop.imgH*_crop.scale)+'px';
+  ci.style.left=_crop.x+'px';
+  ci.style.top=_crop.y+'px';
+  ci.style.transform='';
+}
+
+function clampCrop(){
+  const sz=_crop.stageW;
+  const iw=_crop.imgW*_crop.scale, ih=_crop.imgH*_crop.scale;
+  // ensure the square viewport is always covered
+  _crop.x=Math.min(0,Math.max(sz-iw,_crop.x));
+  _crop.y=Math.min(0,Math.max(sz-ih,_crop.y));
+}
+
+// Zoom slider
+document.addEventListener('DOMContentLoaded',()=>{
+  const sl=document.getElementById('cropZoomSlider');
+  sl.addEventListener('input',()=>{
+    const newScale=parseInt(sl.value)/100;
+    const sz=_crop.stageW||300;
+    // zoom toward center
+    const cx=sz/2, cy=sz/2;
+    const ratio=newScale/_crop.scale;
+    _crop.x=cx+((_crop.x-cx)*ratio);
+    _crop.y=cy+((_crop.y-cy)*ratio);
+    _crop.scale=newScale;
+    clampCrop();
+    updateCropTransform();
+    document.getElementById('cropZoomLabel').textContent=sl.value+'%';
+  });
+});
+
+function initCropDrag(){
+  const stage=document.getElementById('cropStage');
+  if(stage._cd)return; stage._cd=true;
+  stage.addEventListener('pointerdown',e=>{
+    stage.setPointerCapture(e.pointerId);
+    stage.classList.add('grabbing');
+    _crop.dragging=true;_crop.startX=e.clientX-_crop.x;_crop.startY=e.clientY-_crop.y;
+  });
+  stage.addEventListener('pointermove',e=>{
+    if(!_crop.dragging)return;
+    _crop.x=e.clientX-_crop.startX;
+    _crop.y=e.clientY-_crop.startY;
+    clampCrop();
+    updateCropTransform();
+  });
+  const stopDrag=()=>{_crop.dragging=false;stage.classList.remove('grabbing');};
+  stage.addEventListener('pointerup',stopDrag);
+  stage.addEventListener('pointercancel',stopDrag);
+  // Pinch-to-zoom on touch
+  let lastDist=null;
+  stage.addEventListener('touchmove',e=>{
+    if(e.touches.length!==2){lastDist=null;return;}
+    e.preventDefault();
+    const dx=e.touches[0].clientX-e.touches[1].clientX;
+    const dy=e.touches[0].clientY-e.touches[1].clientY;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(lastDist){
+      const factor=dist/lastDist;
+      const sl=document.getElementById('cropZoomSlider');
+      const newScale=Math.max(parseFloat(sl.min)/100,Math.min(4,_crop.scale*factor));
+      const sz=_crop.stageW||300;
+      const cx=sz/2,cy=sz/2;
+      const ratio=newScale/_crop.scale;
+      _crop.x=cx+((_crop.x-cx)*ratio);
+      _crop.y=cy+((_crop.y-cy)*ratio);
+      _crop.scale=newScale;
+      clampCrop();
+      updateCropTransform();
+      sl.value=Math.round(newScale*100);
+      document.getElementById('cropZoomLabel').textContent=sl.value+'%';
+    }
+    lastDist=dist;
+  },{passive:false});
+  stage.addEventListener('touchend',()=>{lastDist=null;});
+}
+
 function handleFile(inp){
   const f=inp.files[0];if(!f)return;
-  const rd=new FileReader();
-  rd.onload=e=>{
-    const img=new Image();
-    img.onload=()=>{
-      const sz=Math.min(img.width,img.height),cv=document.createElement('canvas');cv.width=sz;cv.height=sz;
-      cv.getContext('2d').drawImage(img,(img.width-sz)/2,(img.height-sz)/2,sz,sz,0,0,sz,sz);
-      processImage(S.active,cv.toDataURL('image/jpeg',.92));
-    };img.src=e.target.result;
-  };rd.readAsDataURL(f);
+  loadFileIntoCrop(f);
+}
+
+function revealBuild(){
+  // show upload result sections
+  ['step2','step4','step6'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('show');});
 }
 
 // ═══ RENDERER ════════════════════════════════════════════════════════════
