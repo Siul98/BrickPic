@@ -2250,15 +2250,11 @@ function setFrameColor(c){
     if(v===c){el.style.borderColor='#0066CC';el.style.background='#0066CC';el.style.color='#fff';}
     else{el.style.borderColor='';el.style.background='';el.style.color='';}
   });
-  // frameOverlay: screen blend lifts darks→light while keeping reflections bright
+  // previewPanel bg hint for white frame  
   const fo=document.getElementById('frameOverlay');
-  if(fo){
-    fo.style.mixBlendMode = c==='white' ? 'screen' : '';
-    fo.style.filter = c==='white' ? 'grayscale(1)' : '';
-  }
-  // previewPanel bg hint for white frame
+  if(fo){fo.style.mixBlendMode='';fo.style.filter='';}
   const pp=document.getElementById('previewPanel');
-  if(pp)pp.style.background=c==='white'?'#e8e8e8':'';
+  if(pp)pp.style.background=c==='white'?'#f8f8f8':'';
   renderAll();
 }
 function setSig(on){S.sig=on;const ed=document.getElementById('sigEd');if(ed)ed.style.display=on?'block':'none';renderAll();updateSigPreview();}
