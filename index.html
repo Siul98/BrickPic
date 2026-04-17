@@ -1968,7 +1968,8 @@ function calcTiles(t,c){return{lo:Math.round(t*c.bL),hi:Math.round(t*c.bH)};}
 const S={albums:[null,null,null],active:0,N:48,tier:3,partType:'round',sig:false,sigL1:'',sigL2:'',view:0,frameCol:'black'};
 
 // ═══ HELPERS ═════════════════════════════════════════════════════════════
-function pal(){return COLORS.filter(c=>c.t<=S.tier);}
+const GRAYS=new Set(['black','white','lt-gray','dk-gray']);
+function pal(){return S.tier===1?COLORS.filter(c=>GRAYS.has(c.id)):COLORS.filter(c=>c.t<=S.tier);}
 function boostSat(r,g,b,k){
   const rr=r/255,gg=g/255,bb=b/255;
   const mx=Math.max(rr,gg,bb),mn=Math.min(rr,gg,bb),l=(mx+mn)/2;
@@ -2026,7 +2027,7 @@ function processImage(idx,src){
     const ctx=cv.getContext('2d');ctx.drawImage(img,0,0,N,N);
     const {data}=ctx.getImageData(0,0,N,N);
     const grid=[];
-    for(let y=0;y<N;y++){const row=[];for(let x=0;x<N;x++){const i=(y*N+x)*4;const[br,bg,bb]=boostSat(data[i],data[i+1],data[i+2],1.8);row.push(nearest(br,bg,bb));}grid.push(row);}
+    for(let y=0;y<N;y++){const row=[];for(let x=0;x<N;x++){const i=(y*N+x)*4;row.push(nearest(data[i],data[i+1],data[i+2]));}grid.push(row);}
     // Palette restriction: drop colors with <0.5% coverage, remap to nearest kept color
     const freq0={};for(let y=0;y<N;y++)for(let x=0;x<N;x++){const id=grid[y][x].id;freq0[id]=(freq0[id]||0)+1;}
     const thr=Math.max(5,N*N*0.005);
