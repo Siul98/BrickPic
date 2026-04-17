@@ -1690,6 +1690,13 @@ html, body {
       </div>
       <div class="premium-box" style="margin-top:8px"><b>PREMIUM TECHNIK-FUNDAMENT</b><br>9 Module, jedes einzeln baubar. Mehrere Personen gleichzeitig. Am Ende zusammenstecken.</div>
     </div>
+    <div class="sec step" id="step3">
+      <div class="sec-title"><b>Rahmen.</b> <span class="gray">Schwarz oder Weiß?</span></div>
+      <div class="tp-minimal" style="margin-top:10px">
+        <button class="tp on" id="fc-black" onclick="setFrameColor('black')">Schwarz<small>Klassisch</small></button>
+        <button class="tp" id="fc-white" onclick="setFrameColor('white')">Weiß<small>Modern</small></button>
+      </div>
+    </div>
     <div class="sec step" id="step4">
       <div class="sec-title"><b>Palette.</b></div>
       <div class="tp-minimal" style="margin-top:10px">
@@ -1706,6 +1713,7 @@ html, body {
       <div id="sumBody">
         <div class="sum-box" id="sumBox">
           <div class="sbr"><span class="sbl">Größe</span><span class="sbv" id="sbSz">—</span></div>
+          <div class="sbr"><span class="sbl">Rahmen</span><span class="sbv" id="sbFrame">Schwarz</span></div>
           <div class="sbr"><span class="sbl">Farben</span><span class="sbv" id="sbCol">—</span></div>
           <div class="sbr"><span class="sbl">Tiles gesamt</span><span class="sbv" id="sbTot">—</span></div>
         </div>
@@ -1969,7 +1977,7 @@ function calcBase(c){return c.modules*c.modulePrice+c.connParts.reduce((s,p)=>s+
 function calcTiles(t,c){return{lo:Math.round(t*c.bL),hi:Math.round(t*c.bH)};}
 
 // ═══ STATE ═══════════════════════════════════════════════════════════════
-const S={albums:[null,null,null],active:0,N:48,tier:3,partType:'round',sig:false,sigL1:'',sigL2:'',view:0};
+const S={albums:[null,null,null],active:0,N:48,tier:3,partType:'round',sig:false,sigL1:'',sigL2:'',view:0,frameCol:'black'};
 
 // ═══ HELPERS ═════════════════════════════════════════════════════════════
 function pal(){return COLORS.filter(c=>c.t<=S.tier);}
@@ -2028,7 +2036,7 @@ function renderMosaic(cv,grid,size,pt){
   const x0=FRAME_INNER;
   // Canvas: only fill the tile area, edges are transparent so previewPanel bg shows
   ctx.clearRect(0,0,SZ,SZ);
-  ctx.fillStyle='#0a0a0a';
+  ctx.fillStyle=getFrameBg();
   ctx.fillRect(x0-1, x0-1, SZ-2*x0+2, SZ-2*x0+2);  // fill tile area + 1px overlap
   const tile_r=cell*0.49;
   const rw=Math.max(0.3,cell*0.02);
@@ -2124,7 +2132,7 @@ function animateWave(grid,N){
     const dSZ=waveCV.offsetWidth||500;
     waveCV.width=dSZ;waveCV.height=dSZ;
     const wctx=waveCV.getContext('2d');
-    wctx.fillStyle='#0a0a0a';
+    wctx.fillStyle=getFrameBg();
     wctx.fillRect(36/768*dSZ,36/768*dSZ,(768-72)/768*dSZ,(768-72)/768*dSZ);
   }
   function frame(now){
@@ -2134,7 +2142,7 @@ function animateWave(grid,N){
     if(targetW>lastW){
       const mc=document.getElementById('mc');if(!mc)return;
       const mctx=mc.getContext('2d');
-      if(lastW===-1){mc.width=768;mc.height=768;mctx.clearRect(0,0,768,768);mctx.fillStyle='#0a0a0a';mctx.fillRect(35,35,768-70,768-70);const fi=getLegoFrame();if(fi.complete&&fi.naturalWidth>0)mctx.drawImage(fi,0,0,768,768);}
+      if(lastW===-1){mc.width=768;mc.height=768;mctx.clearRect(0,0,768,768);mctx.fillStyle=getFrameBg();mctx.fillRect(35,35,768-70,768-70);const fi=getLegoFrame();if(fi.complete&&fi.naturalWidth>0){if(S.frameCol==='white'){mctx.filter='invert(1)';}mctx.drawImage(fi,0,0,768,768);mctx.filter='none';}}
       const SZ=768,FRAME_INNER=36,cell=(SZ-2*FRAME_INNER)/N,x0=FRAME_INNER,tile_r=cell*0.49,rw=Math.max(0.3,cell*0.02);
       for(const t of tiles){
         if(t.w>lastW&&t.w<=targetW){
@@ -2190,6 +2198,7 @@ function updateSummary(){
   set('sbTot',total.toLocaleString());
   set('sbSz',`${cfg.cm}`);
   set('sbCol',counts.length+' Farben');
+  set('sbFrame',S.frameCol==='white'?'Weiß':'Schwarz');
   document.getElementById('sumBox').style.display='block';
   document.getElementById('step6')?.classList.add('show');
 
@@ -2224,13 +2233,27 @@ function setSize(n){
 }
 
 function setTier(t){
-  S.tier=t;[1,3].forEach(i=>{
+  S.tier=t;[1,3].forEach(i=>{ 
     const el=document.getElementById('dt-'+i);if(!el)return;
     el.classList.toggle('on',i===t);
     if(i===t){el.style.borderColor='#0066CC';el.style.background='#0066CC';el.style.color='#fff';}
     else{el.style.borderColor='';el.style.background='';el.style.color='';}
   });
   if(S.albums[S.active])processImage(S.active,S.albums[S.active].src);
+}
+function getFrameBg(){return S.frameCol==='white'?'#f5f5f5':'#0a0a0a';}
+function setFrameColor(c){
+  S.frameCol=c;
+  ['black','white'].forEach(v=>{
+    const el=document.getElementById('fc-'+v);if(!el)return;
+    el.classList.toggle('on',v===c);
+    if(v===c){el.style.borderColor='#0066CC';el.style.background='#0066CC';el.style.color='#fff';}
+    else{el.style.borderColor='';el.style.background='';el.style.color='';}
+  });
+  // update frameOverlay filter for live preview
+  const fo=document.getElementById('frameOverlay');
+  if(fo)fo.style.filter=c==='white'?'invert(1)':'none';
+  renderAll();
 }
 function setSig(on){S.sig=on;const ed=document.getElementById('sigEd');if(ed)ed.style.display=on?'block':'none';renderAll();updateSigPreview();}
 function updateSigPreview(){
@@ -2253,7 +2276,7 @@ function addAlbum(i){
   uz.innerHTML=`<input type="file" id="fi" accept="image/*" style="display:none" onchange="handleFile(this)"><div class="uz-icon">💿</div><div class="uz-title">Cover hochladen</div><div class="uz-sub">JPG · PNG · WEBP</div>`;
   uz.onclick=()=>document.getElementById('fi').click();
 }
-function revealSteps(){['step2','step4'].forEach((id,i)=>setTimeout(()=>{const el=document.getElementById(id);if(el)el.classList.add('show');},i*100));}
+function revealSteps(){['step2','step3','step4'].forEach((id,i)=>setTimeout(()=>{const el=document.getElementById(id);if(el)el.classList.add('show');},i*100));}
 
 // ═══ EXPORT ══════════════════════════════════════════════════════════════
 function getAllCounts(){
@@ -2292,11 +2315,14 @@ function closeFS(){document.getElementById('fsm')?.classList.remove('open');}
 
 // ═══ RESET ═══════════════════════════════════════════════════════════════
 function resetToHome(){
-  S.albums=[null,null,null];S.active=0;S.sig=false;S.sigL1='';S.sigL2='';
+  S.albums=[null,null,null];S.active=0;S.sig=false;S.sigL1='';S.sigL2='';S.frameCol='black';
+  // Reset frame color UI
+  ['black','white'].forEach(v=>{const el=document.getElementById('fc-'+v);if(!el)return;el.classList.toggle('on',v==='black');el.style.borderColor='';el.style.background='';el.style.color='';});
+  const fo=document.getElementById('frameOverlay');if(fo)fo.style.filter='none';
   const uz=document.getElementById('uz');
   uz.innerHTML=`<input type="file" id="fi" accept="image/*" style="display:none" onchange="handleFile(this)"><div class="uz-icon">🎵</div><div class="uz-title">Bild hochladen</div><div class="uz-sub">JPG · PNG · WEBP</div>`;
   uz.onclick=()=>document.getElementById('fi').click();
-  ['step2','step4','step6'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('show');});
+  ['step2','step3','step4','step6'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('show');});
   document.getElementById('sumBox').style.display='none';
   document.getElementById('albumPills').innerHTML='';
   setSize(48);setTier(3);startShowcase();
