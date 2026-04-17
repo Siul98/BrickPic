@@ -2014,7 +2014,6 @@ function rgb2lab(r,g,b){
   return[116*fy-16,500*(fx-fy),200*(fy-fz)];
 }
 // ── CIEDE2000 color distance (perceptually accurate) ──
-const _labCache={};
 function colorLab(c){return _labCache[c.id]||(_labCache[c.id]=rgb2lab(c.rgb[0],c.rgb[1],c.rgb[2]));}
 function ciede2000(L1,a1,b1,L2,a2,b2){
   const rad=Math.PI/180;
