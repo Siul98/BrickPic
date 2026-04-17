@@ -2281,24 +2281,30 @@ function setTier(t){
 function getFrameBg(){return S.frameCol==='white'?'#f5f5f5':'#0a0a0a';}
 function improveGrid(){
   const a=S.albums[S.active];if(!a)return;
+  const btn=document.getElementById('improveBtn');
+  // TOGGLE: if already improved, restore original
+  if(a.gridImproved){
+    S.albums[S.active]={...a,grid:a.gridOriginal.map(r=>[...r]),gridImproved:false,gridOriginal:null};
+    renderAll();updateSummary();
+    if(btn){btn.textContent='✦ Verbessern';btn.style.borderColor='';btn.style.color='';}
+    return;
+  }
+  // Save original before improving
+  const originalGrid=a.grid.map(r=>[...r]);
   const grid=a.grid.map(r=>[...r]);const N=a.N;
   const snap=grid.map(r=>[...r]);
-  const R=2; // 5×5 neighbourhood
+  const R=2;
   for(let y=0;y<N;y++){for(let x=0;x<N;x++){
     const curr=snap[y][x].id;
-    // Count colors in 5×5 area
     const freq={};let total=0;
     for(let dy=-R;dy<=R;dy++){for(let dx=-R;dx<=R;dx++){
       const ny=y+dy,nx=x+dx;
       if(ny<0||ny>=N||nx<0||nx>=N)continue;
       const cid=snap[ny][nx].id;freq[cid]=(freq[cid]||0)+1;total++;
     }}
-    // Find dominant color
     let domId=curr,domN=0;
     for(const [id,n] of Object.entries(freq)){if(n>domN){domN=n;domId=id;}}
-    // Only replace if: pixel differs from dominant AND dominant covers >72% of area
     if(domId!==curr&&domN/total>0.72){
-      // Get color object from a neighbor that has domId
       outer:for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
         const ny=y+dy,nx=x+dx;
         if(ny<0||ny>=N||nx<0||nx>=N)continue;
@@ -2306,11 +2312,9 @@ function improveGrid(){
       }
     }
   }}
-  S.albums[S.active]={...a,grid};
+  S.albums[S.active]={...a,grid,gridOriginal:originalGrid,gridImproved:true};
   renderAll();updateSummary();
-  const btn=document.getElementById('improveBtn');
-  if(btn){btn.textContent='✓ Verbessert';btn.style.borderColor='#0066CC';btn.style.color='#0066CC';
-    setTimeout(()=>{btn.textContent='✦ Verbessern';btn.style.borderColor='';btn.style.color='';},1500);}
+  if(btn){btn.textContent='↺ Original';btn.style.borderColor='#888';btn.style.color='#888';}
 }
 function setFrameColor(c){
   S.frameCol=c;
@@ -2341,7 +2345,17 @@ function updateAlbumPills(){
   if(S.albums.filter(Boolean).length<3){const n=S.albums.findIndex(a=>!a);if(n>=0)h+=`<div class="ap ap-add" onclick="addAlbum(${n})">＋</div>`;}
   el.innerHTML=h;
 }
-function switchAlbum(i){S.active=i;renderAll();updateAlbumPills();updateSummary();}
+function switchAlbum(i){
+  S.active=i;
+  const btn=document.getElementById('improveBtn');
+  if(btn){
+    const improved=S.albums[i]?.gridImproved;
+    btn.textContent=improved?'↺ Original':'✦ Verbessern';
+    btn.style.borderColor=improved?'#888':'';
+    btn.style.color=improved?'#888':'';
+  }
+  renderAll();updateAlbumPills();updateSummary();
+}
 function addAlbum(i){
   S.active=i;
   const uz=document.getElementById('uz');
