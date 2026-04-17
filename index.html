@@ -2250,9 +2250,9 @@ function setFrameColor(c){
     if(v===c){el.style.borderColor='#0066CC';el.style.background='#0066CC';el.style.color='#fff';}
     else{el.style.borderColor='';el.style.background='';el.style.color='';}
   });
-  // update frameOverlay filter for live preview
-  const fo=document.getElementById('frameOverlay');
-  if(fo)fo.style.filter=c==='white'?'invert(1)':'none';
+  // previewPanel bg hint for white frame
+  const pp=document.getElementById('previewPanel');
+  if(pp)pp.style.background=c==='white'?'#e8e8e8':'';
   renderAll();
 }
 function setSig(on){S.sig=on;const ed=document.getElementById('sigEd');if(ed)ed.style.display=on?'block':'none';renderAll();updateSigPreview();}
@@ -2319,6 +2319,7 @@ function resetToHome(){
   // Reset frame color UI
   ['black','white'].forEach(v=>{const el=document.getElementById('fc-'+v);if(!el)return;el.classList.toggle('on',v==='black');el.style.borderColor='';el.style.background='';el.style.color='';});
   const fo=document.getElementById('frameOverlay');if(fo)fo.style.filter='none';
+  const pp=document.getElementById('previewPanel');if(pp)pp.style.background='';
   const uz=document.getElementById('uz');
   uz.innerHTML=`<input type="file" id="fi" accept="image/*" style="display:none" onchange="handleFile(this)"><div class="uz-icon">🎵</div><div class="uz-title">Bild hochladen</div><div class="uz-sub">JPG · PNG · WEBP</div>`;
   uz.onclick=()=>document.getElementById('fi').click();
