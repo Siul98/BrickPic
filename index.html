@@ -2009,6 +2009,21 @@ function processImage(idx,src){
     const {data}=ctx.getImageData(0,0,N,N);
     const grid=[];
     for(let y=0;y<N;y++){const row=[];for(let x=0;x<N;x++){const i=(y*N+x)*4;row.push(nearest(data[i],data[i+1],data[i+2]));}grid.push(row);}
+    // Island-removal: 2 passes — isolated pixels replaced by most common neighbor
+    for(let pass=0;pass<2;pass++){
+      const snap=grid.map(r=>[...r]);
+      for(let y=0;y<N;y++){for(let x=0;x<N;x++){
+        const curr=snap[y][x].id;
+        const nb=[];
+        if(y>0)nb.push(snap[y-1][x]);if(y<N-1)nb.push(snap[y+1][x]);
+        if(x>0)nb.push(snap[y][x-1]);if(x<N-1)nb.push(snap[y][x+1]);
+        if(nb.length>=3&&nb.filter(c=>c.id===curr).length===0){
+          const freq={};let best=nb[0],bestN=0;
+          for(const c of nb){const n=(freq[c.id]=(freq[c.id]||0)+1);if(n>bestN){bestN=n;best=c;}}
+          grid[y][x]=best;
+        }
+      }}
+    }
     S.albums[idx]={src,grid,N,thumb:src};
     revealSteps();updateSummary();updateAlbumPills();renderAll();
   };img.src=src;
