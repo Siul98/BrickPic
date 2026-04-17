@@ -1691,17 +1691,16 @@ html, body {
       <div class="premium-box" style="margin-top:8px"><b>PREMIUM TECHNIK-FUNDAMENT</b><br>9 Module, jedes einzeln baubar. Mehrere Personen gleichzeitig. Am Ende zusammenstecken.</div>
     </div>
     <div class="sec step" id="step3">
-      <div class="sec-title"><b>Rahmen.</b> <span class="gray">Schwarz oder Weiß?</span></div>
+      <div class="sec-title"><b>Rahmen.</b> <span class="gray">Klassisches Schwarz.</span></div>
       <div class="tp-minimal" style="margin-top:10px">
-        <button class="tp on" id="fc-black" onclick="setFrameColor('black')">Schwarz<small>Klassisch</small></button>
-        <button class="tp" id="fc-white" onclick="setFrameColor('white')">Weiß<small>Modern</small></button>
+        <button class="tp on" id="fc-black" style="width:100%">Schwarz<small>Klassisch</small></button>
       </div>
     </div>
     <div class="sec step" id="step4">
       <div class="sec-title"><b>Palette.</b></div>
       <div class="tp-minimal" style="margin-top:10px">
-        <button class="tp on" id="dt-3" onclick="setTier(3)">Detail ★<small>Foto-realistisch</small></button>
-        <button class="tp" id="dt-1" onclick="setTier(1)">Two Tone<small>Schwarz &amp; Weiß</small></button>
+        <button class="tp on" id="dt-3" onclick="setTier(3)">COLOR<small>Foto-realistisch</small></button>
+        <button class="tp" id="dt-1" onclick="setTier(1)">BLACK&amp;WHITE<small>Klassisch</small></button>
       </div>
       <button id="improveBtn" onclick="improveGrid()" style="margin-top:10px;width:100%;padding:10px;border-radius:10px;border:1.5px solid var(--brd);background:var(--bg);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--txt);transition:all .15s;display:none">✦ Verbessern</button>
     </div>
@@ -1714,7 +1713,6 @@ html, body {
       <div id="sumBody">
         <div class="sum-box" id="sumBox">
           <div class="sbr"><span class="sbl">Größe</span><span class="sbv" id="sbSz">—</span></div>
-          <div class="sbr"><span class="sbl">Rahmen</span><span class="sbv" id="sbFrame">Schwarz</span></div>
           <div class="sbr"><span class="sbl">Farben</span><span class="sbv" id="sbCol">—</span></div>
           <div class="sbr"><span class="sbl">Tiles gesamt</span><span class="sbv" id="sbTot">—</span></div>
         </div>
@@ -2215,7 +2213,6 @@ function updateSummary(){
   set('sbTot',total.toLocaleString());
   set('sbSz',`${cfg.cm}`);
   set('sbCol',counts.length+' Farben');
-  set('sbFrame',S.frameCol==='white'?'Weiß':'Schwarz');
   document.getElementById('sumBox').style.display='block';
   document.getElementById('step6')?.classList.add('show');
 
