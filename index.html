@@ -2027,6 +2027,12 @@ function processImage(idx,src){
     const {data}=ctx.getImageData(0,0,N,N);
     const grid=[];
     for(let y=0;y<N;y++){const row=[];for(let x=0;x<N;x++){const i=(y*N+x)*4;const[br,bg,bb]=boostSat(data[i],data[i+1],data[i+2],1.8);row.push(nearest(br,bg,bb));}grid.push(row);}
+    // Palette restriction: drop colors with <0.5% coverage, remap to nearest kept color
+    const freq0={};for(let y=0;y<N;y++)for(let x=0;x<N;x++){const id=grid[y][x].id;freq0[id]=(freq0[id]||0)+1;}
+    const thr=Math.max(5,N*N*0.005);
+    const active=pal().filter(c=>(freq0[c.id]||0)>=thr);
+    const excl=new Set(pal().filter(c=>!active.find(a=>a.id===c.id)).map(c=>c.id));
+    if(excl.size){for(let y=0;y<N;y++){for(let x=0;x<N;x++){if(excl.has(grid[y][x].id)){const i=(y*N+x)*4;const[L1,a1,b1]=rgb2lab(data[i],data[i+1],data[i+2]);let best=active[0],bd=Infinity;for(const ac of active){const[L2,a2,b2]=colorLab(ac);const dd=(L1-L2)**2+(a1-a2)**2+(b1-b2)**2;if(dd<bd){bd=dd;best=ac;}}grid[y][x]=best;}}}}
     // Island-removal: 2 passes — isolated pixels replaced by most common neighbor
     for(let pass=0;pass<2;pass++){
       const snap=grid.map(r=>[...r]);
