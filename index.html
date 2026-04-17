@@ -2070,7 +2070,7 @@ function processImage(idx,src){
   const img=new Image();
   img.onload=()=>{
     const N=S.N;
-    // Staged downscale: 4x→2x→1x gives box-filter quality vs direct bilinear
+    // Staged downscale: 4x→2x→1x (same high-quality box-filter as showcase pre-computed data)
     const s1=document.createElement('canvas'),s2=document.createElement('canvas'),cv=document.createElement('canvas');
     const big=Math.max(img.width,img.height);
     s1.width=s1.height=N*4;s2.width=s2.height=N*2;cv.width=cv.height=N;
@@ -2078,70 +2078,9 @@ function processImage(idx,src){
     s2.getContext('2d').drawImage(s1,0,0,N*2,N*2);
     const ctx=cv.getContext('2d');ctx.drawImage(s2,0,0,N,N);
     const raw=ctx.getImageData(0,0,N,N).data;
-    // Mild 3×3 box smooth to reduce JPEG compression artifacts
-    const sm=new Uint8ClampedArray(raw.length);
-    for(let y=0;y<N;y++){for(let x=0;x<N;x++){
-      let rr=0,gg=0,bb=0,w=0;
-      for(let dy=-1;dy<=1;dy++){for(let dx=-1;dx<=1;dx++){
-        const ny=Math.max(0,Math.min(N-1,y+dy)),nx=Math.max(0,Math.min(N-1,x+dx));
-        const ii=(ny*N+nx)*4;rr+=raw[ii];gg+=raw[ii+1];bb+=raw[ii+2];w++;
-      }}
-      const ii=(y*N+x)*4;sm[ii]=rr/w;sm[ii+1]=gg/w;sm[ii+2]=bb/w;sm[ii+3]=255;
-    }}
-    const data=sm;
+    // Direct per-pixel nearest color mapping — same as buildGrid() used by showcase
     const grid=[];
-    // K-Means pre-quantization: cluster image colors → map cluster centroids to LEGO
-    const K=Math.min(18,pal().length);
-    const pixels=[];for(let i=0;i<data.length;i+=4)pixels.push([data[i],data[i+1],data[i+2]]);
-    // Init centroids by sampling spread pixels
-    const step=Math.floor(pixels.length/K);
-    let centroids=Array.from({length:K},(_,k)=>[...pixels[k*step]]);
-    let assign=new Int32Array(pixels.length);
-    // 8 iterations of k-means in Lab space
-    for(let iter=0;iter<8;iter++){
-      // Assignment step
-      for(let pi=0;pi<pixels.length;pi++){
-        const[L1,a1,b1]=rgb2lab(pixels[pi][0],pixels[pi][1],pixels[pi][2]);
-        let best=0,bd=Infinity;
-        for(let k=0;k<K;k++){const[L2,a2,b2]=rgb2lab(centroids[k][0],centroids[k][1],centroids[k][2]);const d=ciede2000(L1,a1,b1,L2,a2,b2);if(d<bd){bd=d;best=k;}}
-        assign[pi]=best;
-      }
-      // Update step
-      const sums=Array.from({length:K},()=>[0,0,0,0]);
-      for(let pi=0;pi<pixels.length;pi++){const k=assign[pi];sums[k][0]+=pixels[pi][0];sums[k][1]+=pixels[pi][1];sums[k][2]+=pixels[pi][2];sums[k][3]++;}
-      for(let k=0;k<K;k++){if(sums[k][3]>0)centroids[k]=[sums[k][0]/sums[k][3],sums[k][1]/sums[k][3],sums[k][2]/sums[k][3]];}
-    }
-    // Map each cluster centroid to nearest LEGO color
-    const clusterColor=centroids.map(([r,g,b])=>nearest(r,g,b));
-    // Build grid using cluster assignments
-    for(let y=0;y<N;y++){const row=[];for(let x=0;x<N;x++){row.push(clusterColor[assign[y*N+x]]);}grid.push(row);}
-    // Palette restriction: drop colors with <0.5% coverage AND no connected structure
-    const freq0={};for(let y=0;y<N;y++)for(let x=0;x<N;x++){const id=grid[y][x].id;freq0[id]=(freq0[id]||0)+1;}
-    const thr=Math.max(5,N*N*0.005);
-    // Check if a color forms a connected structure (has ≥1 pixel with same-color neighbor)
-    const hasStructure={};
-    for(let y=0;y<N;y++){for(let x=0;x<N;x++){
-      const id=grid[y][x].id;
-      if(!hasStructure[id]&&((y>0&&grid[y-1][x].id===id)||(y<N-1&&grid[y+1][x].id===id)||(x>0&&grid[y][x-1].id===id)||(x<N-1&&grid[y][x+1].id===id)))hasStructure[id]=true;
-    }}
-    const active=pal().filter(c=>(freq0[c.id]||0)>=thr||hasStructure[c.id]);
-    const excl=new Set(pal().filter(c=>!active.find(a=>a.id===c.id)).map(c=>c.id));
-    if(excl.size){for(let y=0;y<N;y++){for(let x=0;x<N;x++){if(excl.has(grid[y][x].id)){const i=(y*N+x)*4;const[L1,a1,b1]=rgb2lab(data[i],data[i+1],data[i+2]);let best=active[0],bd=Infinity;for(const ac of active){const[L2,a2,b2]=colorLab(ac);const dd=(L1-L2)**2+(a1-a2)**2+(b1-b2)**2;if(dd<bd){bd=dd;best=ac;}}grid[y][x]=best;}}}}
-    // Island-removal: 2 passes — isolated pixels replaced by most common neighbor
-    for(let pass=0;pass<2;pass++){
-      const snap=grid.map(r=>[...r]);
-      for(let y=0;y<N;y++){for(let x=0;x<N;x++){
-        const curr=snap[y][x].id;
-        const nb=[];
-        if(y>0)nb.push(snap[y-1][x]);if(y<N-1)nb.push(snap[y+1][x]);
-        if(x>0)nb.push(snap[y][x-1]);if(x<N-1)nb.push(snap[y][x+1]);
-        if(nb.length>=3&&nb.filter(c=>c.id===curr).length===0){
-          const freq={};let best=nb[0],bestN=0;
-          for(const c of nb){const n=(freq[c.id]=(freq[c.id]||0)+1);if(n>bestN){bestN=n;best=c;}}
-          grid[y][x]=best;
-        }
-      }}
-    }
+    for(let y=0;y<N;y++){const row=[];for(let x=0;x<N;x++){const i=(y*N+x)*4;row.push(nearest(raw[i],raw[i+1],raw[i+2]));}grid.push(row);}
     S.albums[idx]={src,grid,N,thumb:src};
     const ib=document.getElementById('improveBtn');if(ib)ib.style.display='block';
     const ab=document.getElementById('actionBtns');if(ab)ab.style.display='block';
