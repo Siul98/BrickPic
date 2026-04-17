@@ -2028,10 +2028,16 @@ function processImage(idx,src){
     const {data}=ctx.getImageData(0,0,N,N);
     const grid=[];
     for(let y=0;y<N;y++){const row=[];for(let x=0;x<N;x++){const i=(y*N+x)*4;row.push(nearest(data[i],data[i+1],data[i+2]));}grid.push(row);}
-    // Palette restriction: drop colors with <0.5% coverage, remap to nearest kept color
+    // Palette restriction: drop colors with <0.5% coverage AND no connected structure
     const freq0={};for(let y=0;y<N;y++)for(let x=0;x<N;x++){const id=grid[y][x].id;freq0[id]=(freq0[id]||0)+1;}
     const thr=Math.max(5,N*N*0.005);
-    const active=pal().filter(c=>(freq0[c.id]||0)>=thr);
+    // Check if a color forms a connected structure (has ≥1 pixel with same-color neighbor)
+    const hasStructure={};
+    for(let y=0;y<N;y++){for(let x=0;x<N;x++){
+      const id=grid[y][x].id;
+      if(!hasStructure[id]&&((y>0&&grid[y-1][x].id===id)||(y<N-1&&grid[y+1][x].id===id)||(x>0&&grid[y][x-1].id===id)||(x<N-1&&grid[y][x+1].id===id)))hasStructure[id]=true;
+    }}
+    const active=pal().filter(c=>(freq0[c.id]||0)>=thr||hasStructure[c.id]);
     const excl=new Set(pal().filter(c=>!active.find(a=>a.id===c.id)).map(c=>c.id));
     if(excl.size){for(let y=0;y<N;y++){for(let x=0;x<N;x++){if(excl.has(grid[y][x].id)){const i=(y*N+x)*4;const[L1,a1,b1]=rgb2lab(data[i],data[i+1],data[i+2]);let best=active[0],bd=Infinity;for(const ac of active){const[L2,a2,b2]=colorLab(ac);const dd=(L1-L2)**2+(a1-a2)**2+(b1-b2)**2;if(dd<bd){bd=dd;best=ac;}}grid[y][x]=best;}}}}
     // Island-removal: 2 passes — isolated pixels replaced by most common neighbor
@@ -2296,6 +2302,13 @@ function improveGrid(){
   const R=2;
   for(let y=0;y<N;y++){for(let x=0;x<N;x++){
     const curr=snap[y][x].id;
+    // Structural protection: if pixel has ≥1 same-color 4-neighbor, it's part of a line/shape - never replace
+    const sameNeighbors=
+      (y>0   && snap[y-1][x].id===curr ? 1:0)+
+      (y<N-1 && snap[y+1][x].id===curr ? 1:0)+
+      (x>0   && snap[y][x-1].id===curr ? 1:0)+
+      (x<N-1 && snap[y][x+1].id===curr ? 1:0);
+    if(sameNeighbors>=1) continue; // part of a connected structure - preserve it
     const freq={};let total=0;
     for(let dy=-R;dy<=R;dy++){for(let dx=-R;dx<=R;dx++){
       const ny=y+dy,nx=x+dx;
