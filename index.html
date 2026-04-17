@@ -1653,16 +1653,15 @@ html, body {
     </div>
   </div>
   <div id="config">
-    <div id="topbar">
-      <div class="prod-collab-header" onclick="resetToHome()" style="cursor:pointer;padding:0">
+    <div id="topbar" style="display:none"></div>
+    <div id="albumPills" style="display:none"></div>
+    <div id="config-content">
+    <div class="sec" style="border-top:none;padding-bottom:12px">
+      <div class="prod-collab-header" onclick="resetToHome()" style="cursor:pointer;padding:0 0 16px 0;border-bottom:1px solid var(--brd);margin-bottom:16px">
         <img class="prod-collab-logo" src="https://siul98.github.io/BrickPic/BrickPicLogo.png" alt="BrickPic">
         <span class="prod-collab-x">×</span>
         <span class="prod-collab-diy">Do it yourself</span>
       </div>
-    </div>
-    <div id="albumPills" style="display:none"></div>
-    <div id="config-content">
-    <div class="sec">
       <div class="sec-title"><b>Bild.</b> <span class="gray">Lade dein Motiv hoch.</span></div>
       <div class="sec-sub" style="margin-bottom:10px">Album, Haustier, Gemälde, Portrait — alles geht.</div>
       <div class="uz" id="uz" onclick="document.getElementById('fi').click()">
@@ -1689,12 +1688,6 @@ html, body {
         </div>
       </div>
       <div class="premium-box" style="margin-top:8px"><b>PREMIUM TECHNIK-FUNDAMENT</b><br>9 Module, jedes einzeln baubar. Mehrere Personen gleichzeitig. Am Ende zusammenstecken.</div>
-    </div>
-    <div class="sec step" id="step3">
-      <div class="sec-title"><b>Rahmen.</b> <span class="gray">Klassisches Schwarz.</span></div>
-      <div class="tp-minimal" style="margin-top:10px">
-        <button class="tp on" id="fc-black" style="width:100%">Schwarz<small>Klassisch</small></button>
-      </div>
     </div>
     <div class="sec step" id="step4">
       <div class="sec-title"><b>Palette.</b></div>
@@ -1736,12 +1729,15 @@ html, body {
       </div>
     </div>
 
+      <!-- Action buttons - shown after image upload -->
+      <div id="actionBtns" style="display:none;padding:16px 0 4px">
+        <div style="display:flex;gap:10px">
+          <button class="btn-restart" onclick="resetToHome()" style="flex:1;background:none;border:1.5px solid var(--brd);color:var(--txt);padding:11px 0;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif">↺ Restart</button>
+          <button class="btn-order" onclick="openOrderFromConfig()" style="flex:2;background:linear-gradient(135deg,#F2619C,#93ABD9);border:none;color:#fff;padding:11px 0;border-radius:100px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:-.01em;font-family:'Nunito',sans-serif">Bestellen →</button>
+        </div>
+      </div>
     </div><!-- /config-content -->
-  <!-- Sticky action footer -->
-  <div id="config-footer">
-    <button class="btn-restart" onclick="resetToHome()">↺ Restart</button>
-    <button class="btn-order" onclick="openOrderFromConfig()">Bestellen →</button>
-  </div>
+  <div id="config-footer" style="display:none"></div>
   <div class="legal"><b>Bildrechte:</b> Du bestätigst Rechte an hochgeladenen Bildern. Lokale Verarbeitung — keine Server.<br><b>Markenrecht:</b> BrickPic ist kein Produkt der LEGO Group.</div>
   </div>
 </div>
@@ -2025,6 +2021,7 @@ function processImage(idx,src){
     }
     S.albums[idx]={src,grid,N,thumb:src};
     const ib=document.getElementById('improveBtn');if(ib)ib.style.display='block';
+    const ab=document.getElementById('actionBtns');if(ab)ab.style.display='block';
     revealSteps();updateSummary();updateAlbumPills();renderAll();
   };img.src=src;
 }
@@ -2259,26 +2256,32 @@ function getFrameBg(){return S.frameCol==='white'?'#f5f5f5':'#0a0a0a';}
 function improveGrid(){
   const a=S.albums[S.active];if(!a)return;
   const grid=a.grid.map(r=>[...r]);const N=a.N;
-  // 3 passes: remove isolated + small-cluster noise
-  for(let pass=0;pass<3;pass++){
-    const snap=grid.map(r=>[...r]);
-    for(let y=0;y<N;y++){for(let x=0;x<N;x++){
-      const curr=snap[y][x].id;
-      const nb=[];
-      if(y>0)nb.push(snap[y-1][x]);if(y<N-1)nb.push(snap[y+1][x]);
-      if(x>0)nb.push(snap[y][x-1]);if(x<N-1)nb.push(snap[y][x+1]);
-      const sameCount=nb.filter(c=>c.id===curr).length;
-      // Replace if isolated (0 same) or lone pair with ≥3 diff neighbors
-      if(nb.length>=3&&sameCount<=1&&(nb.length-sameCount)>=3){
-        const freq={};let best=nb[0],bestN=0;
-        for(const c of nb){const n=(freq[c.id]=(freq[c.id]||0)+1);if(n>bestN){bestN=n;best=c;}}
-        grid[y][x]=best;
-      }
+  const snap=grid.map(r=>[...r]);
+  const R=2; // 5×5 neighbourhood
+  for(let y=0;y<N;y++){for(let x=0;x<N;x++){
+    const curr=snap[y][x].id;
+    // Count colors in 5×5 area
+    const freq={};let total=0;
+    for(let dy=-R;dy<=R;dy++){for(let dx=-R;dx<=R;dx++){
+      const ny=y+dy,nx=x+dx;
+      if(ny<0||ny>=N||nx<0||nx>=N)continue;
+      const cid=snap[ny][nx].id;freq[cid]=(freq[cid]||0)+1;total++;
     }}
-  }
+    // Find dominant color
+    let domId=curr,domN=0;
+    for(const [id,n] of Object.entries(freq)){if(n>domN){domN=n;domId=id;}}
+    // Only replace if: pixel differs from dominant AND dominant covers >72% of area
+    if(domId!==curr&&domN/total>0.72){
+      // Get color object from a neighbor that has domId
+      outer:for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+        const ny=y+dy,nx=x+dx;
+        if(ny<0||ny>=N||nx<0||nx>=N)continue;
+        if(snap[ny][nx].id===domId){grid[y][x]=snap[ny][nx];break outer;}
+      }
+    }
+  }}
   S.albums[S.active]={...a,grid};
   renderAll();updateSummary();
-  // Flash button feedback
   const btn=document.getElementById('improveBtn');
   if(btn){btn.textContent='✓ Verbessert';btn.style.borderColor='#0066CC';btn.style.color='#0066CC';
     setTimeout(()=>{btn.textContent='✦ Verbessern';btn.style.borderColor='';btn.style.color='';},1500);}
@@ -2319,7 +2322,7 @@ function addAlbum(i){
   uz.innerHTML=`<input type="file" id="fi" accept="image/*" style="display:none" onchange="handleFile(this)"><div class="uz-icon">💿</div><div class="uz-title">Cover hochladen</div><div class="uz-sub">JPG · PNG · WEBP</div>`;
   uz.onclick=()=>document.getElementById('fi').click();
 }
-function revealSteps(){['step2','step3','step4'].forEach((id,i)=>setTimeout(()=>{const el=document.getElementById(id);if(el)el.classList.add('show');},i*100));}
+function revealSteps(){['step2','step4'].forEach((id,i)=>setTimeout(()=>{const el=document.getElementById(id);if(el)el.classList.add('show');},i*100));}
 
 // ═══ EXPORT ══════════════════════════════════════════════════════════════
 function getAllCounts(){
@@ -2360,6 +2363,7 @@ function closeFS(){document.getElementById('fsm')?.classList.remove('open');}
 function resetToHome(){
   S.albums=[null,null,null];S.active=0;S.sig=false;S.sigL1='';S.sigL2='';S.frameCol='black';
   const ib=document.getElementById('improveBtn');if(ib)ib.style.display='none';
+  const ab=document.getElementById('actionBtns');if(ab)ab.style.display='none';
   // Reset frame color UI
   ['black','white'].forEach(v=>{const el=document.getElementById('fc-'+v);if(!el)return;el.classList.toggle('on',v==='black');el.style.borderColor='';el.style.background='';el.style.color='';});
   const fo=document.getElementById('frameOverlay');if(fo){fo.style.filter='none';fo.style.mixBlendMode='';}
@@ -2367,7 +2371,7 @@ function resetToHome(){
   const uz=document.getElementById('uz');
   uz.innerHTML=`<input type="file" id="fi" accept="image/*" style="display:none" onchange="handleFile(this)"><div class="uz-icon">🎵</div><div class="uz-title">Bild hochladen</div><div class="uz-sub">JPG · PNG · WEBP</div>`;
   uz.onclick=()=>document.getElementById('fi').click();
-  ['step2','step3','step4','step6'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('show');});
+  ['step2','step4','step6'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('show');});
   document.getElementById('sumBox').style.display='none';
   document.getElementById('albumPills').innerHTML='';
   setSize(48);setTier(3);startShowcase();
