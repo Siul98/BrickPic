@@ -1889,6 +1889,9 @@ const COLORS=[
   {id:"br-lblue",  name:"Himmelblau",       bl:105,hex:"#B3D7EE",rgb:[179,215,238], t:4},
   {id:"br-yellow", name:"Zitronengelb",     bl:103,hex:"#FFE001",rgb:[255,224,1],   t:4},
   {id:"br-orange", name:"Pfirsich",         bl:110,hex:"#F9A22B",rgb:[249,162,43],  t:4},
+  {id:"nougat",    name:"Nougat",            bl:28, hex:"#D09168",rgb:[208,145,104], t:3},
+  {id:"lt-nougat", name:"Hellnougat",        bl:90, hex:"#F6D7B3",rgb:[246,215,179], t:3},
+  {id:"med-nougat",name:"Mittelnougat",      bl:150,hex:"#AA7D55",rgb:[170,125,85],  t:3},
 ];
 const PARTS={stud:{id:'3024',name:'Plate mit Noppe'},flat:{id:'3070b',name:'Tile glatt'},round:{id:'98138',name:'Round Tile'}};
 const CFG={
@@ -2075,7 +2078,31 @@ function processImage(idx,src){
     }}
     const data=sm;
     const grid=[];
-    for(let y=0;y<N;y++){const row=[];for(let x=0;x<N;x++){const i=(y*N+x)*4;row.push(nearest(data[i],data[i+1],data[i+2]));}grid.push(row);}
+    // K-Means pre-quantization: cluster image colors → map cluster centroids to LEGO
+    const K=Math.min(18,pal().length);
+    const pixels=[];for(let i=0;i<data.length;i+=4)pixels.push([data[i],data[i+1],data[i+2]]);
+    // Init centroids by sampling spread pixels
+    const step=Math.floor(pixels.length/K);
+    let centroids=Array.from({length:K},(_,k)=>[...pixels[k*step]]);
+    let assign=new Int32Array(pixels.length);
+    // 8 iterations of k-means in Lab space
+    for(let iter=0;iter<8;iter++){
+      // Assignment step
+      for(let pi=0;pi<pixels.length;pi++){
+        const[L1,a1,b1]=rgb2lab(pixels[pi][0],pixels[pi][1],pixels[pi][2]);
+        let best=0,bd=Infinity;
+        for(let k=0;k<K;k++){const[L2,a2,b2]=rgb2lab(centroids[k][0],centroids[k][1],centroids[k][2]);const d=ciede2000(L1,a1,b1,L2,a2,b2);if(d<bd){bd=d;best=k;}}
+        assign[pi]=best;
+      }
+      // Update step
+      const sums=Array.from({length:K},()=>[0,0,0,0]);
+      for(let pi=0;pi<pixels.length;pi++){const k=assign[pi];sums[k][0]+=pixels[pi][0];sums[k][1]+=pixels[pi][1];sums[k][2]+=pixels[pi][2];sums[k][3]++;}
+      for(let k=0;k<K;k++){if(sums[k][3]>0)centroids[k]=[sums[k][0]/sums[k][3],sums[k][1]/sums[k][3],sums[k][2]/sums[k][3]];}
+    }
+    // Map each cluster centroid to nearest LEGO color
+    const clusterColor=centroids.map(([r,g,b])=>nearest(r,g,b));
+    // Build grid using cluster assignments
+    for(let y=0;y<N;y++){const row=[];for(let x=0;x<N;x++){row.push(clusterColor[assign[y*N+x]]);}grid.push(row);}
     // Palette restriction: drop colors with <0.5% coverage AND no connected structure
     const freq0={};for(let y=0;y<N;y++)for(let x=0;x<N;x++){const id=grid[y][x].id;freq0[id]=(freq0[id]||0)+1;}
     const thr=Math.max(5,N*N*0.005);
