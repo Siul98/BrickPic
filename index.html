@@ -1997,12 +1997,43 @@ function rgb2lab(r,g,b){
   const fx=f(x),fy=f(y),fz=f(z);
   return[116*fy-16,500*(fx-fy),200*(fy-fz)];
 }
+// ── CIEDE2000 color distance (perceptually accurate) ──
 const _labCache={};
 function colorLab(c){return _labCache[c.id]||(_labCache[c.id]=rgb2lab(c.rgb[0],c.rgb[1],c.rgb[2]));}
+function ciede2000(L1,a1,b1,L2,a2,b2){
+  const rad=Math.PI/180;
+  const C1=Math.sqrt(a1*a1+b1*b1),C2=Math.sqrt(a2*a2+b2*b2);
+  const Cb=(C1+C2)/2;const Cb7=Math.pow(Cb,7);
+  const G=0.5*(1-Math.sqrt(Cb7/(Cb7+6103515625)));
+  const aa1=a1*(1+G),aa2=a2*(1+G);
+  const CC1=Math.sqrt(aa1*aa1+b1*b1),CC2=Math.sqrt(aa2*aa2+b2*b2);
+  let hh1=CC1<1e-10?0:Math.atan2(b1,aa1)*180/Math.PI;if(hh1<0)hh1+=360;
+  let hh2=CC2<1e-10?0:Math.atan2(b2,aa2)*180/Math.PI;if(hh2<0)hh2+=360;
+  const dL=L2-L1,dC=CC2-CC1;
+  let dhh=0;
+  if(CC1*CC2<1e-10)dhh=0;
+  else if(Math.abs(hh2-hh1)<=180)dhh=hh2-hh1;
+  else if(hh2-hh1>180)dhh=hh2-hh1-360;
+  else dhh=hh2-hh1+360;
+  const dH=2*Math.sqrt(CC1*CC2)*Math.sin(dhh/2*rad);
+  const LL=(L1+L2)/2,CC=(CC1+CC2)/2;
+  let HH=0;
+  if(CC1*CC2<1e-10)HH=(hh1+hh2)/2;
+  else if(Math.abs(hh1-hh2)<=180)HH=(hh1+hh2)/2;
+  else if(hh1+hh2<360)HH=(hh1+hh2+360)/2;
+  else HH=(hh1+hh2-360)/2;
+  const T=1-0.17*Math.cos((HH-30)*rad)+0.24*Math.cos(2*HH*rad)+0.32*Math.cos((3*HH+6)*rad)-0.2*Math.cos((4*HH-63)*rad);
+  const SL=1+0.015*(LL-50)*(LL-50)/Math.sqrt(20+(LL-50)*(LL-50));
+  const SC=1+0.045*CC,SH=1+0.015*CC*T;
+  const CC7=Math.pow(CC,7);const RC=2*Math.sqrt(CC7/(CC7+6103515625));
+  const dt=30*Math.exp(-((HH-275)/25)*((HH-275)/25));
+  const RT=-Math.sin(2*dt*rad)*RC;
+  return (dL/SL)*(dL/SL)+(dC/SC)*(dC/SC)+(dH/SH)*(dH/SH)+RT*(dC/SC)*(dH/SH);
+}
 function nearest(r,g,b){
   const p=pal();const[L1,a1,b1]=rgb2lab(r,g,b);
   let best=p[0],dist=Infinity;
-  for(const c of p){const[L2,a2,b2]=colorLab(c);const dd=(L1-L2)**2+(a1-a2)**2+(b1-b2)**2;if(dd<dist){dist=dd;best=c;}}
+  for(const c of p){const[L2,a2,b2]=colorLab(c);const dd=ciede2000(L1,a1,b1,L2,a2,b2);if(dd<dist){dist=dd;best=c;}}
   return best;
 }
 function dl(name,content,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();}
@@ -2023,9 +2054,26 @@ function getCounts(g,sz){
 function processImage(idx,src){
   const img=new Image();
   img.onload=()=>{
-    const N=S.N,cv=document.createElement('canvas');cv.width=N;cv.height=N;
-    const ctx=cv.getContext('2d');ctx.drawImage(img,0,0,N,N);
-    const {data}=ctx.getImageData(0,0,N,N);
+    const N=S.N;
+    // Staged downscale: 4x→2x→1x gives box-filter quality vs direct bilinear
+    const s1=document.createElement('canvas'),s2=document.createElement('canvas'),cv=document.createElement('canvas');
+    const big=Math.max(img.width,img.height);
+    s1.width=s1.height=N*4;s2.width=s2.height=N*2;cv.width=cv.height=N;
+    s1.getContext('2d').drawImage(img,(img.width-big)/2,(img.height-big)/2,big,big,0,0,N*4,N*4);
+    s2.getContext('2d').drawImage(s1,0,0,N*2,N*2);
+    const ctx=cv.getContext('2d');ctx.drawImage(s2,0,0,N,N);
+    const raw=ctx.getImageData(0,0,N,N).data;
+    // Mild 3×3 box smooth to reduce JPEG compression artifacts
+    const sm=new Uint8ClampedArray(raw.length);
+    for(let y=0;y<N;y++){for(let x=0;x<N;x++){
+      let rr=0,gg=0,bb=0,w=0;
+      for(let dy=-1;dy<=1;dy++){for(let dx=-1;dx<=1;dx++){
+        const ny=Math.max(0,Math.min(N-1,y+dy)),nx=Math.max(0,Math.min(N-1,x+dx));
+        const ii=(ny*N+nx)*4;rr+=raw[ii];gg+=raw[ii+1];bb+=raw[ii+2];w++;
+      }}
+      const ii=(y*N+x)*4;sm[ii]=rr/w;sm[ii+1]=gg/w;sm[ii+2]=bb/w;sm[ii+3]=255;
+    }}
+    const data=sm;
     const grid=[];
     for(let y=0;y<N;y++){const row=[];for(let x=0;x<N;x++){const i=(y*N+x)*4;row.push(nearest(data[i],data[i+1],data[i+2]));}grid.push(row);}
     // Palette restriction: drop colors with <0.5% coverage AND no connected structure
