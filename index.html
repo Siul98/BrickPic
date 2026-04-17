@@ -2142,7 +2142,7 @@ function animateWave(grid,N){
     if(targetW>lastW){
       const mc=document.getElementById('mc');if(!mc)return;
       const mctx=mc.getContext('2d');
-      if(lastW===-1){mc.width=768;mc.height=768;mctx.clearRect(0,0,768,768);mctx.fillStyle=getFrameBg();mctx.fillRect(35,35,768-70,768-70);const fi=getLegoFrame();if(fi.complete&&fi.naturalWidth>0){mctx.drawImage(fi,0,0,768,768);if(S.frameCol==='white'){mctx.globalCompositeOperation='screen';mctx.fillStyle='rgba(210,210,210,1)';mctx.fillRect(0,0,768,768);mctx.globalCompositeOperation='source-over';}}}
+      if(lastW===-1){mc.width=768;mc.height=768;mctx.clearRect(0,0,768,768);mctx.fillStyle=getFrameBg();mctx.fillRect(35,35,768-70,768-70);const fi=getLegoFrame();if(fi.complete&&fi.naturalWidth>0)mctx.drawImage(fi,0,0,768,768);}
       const SZ=768,FRAME_INNER=36,cell=(SZ-2*FRAME_INNER)/N,x0=FRAME_INNER,tile_r=cell*0.49,rw=Math.max(0.3,cell*0.02);
       for(const t of tiles){
         if(t.w>lastW&&t.w<=targetW){
