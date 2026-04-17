@@ -1969,9 +1969,25 @@ const S={albums:[null,null,null],active:0,N:48,tier:3,partType:'round',sig:false
 
 // ═══ HELPERS ═════════════════════════════════════════════════════════════
 function pal(){return COLORS.filter(c=>c.t<=S.tier);}
+function rgb2lab(r,g,b){
+  let lr=r/255,lg=g/255,lb=b/255;
+  lr=lr>0.04045?Math.pow((lr+0.055)/1.055,2.4):lr/12.92;
+  lg=lg>0.04045?Math.pow((lg+0.055)/1.055,2.4):lg/12.92;
+  lb=lb>0.04045?Math.pow((lb+0.055)/1.055,2.4):lb/12.92;
+  let x=lr*0.4124564+lg*0.3575761+lb*0.1804375;
+  let y=lr*0.2126729+lg*0.7151522+lb*0.0721750;
+  let z=lr*0.0193339+lg*0.1191920+lb*0.9503041;
+  x/=0.95047;y/=1.0;z/=1.08883;
+  const f=v=>v>0.008856?Math.cbrt(v):(7.787*v+16/116);
+  const fx=f(x),fy=f(y),fz=f(z);
+  return[116*fy-16,500*(fx-fy),200*(fy-fz)];
+}
+const _labCache={};
+function colorLab(c){return _labCache[c.id]||(_labCache[c.id]=rgb2lab(c.rgb[0],c.rgb[1],c.rgb[2]));}
 function nearest(r,g,b){
-  const p=pal();let best=p[0],dist=Infinity;
-  for(const c of p){const rm=(r+c.rgb[0])/2,dr=r-c.rgb[0],dg=g-c.rgb[1],db=b-c.rgb[2],dd=(2+rm/256)*dr*dr+4*dg*dg+(2+(255-rm)/256)*db*db;if(dd<dist){dist=dd;best=c;}}
+  const p=pal();const[L1,a1,b1]=rgb2lab(r,g,b);
+  let best=p[0],dist=Infinity;
+  for(const c of p){const[L2,a2,b2]=colorLab(c);const dd=(L1-L2)**2+(a1-a2)**2+(b1-b2)**2;if(dd<dist){dist=dd;best=c;}}
   return best;
 }
 function dl(name,content,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();}
