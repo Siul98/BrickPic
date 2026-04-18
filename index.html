@@ -26,6 +26,26 @@
   </div>
 </div>
 
+
+<!-- Shopify Checkout Modal -->
+<div id="shopifyModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+  <div style="background:var(--bg);border-radius:20px;padding:24px;width:min(360px,90vw);box-shadow:0 24px 80px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:14px;">
+    <div style="font-size:16px;font-weight:800;color:var(--txt)">Format wählen</div>
+    <div style="font-size:13px;color:var(--mut)">Wähle dein Mosaic-Format aus:</div>
+    <div style="display:flex;flex-direction:column;gap:8px;" id="shopifyVariants">
+      <button onclick="goShopify('53712034333013')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-radius:12px;border:1.5px solid var(--brd);background:var(--white);cursor:pointer;font-family:inherit;font-size:14px;transition:border-color .15s" onmouseover="this.style.borderColor='#F2619C'" onmouseout="this.style.borderColor='var(--brd)'">
+        <span style="font-weight:700">48×48 STANDARD</span>
+        <span style="font-weight:800;color:#F2619C">119 €</span>
+      </button>
+      <button onclick="goShopify('53712034365781')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-radius:12px;border:1.5px solid var(--brd);background:var(--white);cursor:pointer;font-family:inherit;font-size:14px;transition:border-color .15s" onmouseover="this.style.borderColor='#F2619C'" onmouseout="this.style.borderColor='var(--brd)'">
+        <span style="font-weight:700">64×64 XL</span>
+        <span style="font-weight:800;color:#F2619C">189 €</span>
+      </button>
+    </div>
+    <button onclick="document.getElementById('shopifyModal').style.display='none'" style="padding:11px;border-radius:100px;border:1.5px solid var(--brd);background:none;color:var(--mut);font-size:13px;cursor:pointer;font-family:inherit">Abbrechen</button>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -1806,7 +1826,7 @@ html, body {
       <div id="actionBtns" style="display:none;padding:16px 0 4px">
         <div style="display:flex;gap:10px">
           <button class="btn-restart" onclick="resetToHome()" style="flex:1;background:none;border:1.5px solid var(--brd);color:var(--txt);padding:11px 0;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif">↺ Restart</button>
-          <button class="btn-order" onclick="openOrderFromConfig()" style="flex:2;background:linear-gradient(135deg,#F2619C,#93ABD9);border:none;color:#fff;padding:11px 0;border-radius:100px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:-.01em;font-family:'Nunito',sans-serif">Bestellen →</button>
+          <button class="btn-order" onclick="openShopifyCheckout()" style="flex:2;background:linear-gradient(135deg,#F2619C,#93ABD9);border:none;color:#fff;padding:11px 0;border-radius:100px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:-.01em;font-family:'Nunito',sans-serif">Bestellen →</button>
         </div>
       </div>
     </div><!-- /config-content -->
@@ -2192,6 +2212,15 @@ function processImage(idx,src){
     const ab=document.getElementById('actionBtns');if(ab)ab.style.display='block';
     revealSteps();updateSummary();updateAlbumPills();renderAll();
   };img.src=src;
+}
+
+// ── Shopify Checkout ─────────────────────────────────────────────────────
+function openShopifyCheckout(){
+  document.getElementById('shopifyModal').style.display='flex';
+}
+function goShopify(variantId){
+  document.getElementById('shopifyModal').style.display='none';
+  window.open('https://jcivac-3m.myshopify.com/cart/'+variantId+':1?storefront=true','_blank');
 }
 // ── Drag & Drop on upload zone ──────────────────────────────────────────
 (function(){
