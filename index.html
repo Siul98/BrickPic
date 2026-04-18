@@ -443,6 +443,55 @@ input,textarea{user-select:text;-webkit-user-select:text}
   transition: opacity .4s ease;
 }
 .anno-arrow.visible { opacity: 1; }
+
+/* ── Hero Annotations ───────────────────────────────────────────────────── */
+.anno-wrap {
+  position: absolute;
+  pointer-events: none;
+  z-index: 12;
+  white-space: normal;
+  max-width: 160px;
+}
+.anno-text {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(13px, 1.6vw, 19px);
+  font-weight: 700;
+  color: rgba(255,255,255,.92);
+  text-shadow: 0 2px 14px rgba(0,0,0,.75), 0 0 40px rgba(0,0,0,.5);
+  line-height: 1.35;
+  display: block;
+  overflow: hidden;
+  /* write-on: clip from right */
+  clip-path: inset(0 100% 0 0);
+  transition: none;
+}
+.anno-text.written {
+  animation: writeOn var(--dur, .7s) cubic-bezier(.3,0,.5,1) forwards;
+}
+@keyframes writeOn {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0% 0 0); }
+}
+.anno-svg {
+  position: absolute;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+.anno-svg.visible { opacity: 1; }
+.anno-path {
+  fill: none;
+  stroke: rgba(255,255,255,.6);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  transition: stroke-dashoffset .6s ease;
+}
+.anno-svg.visible .anno-path { stroke-dashoffset: 0; }
+@media (max-width: 700px) {
+  .anno-wrap, .anno-svg { display: none; }
+}
 /* ── Nav: light theme when scrolled past hero ── */
 #glass-nav.nav-light {
   background: rgba(255,255,255,.92);
@@ -1854,48 +1903,51 @@ html, body {
   </div>
 
   <!-- Hero handwritten annotations -->
-  <div id="heroAnnotations">
-    <!-- top-left -->
-    <div class="anno" id="anno0" style="right:calc(50% + min(22vh,22vw) + 40px); top:calc(46% - min(21vh,21vw) - 20px); text-align:right; max-width:160px; white-space:normal;">
-      Dein Design<br>zum Leben erweckt ✦
-    </div>
-    <svg class="anno-arrow" id="arw0" style="position:absolute;right:calc(50% + min(22vh,22vw) - 10px);top:calc(46% - min(21vh,21vw) + 30px);width:60px;height:40px;overflow:visible" viewBox="0 0 60 40">
-      <path d="M0 8 Q30 0 52 28" stroke="rgba(255,255,255,.55)" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
-      <polygon points="52,28 44,26 50,20" fill="rgba(255,255,255,.55)"/>
-    </svg>
 
-    <!-- top-right -->
-    <div class="anno" id="anno1" style="left:calc(50% + min(22vh,22vw) + 30px); top:calc(46% - min(21vh,21vw) + 10px); max-width:155px; white-space:normal;">
-      Hohe Qualität —<br>solide & langlebig
-    </div>
-    <svg class="anno-arrow" id="arw1" style="position:absolute;left:calc(50% + min(22vh,22vw) - 5px);top:calc(46% - min(21vh,21vw) + 35px);width:50px;height:35px;overflow:visible" viewBox="0 0 50 35">
-      <path d="M50 5 Q20 0 4 25" stroke="rgba(255,255,255,.55)" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
-      <polygon points="4,25 12,22 6,30" fill="rgba(255,255,255,.55)"/>
-    </svg>
-
-    <!-- right middle -->
-    <div class="anno" id="anno2" style="left:calc(50% + min(22vh,22vw) + 28px); top:calc(46% + 10px); max-width:150px; white-space:normal;">
-      Einfache Anleitung —<br>Stein für Stein
-    </div>
-    <svg class="anno-arrow" id="arw2" style="position:absolute;left:calc(50% + min(22vh,22vw) - 8px);top:calc(46% + 15px);width:48px;height:30px;overflow:visible" viewBox="0 0 48 30">
-      <path d="M48 4 Q24 4 6 22" stroke="rgba(255,255,255,.55)" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
-      <polygon points="6,22 14,18 8,26" fill="rgba(255,255,255,.55)"/>
-    </svg>
-
-    <!-- bottom-right -->
-    <div class="anno" id="anno3" style="left:calc(50% + min(22vh,22vw) + 20px); bottom:calc(54% - min(21vh,21vw) - 10px); max-width:160px; white-space:normal;">
-      ↑ Perfektes Geschenk<br>für jeden Anlass ♡
-    </div>
-
-    <!-- left middle -->
-    <div class="anno" id="anno4" style="right:calc(50% + min(22vh,22vw) + 28px); top:calc(46% + 5px); text-align:right; max-width:160px; white-space:normal;">
-      Zusammen bauen —<br>mit Familie &amp; Freunden
-    </div>
-    <svg class="anno-arrow" id="arw4" style="position:absolute;right:calc(50% + min(22vh,22vw) - 8px);top:calc(46% + 10px);width:48px;height:30px;overflow:visible" viewBox="0 0 48 30">
-      <path d="M0 4 Q24 4 42 22" stroke="rgba(255,255,255,.55)" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
-      <polygon points="42,22 34,18 40,26" fill="rgba(255,255,255,.55)"/>
-    </svg>
+  <!-- 1. top-left: "Dein Foto. Dein Mosaik." -->
+  <div class="anno-wrap" style="left:calc(50% - min(44vh,44vw)/2 - 155px); top:calc(46% - min(44vh,44vw)/2 - 10px); transform:rotate(-8deg);">
+    <span class="anno-text" style="--dur:.65s;">Dein Foto.<br>Dein Mosaik.</span>
   </div>
+  <svg class="anno-svg" style="left:calc(50% - min(44vh,44vw)/2 - 20px); top:calc(46% - min(44vh,44vw)/2 + 32px); width:70px; height:50px;" viewBox="0 0 70 50">
+    <path class="anno-path" d="M4 8 C20 4 50 10 64 42"/>
+    <polygon points="64,42 56,36 62,50" fill="rgba(255,255,255,.6)"/>
+  </svg>
+
+  <!-- 2. top-right: "Stein für Stein aufgebaut" -->
+  <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 18px); top:calc(46% - min(44vh,44vw)/2 + 5px); transform:rotate(5deg);">
+    <span class="anno-text" style="--dur:.7s;">Stein für Stein<br>aufgebaut ✦</span>
+  </div>
+  <svg class="anno-svg" style="left:calc(50% + min(44vh,44vw)/2 + 8px); top:calc(46% - min(44vh,44vw)/2 + 48px); width:60px; height:45px;" viewBox="0 0 60 45">
+    <path class="anno-path" d="M58 5 C40 2 12 18 4 40"/>
+    <polygon points="4,40 14,36 6,48" fill="rgba(255,255,255,.6)"/>
+  </svg>
+
+  <!-- 3. right: "Perfektes Geschenk" -->
+  <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% + 20px); transform:rotate(-6deg);">
+    <span class="anno-text" style="--dur:.6s;">Perfektes<br>Geschenk ♡</span>
+  </div>
+  <svg class="anno-svg" style="left:calc(50% + min(44vh,44vw)/2 + 10px); top:calc(46% + 22px); width:55px; height:40px;" viewBox="0 0 55 40">
+    <path class="anno-path" d="M54 6 C36 2 14 14 4 34"/>
+    <polygon points="4,34 13,30 5,40" fill="rgba(255,255,255,.6)"/>
+  </svg>
+
+  <!-- 4. bottom-left: "Kompatibel mit LEGO®" -->
+  <div class="anno-wrap" style="right:calc(50% + min(44vh,44vw)/2 + 12px); bottom:calc(54% - min(44vh,44vw)/2 - 10px); text-align:right; transform:rotate(7deg);">
+    <span class="anno-text" style="--dur:.7s;">Kompatibel<br>mit LEGO® ✓</span>
+  </div>
+  <svg class="anno-svg" style="right:calc(50% + min(44vh,44vw)/2 - 20px); bottom:calc(54% - min(44vh,44vw)/2 + 32px); width:65px; height:48px;" viewBox="0 0 65 48">
+    <path class="anno-path" d="M4 6 C22 2 50 16 62 42"/>
+    <polygon points="62,42 54,36 60,50" fill="rgba(255,255,255,.6)"/>
+  </svg>
+
+  <!-- 5. left-middle: "Gemeinsam bauen macht Spaß" -->
+  <div class="anno-wrap" style="right:calc(50% + min(44vh,44vw)/2 + 16px); top:calc(46% + 15px); text-align:right; transform:rotate(-5deg);">
+    <span class="anno-text" style="--dur:.75s;">Gemeinsam<br>bauen macht<br>Spaß ↗</span>
+  </div>
+  <svg class="anno-svg" style="right:calc(50% + min(44vh,44vw)/2 - 14px); top:calc(46% + 20px); width:58px; height:42px;" viewBox="0 0 58 42">
+    <path class="anno-path" d="M56 6 C38 2 12 16 4 38"/>
+    <polygon points="4,38 13,34 5,44" fill="rgba(255,255,255,.6)"/>
+  </svg>
 
   <div id="scrollHint"><span>Scroll</span><div class="scroll-arrow"></div></div>
 </div>
