@@ -3168,7 +3168,17 @@ function buildGrid(pixels){
   return grid;
 }
 let scGrids=null,scIdx=0,scTimer=null;
-function buildShowcaseGrids(){if(!scGrids)scGrids=SHOWCASE_ALBUMS.map(a=>buildGrid(a.pixels));}
+function buildShowcaseGrids(){
+  if(!scGrids)scGrids=SHOWCASE_ALBUMS.map(a=>buildGrid(a.pixels));
+  // Preload all thumb images to eliminate white-flash on first rotation
+  SHOWCASE_ALBUMS.forEach(function(album,i){
+    if(album.thumb&&!_scThumbCache[i]){
+      var img=new Image();
+      img.onload=function(){_scThumbCache[i]=img;};
+      img.src=album.thumb;
+    }
+  });
+}
 function startShowcase(){
   buildShowcaseGrids();clearInterval(scTimer);paintDisplay();
   scTimer=setInterval(()=>{if(S.albums[S.active]){clearInterval(scTimer);return;}scIdx=(scIdx+1)%SHOWCASE_ALBUMS.length;paintDisplay();},4000);
