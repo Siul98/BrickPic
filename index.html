@@ -1076,49 +1076,49 @@ html, body {
   color: rgba(120,120,140,.75);
   letter-spacing: .02em;
 }
-/* vertical left ruler */
-.ruler-left {
-  left: -38px;
+/* vertical right ruler */
+.ruler-right {
+  right: -38px;
   top: 0;
   bottom: 0;
   width: 36px;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
+  position: absolute;
 }
-.ruler-left-line {
+.ruler-right-line {
   width: 1px;
   height: 100%;
   background: rgba(120,120,140,.25);
   position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
 }
-.ruler-left-label {
+.ruler-right-label {
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  transform: rotate(180deg);
   white-space: nowrap;
   color: rgba(100,100,130,.85);
   font-size: 12px;
   font-weight: 700;
   font-family: 'Caveat', cursive;
-  padding-right: 6px;
+  padding-left: 6px;
 }
-.ruler-left-arrow {
+.ruler-right-arrow {
   position: absolute;
-  right: -3px;
+  left: -3px;
   width: 0;
   height: 0;
 }
-.ruler-left-arrow.top {
+.ruler-right-arrow.top {
   top: 0;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-bottom: 7px solid rgba(120,120,140,.4);
 }
-.ruler-left-arrow.bottom {
+.ruler-right-arrow.bottom {
   bottom: 0;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
@@ -1930,11 +1930,11 @@ html, body {
 
       <!-- Measurement rulers -->
       <div id="mosaicRulerWrap">
-        <div class="ruler-left">
-          <div class="ruler-left-line"></div>
-          <div class="ruler-left-arrow top"></div>
-          <span class="ruler-left-label" id="rulerLabelV">38,4 cm</span>
-          <div class="ruler-left-arrow bottom"></div>
+        <div class="ruler-right">
+          <div class="ruler-right-line"></div>
+          <div class="ruler-right-arrow top"></div>
+          <span class="ruler-right-label" id="rulerLabelV">38,4 cm</span>
+          <div class="ruler-right-arrow bottom"></div>
         </div>
         <div class="ruler-bottom">
           <div class="ruler-bottom-line"></div>
