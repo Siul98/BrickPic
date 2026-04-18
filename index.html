@@ -4766,6 +4766,14 @@ function closeLegal() {
   document.body.style.overflow = '';
 }
 
+// Ensure footer & overlays are direct body children regardless of HTML nesting
+document.addEventListener('DOMContentLoaded', function() {
+  ['site-footer','cookie-banner','legal-modal-overlay'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if(el && el.parentElement !== document.body) document.body.appendChild(el);
+  });
+});
+
 // ── Cookie Banner ──────────────────────────────────────────────────────────
 function closeCookie(accepted) {
   localStorage.setItem('cookieConsent', accepted ? 'accepted' : 'declined');
