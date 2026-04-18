@@ -451,6 +451,121 @@ input,textarea{user-select:text;-webkit-user-select:text}
 @media (max-width: 700px) {
   .anno-wrap, .anno-svg { display: none; }
 }
+
+/* ── Cart Drawer ─────────────────────────────────────────────────── */
+#cartDrawer {
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  width: 360px;
+  max-width: 92vw;
+  background: #161616;
+  border-left: 1px solid #2a2a2a;
+  z-index: 9999;
+  transform: translateX(100%);
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 40px rgba(0,0,0,.5);
+}
+#cartDrawer.open { transform: translateX(0); }
+#cartOverlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+#cartOverlay.open { opacity: 1; pointer-events: all; }
+.cart-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #2a2a2a;
+}
+.cart-header h3 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem; font-weight: 800;
+  color: #fff; margin: 0;
+  letter-spacing: .02em;
+}
+.cart-close {
+  background: none; border: none;
+  color: #888; font-size: 1.4rem;
+  cursor: pointer; padding: 4px;
+  line-height: 1;
+  transition: color .15s;
+}
+.cart-close:hover { color: #fff; }
+.cart-item {
+  display: flex; gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #1e1e1e;
+  align-items: flex-start;
+}
+.cart-thumb {
+  width: 72px; height: 72px;
+  border-radius: 10px;
+  background: #222;
+  overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.cart-thumb canvas {
+  width: 72px !important; height: 72px !important;
+  image-rendering: pixelated;
+  border-radius: 10px;
+}
+.cart-info { flex: 1; }
+.cart-info .ci-name {
+  font-family: 'Nunito', sans-serif;
+  font-size: .9rem; font-weight: 800; color: #fff;
+  margin-bottom: 4px;
+}
+.cart-info .ci-size {
+  font-size: .78rem; color: #888; font-weight: 600;
+  margin-bottom: 8px;
+}
+.cart-info .ci-price {
+  font-size: 1.15rem; font-weight: 900;
+  background: linear-gradient(90deg,#F2619C,#93ABD9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.cart-footer {
+  margin-top: auto;
+  padding: 20px 24px;
+  border-top: 1px solid #2a2a2a;
+}
+.cart-total-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.cart-total-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: .85rem; color: #888; font-weight: 700;
+}
+.cart-total-price {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.2rem; font-weight: 900; color: #fff;
+}
+.cart-checkout-btn {
+  width: 100%;
+  background: linear-gradient(90deg,#F2619C,#93ABD9);
+  border: none; color: #fff;
+  padding: 14px 0;
+  border-radius: 100px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem; font-weight: 800;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: opacity .2s, transform .15s;
+}
+.cart-checkout-btn:hover { opacity: .88; transform: translateY(-1px); }
+.cart-note {
+  text-align: center;
+  font-size: .72rem; color: #555;
+  margin-top: 10px;
+  line-height: 1.5;
+}
 /* ── Nav: light theme when scrolled past hero ── */
 #glass-nav.nav-light {
   background: rgba(255,255,255,.92);
@@ -1867,8 +1982,8 @@ html, body {
   <div class="anno-wrap" style="left:calc(50% - min(44vh,44vw)/2 - 172px); top:calc(46% - min(44vh,44vw)/2 - 10px); transform:rotate(-8deg);">
     <span class="anno-text" style="animation-delay:1.2s">Dein Foto.<br>Dein Mosaik.</span>
     <svg class="anno-arrow" viewBox="0 0 100 60" style="position:absolute; right:-90px; bottom:-10px; width:100px; height:60px; overflow:visible; transform:rotate(5deg); animation-delay:1.5s">
-      <path d="M4 8 C30 4 70 20 92 50" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <polygon points="92,50 80,44 88,56" fill="rgba(255,255,255,.65)"/>
+      <path d="M4 8 C30 4 70 20 92 50" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M78 42 L92 50 L84 60" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </div>
 
@@ -1876,8 +1991,8 @@ html, body {
   <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% - min(44vh,44vw)/2 + 5px); transform:rotate(5deg);">
     <span class="anno-text" style="animation-delay:1.6s">Stein für Stein<br>aufgebaut ✦</span>
     <svg class="anno-arrow" viewBox="0 0 100 60" style="position:absolute; left:-90px; bottom:-12px; width:100px; height:60px; overflow:visible; transform:rotate(-3deg); animation-delay:1.9s">
-      <path d="M96 8 C70 4 30 20 8 50" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <polygon points="8,50 20,44 12,56" fill="rgba(255,255,255,.65)"/>
+      <path d="M96 8 C70 4 30 20 8 50" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M22 42 L8 50 L16 60" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </div>
 
@@ -1885,8 +2000,8 @@ html, body {
   <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% + 20px); transform:rotate(-6deg);">
     <span class="anno-text" style="animation-delay:2.0s">Perfektes<br>Geschenk ♡</span>
     <svg class="anno-arrow" viewBox="0 0 90 40" style="position:absolute; left:-82px; top:10px; width:90px; height:40px; overflow:visible; animation-delay:2.3s">
-      <path d="M88 8 C60 6 28 16 8 30" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <polygon points="8,30 20,24 14,36" fill="rgba(255,255,255,.65)"/>
+      <path d="M88 8 C60 6 28 16 8 30" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M20 20 L8 30 L20 38" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </div>
 
@@ -1894,8 +2009,8 @@ html, body {
   <div class="anno-wrap" style="right:calc(50% + min(44vh,44vw)/2 + 20px); top:calc(46% + 15px); text-align:right; transform:rotate(-5deg);">
     <span class="anno-text" style="animation-delay:2.4s">Gemeinsam<br>bauen macht<br>Spaß ↗</span>
     <svg class="anno-arrow" viewBox="0 0 90 40" style="position:absolute; right:-82px; top:10px; width:90px; height:40px; overflow:visible; animation-delay:2.7s">
-      <path d="M2 8 C30 6 62 16 82 30" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <polygon points="82,30 70,24 76,36" fill="rgba(255,255,255,.65)"/>
+      <path d="M2 8 C30 6 62 16 82 30" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M70 20 L82 30 L70 38" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </div>
   <div id="scrollHint"><span>Scroll</span><div class="scroll-arrow"></div></div>
@@ -2425,11 +2540,12 @@ function processImage(idx,src){
 }
 
 // ── Shopify Checkout ─────────────────────────────────────────────────────
+const VARIANTS={48:53712034333013,64:53712034365781};
 function openShopifyCheckout(){
-  document.getElementById('shopifyModal').style.display='flex';
+  const variantId=VARIANTS[S.N]||VARIANTS[48];
+  openCartDrawer(variantId);
 }
 function goShopify(variantId){
-  document.getElementById('shopifyModal').style.display='none';
   window.open('https://shop.brickpic.art/cart/'+variantId+':1?storefront=true','_blank');
 }
 // ── Drag & Drop on upload zone ──────────────────────────────────────────
@@ -4030,5 +4146,69 @@ function buildMarquee(){
 
 
 
+
+<!-- Cart Drawer -->
+<div id="cartOverlay" onclick="closeCartDrawer()"></div>
+<div id="cartDrawer">
+  <div class="cart-header">
+    <h3>🛒 Warenkorb</h3>
+    <button class="cart-close" onclick="closeCartDrawer()">✕</button>
+  </div>
+  <div class="cart-item" id="cartItem">
+    <div class="cart-thumb" id="cartThumb"></div>
+    <div class="cart-info">
+      <div class="ci-name">BrickPic Mosaic Kit</div>
+      <div class="ci-size" id="cartSize">48×48 STANDARD</div>
+      <div class="ci-price" id="cartPrice">119 €</div>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Gesamt (inkl. Versand)</span>
+      <span class="cart-total-price" id="cartTotal">129 €</span>
+    </div>
+    <button class="cart-checkout-btn" id="cartCheckoutBtn" onclick="cartGoCheckout()">
+      Zur Kasse →
+    </button>
+    <div class="cart-note">Sicherer Checkout · Lieferung in 5–7 Werktagen</div>
+  </div>
+</div>
+
+<script>
+// ── Cart Drawer ────────────────────────────────────────────────────
+var _cartVariantId = null;
+function openCartDrawer(variantId) {
+  _cartVariantId = variantId;
+  var is64 = (S.N === 64);
+  // Update info
+  document.getElementById('cartSize').textContent  = is64 ? '64×64 XL FORMAT' : '48×48 STANDARD';
+  document.getElementById('cartPrice').textContent = is64 ? '189 €' : '119 €';
+  document.getElementById('cartTotal').textContent = is64 ? '199 €' : '129 €';
+  // Copy mosaic thumb
+  var src = document.getElementById('mosaicDisplay');
+  var thumb = document.getElementById('cartThumb');
+  thumb.innerHTML = '';
+  if (src) {
+    var cv = document.createElement('canvas');
+    cv.width = 72; cv.height = 72;
+    var ctx = cv.getContext('2d');
+    ctx.drawImage(src, 0, 0, 72, 72);
+    thumb.appendChild(cv);
+  }
+  document.getElementById('cartDrawer').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCartDrawer() {
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function cartGoCheckout() {
+  if (_cartVariantId) {
+    window.open('https://shop.brickpic.art/cart/'+_cartVariantId+':1?storefront=true','_blank');
+  }
+}
+</script>
 </body>
 </html>
