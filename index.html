@@ -433,9 +433,16 @@ input,textarea{user-select:text;-webkit-user-select:text}
   animation: annoFadeIn .6s ease forwards;
 }
 .anno-arrow {
-  overflow: visible;
+  display: block;
+  font-size: clamp(28px, 3.5vw, 46px);
+  line-height: 1;
   opacity: 0;
   animation: annoFadeIn .5s ease forwards;
+  filter: drop-shadow(0 0 12px rgba(0,0,0,.55)) drop-shadow(0 0 28px rgba(0,0,0,.3));
+  color: rgba(255,255,255,.82);
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
 }
 @keyframes annoFadeIn {
   from { opacity: 0; transform: translateY(6px); }
@@ -565,6 +572,123 @@ input,textarea{user-select:text;-webkit-user-select:text}
   font-size: .72rem; color: #555;
   margin-top: 10px;
   line-height: 1.5;
+}
+
+/* ── Bestsellers Section ─────────────────────────────────────────────────── */
+#section-bestsellers {
+  background: #0e0e0e;
+  padding: 80px 0 100px;
+  position: relative;
+}
+#section-bestsellers::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse 60% 50% at 30% 30%, rgba(242,97,156,.07), transparent),
+              radial-gradient(ellipse 50% 60% at 80% 70%, rgba(147,171,217,.06), transparent);
+  pointer-events: none;
+}
+.bs-headline {
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(1.5rem, 4vw, 2.6rem);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -.03em;
+  margin: 0 0 8px;
+}
+.bs-sub {
+  text-align: center;
+  font-size: .9rem;
+  color: rgba(255,255,255,.4);
+  letter-spacing: .08em;
+  margin-bottom: 56px;
+}
+.bs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.bs-card {
+  background: #161616;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s;
+  cursor: pointer;
+}
+.bs-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  border-color: rgba(242,97,156,.3);
+}
+.bs-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  background: #222;
+  image-rendering: pixelated;
+}
+.bs-info {
+  padding: 16px 18px 20px;
+}
+.bs-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: .9rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bs-artist {
+  font-size: .75rem;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 14px;
+}
+.bs-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.bs-price {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #F2619C, #93ABD9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.bs-buy-btn {
+  background: linear-gradient(90deg, #F2619C, #93ABD9);
+  border: none;
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-family: 'Nunito', sans-serif;
+  font-size: .8rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity .2s, transform .15s;
+  letter-spacing: .02em;
+}
+.bs-buy-btn:hover { opacity: .85; transform: scale(1.04); }
+.bs-badge {
+  display: inline-block;
+  background: rgba(242,97,156,.15);
+  border: 1px solid rgba(242,97,156,.35);
+  color: #F2619C;
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  padding: 2px 8px;
+  border-radius: 100px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
 }
 /* ── Nav: light theme when scrolled past hero ── */
 #glass-nav.nav-light {
@@ -1981,37 +2105,25 @@ html, body {
   <!-- 1. top-left: arrow exits right side → toward mosaic left-top corner -->
   <div class="anno-wrap" style="left:calc(50% - min(44vh,44vw)/2 - 172px); top:calc(46% - min(44vh,44vw)/2 - 10px); transform:rotate(-8deg);">
     <span class="anno-text" style="animation-delay:1.2s">Dein Foto.<br>Dein Mosaik.</span>
-    <svg class="anno-arrow" viewBox="0 0 100 60" style="position:absolute; right:-90px; bottom:-10px; width:100px; height:60px; overflow:visible; transform:rotate(5deg); animation-delay:1.5s">
-      <path d="M4 8 C30 4 70 20 92 50" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M78 42 L92 50 L84 60" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+    <span class="anno-arrow" style="right:-1.4em; bottom:-0.6em; transform:rotate(20deg); animation-delay:1.5s">↩</span>
   </div>
 
   <!-- 2. top-right: arrow exits left side → toward mosaic right-top corner -->
   <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% - min(44vh,44vw)/2 + 5px); transform:rotate(5deg);">
     <span class="anno-text" style="animation-delay:1.6s">Stein für Stein<br>aufgebaut ✦</span>
-    <svg class="anno-arrow" viewBox="0 0 100 60" style="position:absolute; left:-90px; bottom:-12px; width:100px; height:60px; overflow:visible; transform:rotate(-3deg); animation-delay:1.9s">
-      <path d="M96 8 C70 4 30 20 8 50" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M22 42 L8 50 L16 60" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+    <span class="anno-arrow" style="left:-1.4em; bottom:-0.6em; transform:rotate(-160deg) scaleY(-1); animation-delay:1.9s">↩</span>
   </div>
 
   <!-- 3. right-middle: arrow exits left side → toward mosaic right edge -->
   <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% + 20px); transform:rotate(-6deg);">
     <span class="anno-text" style="animation-delay:2.0s">Perfektes<br>Geschenk ♡</span>
-    <svg class="anno-arrow" viewBox="0 0 90 40" style="position:absolute; left:-82px; top:10px; width:90px; height:40px; overflow:visible; animation-delay:2.3s">
-      <path d="M88 8 C60 6 28 16 8 30" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M20 20 L8 30 L20 38" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+    <span class="anno-arrow" style="left:-1.2em; top:0.1em; transform:rotate(180deg) scaleY(-1); animation-delay:2.3s">↩</span>
   </div>
 
   <!-- 4. left-middle: arrow exits right side → toward mosaic left edge -->
   <div class="anno-wrap" style="right:calc(50% + min(44vh,44vw)/2 + 20px); top:calc(46% + 15px); text-align:right; transform:rotate(-5deg);">
     <span class="anno-text" style="animation-delay:2.4s">Gemeinsam<br>bauen macht<br>Spaß ↗</span>
-    <svg class="anno-arrow" viewBox="0 0 90 40" style="position:absolute; right:-82px; top:10px; width:90px; height:40px; overflow:visible; animation-delay:2.7s">
-      <path d="M2 8 C30 6 62 16 82 30" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M70 20 L82 30 L70 38" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+    <span class="anno-arrow" style="right:-1.2em; top:0.1em; transform:scaleY(-1); animation-delay:2.7s">↩</span>
   </div>
   <div id="scrollHint"><span>Scroll</span><div class="scroll-arrow"></div></div>
 </div>
@@ -4209,6 +4321,123 @@ function cartGoCheckout() {
     window.open('https://shop.brickpic.art/cart/'+_cartVariantId+':1?storefront=true','_blank');
   }
 }
+</script>
+
+<script>
+// ── Bestsellers ────────────────────────────────────────────────────────────
+(function() {
+  var BESTSELLERS = [
+    {title:'Beatles — Let It Be', artist:'Abbey Road, 1970', price:'119 €', variant:53712034333013, size:'48×48', emoji:'🎵'},
+    {title:'Kanye West — MBDTF', artist:'My Beautiful Dark Twisted Fantasy', price:'119 €', variant:53712034333013, size:'48×48', emoji:'🎨'},
+    {title:'Frank Ocean — Blonde', artist:'Boys Don't Cry, 2016', price:'119 €', variant:53712034333013, size:'48×48', emoji:'🌊'},
+    {title:'Mac Miller — Balloonerism', artist:'posthumously released 2024', price:'189 €', variant:53712034365781, size:'64×64', emoji:'🎈'},
+    {title:'Tyler, the Creator — Flower Boy', artist:'Columbia, 2017', price:'119 €', variant:53712034333013, size:'48×48', emoji:'🌸'},
+    {title:'Bad Bunny — Un Verano Sin Ti', artist:'El Conejo Malo, 2022', price:'119 €', variant:53712034333013, size:'48×48', emoji:'🏝️'},
+  ];
+
+  var canvasCache = {};
+
+  function renderAlbumCanvas(albumIdx, size) {
+    var key = albumIdx + '_' + size;
+    if (canvasCache[key]) return canvasCache[key];
+    
+    var cv = document.createElement('canvas');
+    cv.width = size; cv.height = size;
+    var ctx = cv.getContext('2d');
+    
+    if (typeof SHOWCASE_ALBUMS !== 'undefined' && SHOWCASE_ALBUMS[albumIdx]) {
+      var album = SHOWCASE_ALBUMS[albumIdx];
+      if (album.thumb) {
+        var img = new Image();
+        img.onload = function() {
+          ctx.drawImage(img, 0, 0, size, size);
+          cv.setAttribute('data-loaded','1');
+        };
+        img.src = album.thumb;
+      }
+    }
+    canvasCache[key] = cv;
+    return cv;
+  }
+
+  function buildCards() {
+    var grid = document.getElementById('bsGrid');
+    if (!grid) return;
+    
+    BESTSELLERS.forEach(function(item, i) {
+      var card = document.createElement('div');
+      card.className = 'bs-card';
+      
+      // Image area
+      var imgWrap = document.createElement('div');
+      imgWrap.style.cssText = 'position:relative; aspect-ratio:1; background:#1a1a1a; overflow:hidden;';
+      
+      var cv = renderAlbumCanvas(i, 300);
+      cv.style.cssText = 'width:100%; height:100%; object-fit:cover; display:block;';
+      imgWrap.appendChild(cv);
+      
+      // Overlay watermark
+      var wm = document.createElement('div');
+      wm.style.cssText = 'position:absolute;bottom:8px;right:10px;font-family:"Nunito",sans-serif;font-size:10px;font-weight:900;color:rgba(255,255,255,.4);letter-spacing:.05em;';
+      wm.textContent = 'BRICKPIC';
+      imgWrap.appendChild(wm);
+      
+      card.appendChild(imgWrap);
+      
+      // Info
+      var info = document.createElement('div');
+      info.className = 'bs-info';
+      info.innerHTML =
+        '<div class="bs-badge">' + item.size + ' · ' + item.price.replace(' €','') + ' €</div>' +
+        '<div class="bs-title">' + item.emoji + ' ' + item.title + '</div>' +
+        '<div class="bs-artist">' + item.artist + '</div>' +
+        '<div class="bs-price-row">' +
+          '<span class="bs-price">' + item.price + '</span>' +
+          '<button class="bs-buy-btn" data-variant="' + item.variant + '" data-title="' + item.title + '">Jetzt kaufen →</button>' +
+        '</div>';
+      
+      card.appendChild(info);
+      grid.appendChild(card);
+    });
+
+    // Buy button handler
+    grid.addEventListener('click', function(e) {
+      var btn = e.target.closest('.bs-buy-btn');
+      if (!btn) return;
+      var variantId = parseInt(btn.dataset.variant);
+      // Open cart drawer with this item
+      var is64 = (variantId === 53712034365781);
+      var prevN = S ? S.N : 48;
+      // Temporarily set size for drawer info
+      if (typeof openCartDrawer === 'function') {
+        // Override size display for this item
+        var drawerSize = document.getElementById('cartSize');
+        var drawerPrice = document.getElementById('cartPrice');
+        var drawerTotal = document.getElementById('cartTotal');
+        var drawerBtn = document.getElementById('cartCheckoutBtn');
+        if (drawerSize) drawerSize.textContent = is64 ? '64×64 XL FORMAT' : '48×48 STANDARD';
+        if (drawerPrice) drawerPrice.textContent = is64 ? '189 €' : '119 €';
+        if (drawerTotal) drawerTotal.textContent = is64 ? '199 €' : '129 €';
+        
+        // Show the mosaic thumb from the album
+        var idx = parseInt(btn.closest('.bs-card').parentNode.querySelectorAll('.bs-card'), []).indexOf(btn.closest('.bs-card'));
+        
+        // Just open the cart drawer directly
+        window._cartVariantId = variantId;
+        document.getElementById('cartDrawer').classList.add('open');
+        document.getElementById('cartOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  }
+
+  // Wait for SHOWCASE_ALBUMS to be available
+  function tryBuild() {
+    if (typeof SHOWCASE_ALBUMS !== 'undefined') { buildCards(); }
+    else { setTimeout(tryBuild, 200); }
+  }
+  tryBuild();
+})();
 </script>
 </body>
 </html>
