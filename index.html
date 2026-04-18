@@ -461,16 +461,20 @@ input,textarea{user-select:text;-webkit-user-select:text}
   line-height: 1.35;
   display: block;
   overflow: hidden;
-  /* write-on: clip from right */
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .5s ease, transform .5s ease;
+  /* clip-path write-on */
   clip-path: inset(0 100% 0 0);
-  transition: none;
 }
 .anno-text.written {
+  opacity: 1;
+  transform: translateY(0);
   animation: writeOn var(--dur, .7s) cubic-bezier(.3,0,.5,1) forwards;
 }
 @keyframes writeOn {
-  from { clip-path: inset(0 100% 0 0); }
-  to   { clip-path: inset(0 0% 0 0); }
+  from { clip-path: inset(0 100% 0 0); opacity: 0; }
+  to   { clip-path: inset(0 0% 0 0); opacity: 1; }
 }
 .anno-svg {
   position: absolute;
@@ -4083,16 +4087,22 @@ function buildMarquee(){
 <script>
 // ── Hero Annotations: staggered write-on
 (function() {
+  var done = false;
   function runAnnos() {
-    document.querySelectorAll('.anno-text').forEach(function(el, i) {
-      setTimeout(function() { el.classList.add('written'); }, i * 400);
+    if (done) return; done = true;
+    var texts = document.querySelectorAll('.anno-text');
+    var svgs  = document.querySelectorAll('.anno-svg');
+    texts.forEach(function(el, i) {
+      setTimeout(function() { el.classList.add('written'); }, 200 + i * 380);
     });
-    document.querySelectorAll('.anno-svg').forEach(function(el, i) {
-      setTimeout(function() { el.classList.add('visible'); }, 250 + i * 400);
+    svgs.forEach(function(el, i) {
+      setTimeout(function() { el.classList.add('visible'); }, 400 + i * 380);
     });
   }
-  window.addEventListener('load', function() { setTimeout(runAnnos, 1400); });
-  setTimeout(runAnnos, 3200);
+  // Multiple triggers to ensure it always fires
+  document.addEventListener('DOMContentLoaded', function() { setTimeout(runAnnos, 1200); });
+  window.addEventListener('load', function() { setTimeout(runAnnos, 800); });
+  setTimeout(runAnnos, 2500); // hard fallback
 })();
 </script>
 </body>
