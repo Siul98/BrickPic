@@ -419,10 +419,13 @@ input,textarea{user-select:text;-webkit-user-select:text}
 }
 .anno-text {
   font-family: 'Caveat', cursive;
-  font-size: clamp(13px, 1.6vw, 19px);
+  font-size: clamp(17px, 2.1vw, 26px);
   font-weight: 700;
-  color: rgba(255,255,255,.92);
-  text-shadow: 0 2px 14px rgba(0,0,0,.75), 0 0 40px rgba(0,0,0,.5);
+  color: rgba(255,255,255,.95);
+  text-shadow:
+    0 0 20px rgba(0,0,0,.6),
+    0 0 40px rgba(0,0,0,.4),
+    0 0 80px rgba(0,0,0,.25);
   line-height: 1.35;
   display: block;
   overflow: hidden;
@@ -435,22 +438,11 @@ input,textarea{user-select:text;-webkit-user-select:text}
   transform: translateY(0);
 }
 .anno-svg {
-  position: absolute;
   overflow: visible;
   opacity: 0;
-  transition: opacity .35s ease;
+  transition: opacity .5s ease;
 }
 .anno-svg.visible { opacity: 1; }
-.anno-path {
-  fill: none;
-  stroke: rgba(255,255,255,.6);
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-dasharray: 200;
-  stroke-dashoffset: 200;
-  transition: stroke-dashoffset .6s ease;
-}
-.anno-svg.visible .anno-path { stroke-dashoffset: 0; }
 @media (max-width: 700px) {
   .anno-wrap, .anno-svg { display: none; }
 }
@@ -1867,50 +1859,49 @@ html, body {
   <!-- Hero handwritten annotations -->
 
   <!-- 1. top-left: "Dein Foto. Dein Mosaik." -->
-  <div class="anno-wrap" style="left:calc(50% - min(44vh,44vw)/2 - 155px); top:calc(46% - min(44vh,44vw)/2 - 10px); transform:rotate(-8deg);">
+  <div class="anno-wrap" style="left:calc(50% - min(44vh,44vw)/2 - 160px); top:calc(46% - min(44vh,44vw)/2 - 15px); transform:rotate(-8deg);">
     <span class="anno-text" style="--dur:.65s;">Dein Foto.<br>Dein Mosaik.</span>
   </div>
-  <svg class="anno-svg" style="left:calc(50% - min(44vh,44vw)/2 - 20px); top:calc(46% - min(44vh,44vw)/2 + 32px); width:70px; height:50px;" viewBox="0 0 70 50">
-    <path class="anno-path" d="M4 8 C20 4 50 10 64 42"/>
-    <polygon points="64,42 56,36 62,50" fill="rgba(255,255,255,.6)"/>
+  <svg class="anno-svg" style="position:absolute; left:calc(50% - min(44vh,44vw)/2 - 60px); top:calc(46% - min(44vh,44vw)/2 + 45px); width:90px; height:65px; overflow:visible;" viewBox="0 0 90 65">
+    <path class="anno-path" d="M8 10 C25 5 60 15 80 55" stroke="rgba(255,255,255,.65)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M80 55 L70 46 L78 40 Z" fill="rgba(255,255,255,.65)"/>
   </svg>
 
   <!-- 2. top-right: "Stein für Stein aufgebaut" -->
-  <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 18px); top:calc(46% - min(44vh,44vw)/2 + 5px); transform:rotate(5deg);">
+  <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% - min(44vh,44vw)/2 + 5px); transform:rotate(5deg);">
     <span class="anno-text" style="--dur:.7s;">Stein für Stein<br>aufgebaut ✦</span>
   </div>
-  <svg class="anno-svg" style="left:calc(50% + min(44vh,44vw)/2 + 8px); top:calc(46% - min(44vh,44vw)/2 + 48px); width:60px; height:45px;" viewBox="0 0 60 45">
-    <path class="anno-path" d="M58 5 C40 2 12 18 4 40"/>
-    <polygon points="4,40 14,36 6,48" fill="rgba(255,255,255,.6)"/>
+  <svg class="anno-svg" style="position:absolute; left:calc(50% + min(44vh,44vw)/2 - 5px); top:calc(46% - min(44vh,44vw)/2 + 60px); width:80px; height:60px; overflow:visible;" viewBox="0 0 80 60">
+    <path class="anno-path" d="M72 8 C50 5 18 22 8 52" stroke="rgba(255,255,255,.65)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8 52 L18 46 L10 56 Z" fill="rgba(255,255,255,.65)"/>
   </svg>
 
-  <!-- 3. right: "Perfektes Geschenk" -->
+  <!-- 3. right-middle: "Perfektes Geschenk" -->
   <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% + 20px); transform:rotate(-6deg);">
     <span class="anno-text" style="--dur:.6s;">Perfektes<br>Geschenk ♡</span>
   </div>
-  <svg class="anno-svg" style="left:calc(50% + min(44vh,44vw)/2 + 10px); top:calc(46% + 22px); width:55px; height:40px;" viewBox="0 0 55 40">
-    <path class="anno-path" d="M54 6 C36 2 14 14 4 34"/>
-    <polygon points="4,34 13,30 5,40" fill="rgba(255,255,255,.6)"/>
+  <svg class="anno-svg" style="position:absolute; left:calc(50% + min(44vh,44vw)/2 - 8px); top:calc(46% + 24px); width:78px; height:55px; overflow:visible;" viewBox="0 0 78 55">
+    <path class="anno-path" d="M70 8 C48 5 18 20 8 48" stroke="rgba(255,255,255,.65)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8 48 L18 42 L10 52 Z" fill="rgba(255,255,255,.65)"/>
   </svg>
 
-  <!-- 4. bottom-left: "Kompatibel mit LEGO®" -->
-  <div class="anno-wrap" style="right:calc(50% + min(44vh,44vw)/2 + 12px); bottom:calc(54% - min(44vh,44vw)/2 - 10px); text-align:right; transform:rotate(7deg);">
+  <!-- 4. bottom-left: "Kompatibel mit LEGO" -->
+  <div class="anno-wrap" style="right:calc(50% + min(44vh,44vw)/2 + 20px); bottom:calc(54% - min(44vh,44vw)/2 - 15px); text-align:right; transform:rotate(7deg);">
     <span class="anno-text" style="--dur:.7s;">Kompatibel<br>mit LEGO® ✓</span>
   </div>
-  <svg class="anno-svg" style="right:calc(50% + min(44vh,44vw)/2 - 20px); bottom:calc(54% - min(44vh,44vw)/2 + 32px); width:65px; height:48px;" viewBox="0 0 65 48">
-    <path class="anno-path" d="M4 6 C22 2 50 16 62 42"/>
-    <polygon points="62,42 54,36 60,50" fill="rgba(255,255,255,.6)"/>
+  <svg class="anno-svg" style="position:absolute; right:calc(50% + min(44vh,44vw)/2 - 30px); bottom:calc(54% - min(44vh,44vw)/2 + 48px); width:85px; height:62px; overflow:visible;" viewBox="0 0 85 62">
+    <path class="anno-path" d="M8 10 C28 5 62 20 78 54" stroke="rgba(255,255,255,.65)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M78 54 L68 46 L76 40 Z" fill="rgba(255,255,255,.65)"/>
   </svg>
 
   <!-- 5. left-middle: "Gemeinsam bauen macht Spaß" -->
-  <div class="anno-wrap" style="right:calc(50% + min(44vh,44vw)/2 + 16px); top:calc(46% + 15px); text-align:right; transform:rotate(-5deg);">
+  <div class="anno-wrap" style="right:calc(50% + min(44vh,44vw)/2 + 20px); top:calc(46% + 15px); text-align:right; transform:rotate(-5deg);">
     <span class="anno-text" style="--dur:.75s;">Gemeinsam<br>bauen macht<br>Spaß ↗</span>
   </div>
-  <svg class="anno-svg" style="right:calc(50% + min(44vh,44vw)/2 - 14px); top:calc(46% + 20px); width:58px; height:42px;" viewBox="0 0 58 42">
-    <path class="anno-path" d="M56 6 C38 2 12 16 4 38"/>
-    <polygon points="4,38 13,34 5,44" fill="rgba(255,255,255,.6)"/>
+  <svg class="anno-svg" style="position:absolute; right:calc(50% + min(44vh,44vw)/2 - 25px); top:calc(46% + 20px); width:80px; height:58px; overflow:visible;" viewBox="0 0 80 58">
+    <path class="anno-path" d="M72 8 C50 5 18 20 8 50" stroke="rgba(255,255,255,.65)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8 50 L18 44 L10 54 Z" fill="rgba(255,255,255,.65)"/>
   </svg>
-
   <div id="scrollHint"><span>Scroll</span><div class="scroll-arrow"></div></div>
 </div>
 
