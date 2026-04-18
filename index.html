@@ -4079,5 +4079,21 @@ function buildMarquee(){
   </div>
 </div>
 
+
+<script>
+// ── Hero Annotations: staggered write-on
+(function() {
+  function runAnnos() {
+    document.querySelectorAll('.anno-text').forEach(function(el, i) {
+      setTimeout(function() { el.classList.add('written'); }, i * 400);
+    });
+    document.querySelectorAll('.anno-svg').forEach(function(el, i) {
+      setTimeout(function() { el.classList.add('visible'); }, 250 + i * 400);
+    });
+  }
+  window.addEventListener('load', function() { setTimeout(runAnnos, 1400); });
+  setTimeout(runAnnos, 3200);
+})();
+</script>
 </body>
 </html>
