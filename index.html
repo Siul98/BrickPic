@@ -3016,24 +3016,31 @@ function renderView(cv,src,view,N){
 }
 function goView(v){S.view=0;paintDisplay();}
 
+const _scThumbCache={};
 function updateThumbCanvas(){
   const tc=document.getElementById('thumbCanvas');if(!tc)return;
-  tc.width=54;tc.height=54;
   const ctx=tc.getContext('2d');
   // Thumbnail: show plain source image (no tile overlay)
-  if(S.img){
-    ctx.drawImage(S.img,0,0,54,54);
-    return;
-  }
-  // Fallback: showcase thumbnail photo
+  if(S.img){tc.width=54;tc.height=54;ctx.drawImage(S.img,0,0,54,54);return;}
+  // Fallback: showcase thumbnail photo — cache to avoid white-flash on reload
   const thumb=SHOWCASE_ALBUMS[scIdx]&&SHOWCASE_ALBUMS[scIdx].thumb;
   if(thumb){
+    if(_scThumbCache[scIdx]){
+      tc.width=54;tc.height=54;
+      ctx.drawImage(_scThumbCache[scIdx],0,0,54,54);
+      return;
+    }
     const tImg=new Image();
-    tImg.onload=function(){ctx.drawImage(tImg,0,0,54,54);};
+    tImg.onload=function(){
+      _scThumbCache[scIdx]=tImg;
+      tc.width=54;tc.height=54;
+      ctx.drawImage(tImg,0,0,54,54);
+    };
     tImg.src=thumb;
     return;
   }
   // Last resort: copy mc with border crop
+  tc.width=54;tc.height=54;
   const mc=document.getElementById('mc');
   if(!mc||!mc.width)return;
   const border=Math.round(mc.width*36/768);
@@ -3819,6 +3826,10 @@ let _previewMode = 'mosaic'; // 'mosaic' | 0 | 1
 function switchPreview(mode) {
   _previewMode = mode;
   const lifestyleView = document.getElementById('lifestyleView');
+  const rulerWrap = document.getElementById('mosaicRulerWrap');
+
+  // Show/hide rulers: only visible in mosaic mode
+  if(rulerWrap) rulerWrap.style.visibility = (mode === 'mosaic') ? 'visible' : 'hidden';
 
   // Update active thumb
   document.querySelectorAll('.preview-thumb').forEach(t => t.classList.remove('active'));
@@ -4650,10 +4661,12 @@ const LEGAL = {
     <h2>Impressum</h2>
     <h3>Angaben gemäß § 5 DDG</h3>
     <p><strong>Luis Burkert</strong><br>
-    Frankfurt am Main, Deutschland<br>
-    E-Mail: <a href="mailto:info@brickpic.art">info@brickpic.art</a></p>
+    De-Neufville-Straße 8<br>
+    60599 Frankfurt am Main, Deutschland<br>
+    E-Mail: <a href="mailto:info@brickpic.art">info@brickpic.art</a><br>
+    Umsatzsteuer-ID: DE346735701</p>
     <h3>Verantwortlich für den Inhalt</h3>
-    <p>Luis Burkert (Anschrift wie oben)</p>
+    <p>Luis Burkert, De-Neufville-Straße 8, 60599 Frankfurt am Main</p>
     <h3>Streitschlichtung</h3>
     <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: 
     <a href="https://ec.europa.eu/consumers/odr" target="_blank">https://ec.europa.eu/consumers/odr</a>. 
