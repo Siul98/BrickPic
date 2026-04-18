@@ -462,19 +462,12 @@ input,textarea{user-select:text;-webkit-user-select:text}
   display: block;
   overflow: hidden;
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity .5s ease, transform .5s ease;
-  /* clip-path write-on */
-  clip-path: inset(0 100% 0 0);
+  transform: translateY(8px);
+  transition: opacity .55s ease, transform .55s ease;
 }
 .anno-text.written {
   opacity: 1;
   transform: translateY(0);
-  animation: writeOn var(--dur, .7s) cubic-bezier(.3,0,.5,1) forwards;
-}
-@keyframes writeOn {
-  from { clip-path: inset(0 100% 0 0); opacity: 0; }
-  to   { clip-path: inset(0 0% 0 0); opacity: 1; }
 }
 .anno-svg {
   position: absolute;
