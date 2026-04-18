@@ -418,11 +418,6 @@ input,textarea{user-select:text;-webkit-user-select:text}
   max-width: 220px;
   overflow: visible;
 }
-.anno-arrow {
-  opacity: 0;
-  transition: opacity .5s ease;
-}
-.anno-arrow.visible { opacity: 1; }
 .anno-text {
   font-family: 'Caveat', cursive;
   font-size: clamp(17px, 2.1vw, 26px);
@@ -437,9 +432,13 @@ input,textarea{user-select:text;-webkit-user-select:text}
   opacity: 0;
   animation: annoFadeIn .6s ease forwards;
 }
-
+.anno-arrow {
+  overflow: visible;
+  opacity: 0;
+  animation: annoFadeIn .5s ease forwards;
+}
 @keyframes annoFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .anno-svg {
@@ -1866,8 +1865,8 @@ html, body {
 
   <!-- 1. top-left: arrow exits right side → toward mosaic left-top corner -->
   <div class="anno-wrap" style="left:calc(50% - min(44vh,44vw)/2 - 172px); top:calc(46% - min(44vh,44vw)/2 - 10px); transform:rotate(-8deg);">
-    <span class="anno-text">Dein Foto.<br>Dein Mosaik.</span>
-    <svg class="anno-arrow" viewBox="0 0 100 60" style="position:absolute; right:-90px; bottom:-10px; width:100px; height:60px; overflow:visible; transform:rotate(5deg);">
+    <span class="anno-text" style="animation-delay:1.2s">Dein Foto.<br>Dein Mosaik.</span>
+    <svg class="anno-arrow" viewBox="0 0 100 60" style="position:absolute; right:-90px; bottom:-10px; width:100px; height:60px; overflow:visible; transform:rotate(5deg); animation-delay:1.5s">
       <path d="M4 8 C30 4 70 20 92 50" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
       <polygon points="92,50 80,44 88,56" fill="rgba(255,255,255,.65)"/>
     </svg>
@@ -1875,8 +1874,8 @@ html, body {
 
   <!-- 2. top-right: arrow exits left side → toward mosaic right-top corner -->
   <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% - min(44vh,44vw)/2 + 5px); transform:rotate(5deg);">
-    <span class="anno-text">Stein für Stein<br>aufgebaut ✦</span>
-    <svg class="anno-arrow" viewBox="0 0 100 60" style="position:absolute; left:-90px; bottom:-12px; width:100px; height:60px; overflow:visible; transform:rotate(-3deg);">
+    <span class="anno-text" style="animation-delay:1.6s">Stein für Stein<br>aufgebaut ✦</span>
+    <svg class="anno-arrow" viewBox="0 0 100 60" style="position:absolute; left:-90px; bottom:-12px; width:100px; height:60px; overflow:visible; transform:rotate(-3deg); animation-delay:1.9s">
       <path d="M96 8 C70 4 30 20 8 50" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
       <polygon points="8,50 20,44 12,56" fill="rgba(255,255,255,.65)"/>
     </svg>
@@ -1884,8 +1883,8 @@ html, body {
 
   <!-- 3. right-middle: arrow exits left side → toward mosaic right edge -->
   <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% + 20px); transform:rotate(-6deg);">
-    <span class="anno-text">Perfektes<br>Geschenk ♡</span>
-    <svg class="anno-arrow" viewBox="0 0 90 40" style="position:absolute; left:-82px; top:10px; width:90px; height:40px; overflow:visible;">
+    <span class="anno-text" style="animation-delay:2.0s">Perfektes<br>Geschenk ♡</span>
+    <svg class="anno-arrow" viewBox="0 0 90 40" style="position:absolute; left:-82px; top:10px; width:90px; height:40px; overflow:visible; animation-delay:2.3s">
       <path d="M88 8 C60 6 28 16 8 30" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
       <polygon points="8,30 20,24 14,36" fill="rgba(255,255,255,.65)"/>
     </svg>
@@ -1893,8 +1892,8 @@ html, body {
 
   <!-- 4. left-middle: arrow exits right side → toward mosaic left edge -->
   <div class="anno-wrap" style="right:calc(50% + min(44vh,44vw)/2 + 20px); top:calc(46% + 15px); text-align:right; transform:rotate(-5deg);">
-    <span class="anno-text">Gemeinsam<br>bauen macht<br>Spaß ↗</span>
-    <svg class="anno-arrow" viewBox="0 0 90 40" style="position:absolute; right:-82px; top:10px; width:90px; height:40px; overflow:visible;">
+    <span class="anno-text" style="animation-delay:2.4s">Gemeinsam<br>bauen macht<br>Spaß ↗</span>
+    <svg class="anno-arrow" viewBox="0 0 90 40" style="position:absolute; right:-82px; top:10px; width:90px; height:40px; overflow:visible; animation-delay:2.7s">
       <path d="M2 8 C30 6 62 16 82 30" stroke="rgba(255,255,255,.65)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
       <polygon points="82,30 70,24 76,36" fill="rgba(255,255,255,.65)"/>
     </svg>
