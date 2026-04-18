@@ -760,39 +760,63 @@ input,textarea{user-select:text;-webkit-user-select:text}
   line-height: 1.5;
 }
 
-/* Cookie Banner */
+/* Cookie Banner — Liquid Glass, passend zum Header */
 #cookie-banner {
   position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: #161616;
-  border-top: 1px solid #2a2a2a;
-  padding: 16px 24px;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  width: calc(100% - 48px);
+  max-width: 720px;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.18);
+  padding: 14px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   z-index: 9999;
   font-family: 'Nunito', sans-serif;
   flex-wrap: wrap;
-  transform: translateY(100%);
-  transition: transform .4s ease;
+  transition: transform .45s cubic-bezier(.34,1.56,.64,1), opacity .45s ease;
+  opacity: 0;
 }
-#cookie-banner.show { transform: translateY(0); }
-#cookie-banner p { margin: 0; font-size: .82rem; color: rgba(255,255,255,.6); flex: 1; min-width: 200px; }
-#cookie-banner p a { color: #F2619C; text-decoration: none; }
-.cookie-btns { display: flex; gap: 10px; flex-shrink: 0; }
+#cookie-banner.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+#cookie-banner p {
+  margin: 0;
+  font-size: .8rem;
+  color: rgba(255,255,255,.85);
+  flex: 1;
+  min-width: 180px;
+  line-height: 1.4;
+}
+#cookie-banner p a { color: #F2619C; text-decoration: none; font-weight: 700; }
+.cookie-btns { display: flex; gap: 8px; flex-shrink: 0; }
 .cookie-accept {
   background: linear-gradient(90deg, #F2619C, #93ABD9);
-  border: none; color: #fff; padding: 9px 22px;
+  border: none; color: #fff; padding: 8px 20px;
   border-radius: 100px; font-family: 'Nunito', sans-serif;
-  font-weight: 800; font-size: .82rem; cursor: pointer;
+  font-weight: 800; font-size: .78rem; cursor: pointer;
+  box-shadow: 0 2px 12px rgba(242,97,156,.4);
+  white-space: nowrap;
 }
+.cookie-accept:hover { filter: brightness(1.1); }
 .cookie-decline {
-  background: transparent; border: 1px solid #333; color: rgba(255,255,255,.5);
-  padding: 9px 18px; border-radius: 100px; font-family: 'Nunito', sans-serif;
-  font-size: .82rem; cursor: pointer;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.25);
+  color: rgba(255,255,255,.7);
+  padding: 8px 16px; border-radius: 100px; font-family: 'Nunito', sans-serif;
+  font-size: .78rem; cursor: pointer;
+  white-space: nowrap;
 }
-.cookie-decline:hover { border-color: #555; color: rgba(255,255,255,.7); }
+.cookie-decline:hover { background: rgba(255,255,255,.18); color: #fff; }
 
 /* Legal Modal */
 #legal-modal-overlay {
@@ -2418,7 +2442,7 @@ html, body {
   <div class="legal"><b>Bildrechte:</b> Du bestätigst Rechte an hochgeladenen Bildern. Lokale Verarbeitung — keine Server.<br><b>Markenrecht:</b> BrickPic ist kein Produkt der LEGO Group.</div>
   </div>
 </div>
-</div><!-- /section-build -->
+</div></div><!-- /section-build -->
 
 <!-- FULLSCREEN -->
 <div id="fsm" onclick="if(event.target===this)closeFS()">
