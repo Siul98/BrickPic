@@ -496,13 +496,19 @@ input,textarea{user-select:text;-webkit-user-select:text}
   letter-spacing: .02em;
 }
 .cart-close {
-  background: none; border: none;
-  color: #888; font-size: 1.4rem;
-  cursor: pointer; padding: 4px;
-  line-height: 1;
-  transition: color .15s;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+  color: rgba(255,255,255,.55);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all .15s;
+  padding: 0;
 }
-.cart-close:hover { color: #fff; }
+.cart-close:hover { background: rgba(255,255,255,.18); color: #fff; border-color: rgba(255,255,255,.3); }
 .cart-item {
   display: flex; gap: 14px;
   padding: 14px 20px;
@@ -558,15 +564,26 @@ input,textarea{user-select:text;-webkit-user-select:text}
   width: 100%;
   background: linear-gradient(90deg,#F2619C,#93ABD9);
   border: none; color: #fff;
-  padding: 14px 0;
+  padding: 15px 0;
   border-radius: 100px;
   font-family: 'Nunito', sans-serif;
-  font-size: 1rem; font-weight: 800;
+  font-size: .95rem; font-weight: 800;
   cursor: pointer;
-  letter-spacing: .02em;
-  transition: opacity .2s, transform .15s;
+  letter-spacing: .04em;
+  transition: all .2s;
+  box-shadow: 0 4px 24px rgba(242,97,156,.35), inset 0 1px 0 rgba(255,255,255,.2);
+  position: relative; overflow: hidden;
 }
-.cart-checkout-btn:hover { opacity: .88; transform: translateY(-1px); }
+.cart-checkout-btn::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: 100px;
+  background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cart-checkout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(242,97,156,.5), inset 0 1px 0 rgba(255,255,255,.2);
+}
 .cart-note {
   text-align: center;
   font-size: .72rem; color: #555;
@@ -579,25 +596,35 @@ input,textarea{user-select:text;-webkit-user-select:text}
   margin-top: 6px;
 }
 .cart-qty-btn {
-  width: 24px; height: 24px;
+  width: 28px; height: 28px;
   border-radius: 50%;
-  border: 1px solid #333;
-  background: #1a1a1a;
-  color: #fff; font-size: .85rem; font-weight: 700;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(10px);
+  color: rgba(255,255,255,.85); font-size: .8rem; font-weight: 700;
   cursor: pointer; line-height: 1;
   display: flex; align-items: center; justify-content: center;
-  transition: background .15s;
+  transition: all .15s;
+  flex-shrink: 0;
 }
-.cart-qty-btn:hover { background: #2a2a2a; }
+.cart-qty-btn:hover { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.32); color: #fff; }
 .cart-qty-num { font-size: .85rem; font-weight: 700; color: #fff; min-width: 20px; text-align: center; }
-.cart-item-remove { margin-left: auto; background: none; border: none; color: #444; cursor: pointer; font-size: 1rem; padding: 4px; transition: color .15s; }
+.cart-item-remove {
+  margin-left: auto;
+  background: none; border: none;
+  color: rgba(255,255,255,.22); cursor: pointer;
+  padding: 6px; transition: color .2s;
+  display: flex; align-items: center;
+  flex-shrink: 0;
+}
 .cart-item-remove:hover { color: #F2619C; }
 .cart-empty {
   flex: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  color: #555; font-family: 'Nunito', sans-serif;
-  font-size: .9rem; gap: 8px; padding: 40px 0;
+  color: rgba(255,255,255,.3); font-family: 'Nunito', sans-serif;
+  font-size: .88rem; font-weight: 600; gap: 12px; padding: 40px 0;
 }
+.cart-empty svg { opacity: .35; }
 .cart-badge {
   position: absolute; top: -6px; right: -6px;
   background: #F2619C; color: #fff;
@@ -636,8 +663,10 @@ input,textarea{user-select:text;-webkit-user-select:text}
 }
 #cartDrawer {
   position: fixed; right: 0; top: 0; bottom: 0;
-  width: 360px; max-width: 95vw;
-  background: #111;
+  width: 380px; max-width: 95vw;
+  background: rgba(10,10,12,0.97);
+  backdrop-filter: blur(24px) saturate(160%);
+  border-left: 1px solid rgba(255,255,255,.07);
   border-left: 1px solid #222;
   z-index: 10001;
   transform: translateX(100%);
@@ -2371,8 +2400,8 @@ html, body {
     <span class="anno-text" style="animation-delay:2.0s">Perfektes<br>Geschenk ♡</span>
     <svg class="anno-svg" width="54" height="40" viewBox="0 0 54 40" fill="none" style="position:absolute;left:-58px;top:4px;animation-delay:2.3s;filter:drop-shadow(0 0 10px rgba(0,0,0,.5))">
       <path d="M50,14 C38,8 22,10 10,20 C6,23 4,28 8,34" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M8,34 L6,24" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
-      <path d="M8,34 L18,34" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+      <path d="M8,34 L2,27" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+      <path d="M8,34 L16,27" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
     </svg>
   </div>
 
@@ -2381,8 +2410,8 @@ html, body {
     <span class="anno-text" style="animation-delay:2.4s">Gemeinsam<br>bauen macht<br>Spaß ↗</span>
     <svg class="anno-svg" width="54" height="40" viewBox="0 0 54 40" fill="none" style="position:absolute;right:-58px;top:4px;animation-delay:2.7s;filter:drop-shadow(0 0 10px rgba(0,0,0,.5))">
       <path d="M4,14 C16,8 32,10 44,20 C48,23 50,28 46,34" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M46,34 L48,24" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
-      <path d="M46,34 L36,34" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+      <path d="M46,34 L40,27" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+      <path d="M46,34 L52,27" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
     </svg>
   </div>
   <div id="scrollHint"><span>Scroll</span><div class="scroll-arrow"></div></div>
@@ -4500,8 +4529,13 @@ function buildMarquee(){
 <div id="cartOverlay" onclick="closeCartDrawer()"></div>
 <div id="cartDrawer">
   <div class="cart-header">
-    <h3>🛒 Warenkorb</h3>
-    <button class="cart-close" onclick="closeCartDrawer()">✕</button>
+    <h3 style="display:flex;align-items:center;gap:8px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.7"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Warenkorb
+    </h3>
+    <button class="cart-close" onclick="closeCartDrawer()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
   <div class="cart-items-list" id="cartItemsList">
     <div class="cart-empty" id="cartEmpty">
@@ -4606,7 +4640,7 @@ function _renderCart() {
   list.innerHTML = '';
 
   if(_cart.length === 0) {
-    list.innerHTML = '<div class="cart-empty"><span style="font-size:2rem">🧱</span><span>Dein Warenkorb ist leer</span></div>';
+    list.innerHTML = '<div class="cart-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg><span>Dein Warenkorb ist leer</span></div>';
     return;
   }
 
@@ -4625,7 +4659,7 @@ function _renderCart() {
           '<span class="ci-price" style="margin-left:8px">'+item.price*item.qty+' €</span>'+
         '</div>'+
       '</div>'+
-      '<button class="cart-item-remove" onclick="_cartRemove('+idx+')" title="Entfernen">✕</button>';
+      '<button class="cart-item-remove" onclick="_cartRemove('+idx+')" title="Entfernen"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>';
     list.appendChild(div);
   });
 }
