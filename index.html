@@ -2349,25 +2349,41 @@ html, body {
   <!-- 1. top-left: arrow exits right side → toward mosaic left-top corner -->
   <div class="anno-wrap" style="left:calc(50% - min(44vh,44vw)/2 - 172px); top:calc(46% - min(44vh,44vw)/2 - 10px); transform:rotate(-8deg);">
     <span class="anno-text" style="animation-delay:1.2s">Dein Foto.<br>Dein Mosaik.</span>
-    <span class="anno-arrow" style="right:-1.4em; bottom:-0.6em; transform:rotate(20deg); animation-delay:1.5s">↩</span>
+    <svg class="anno-svg" width="62" height="52" viewBox="0 0 62 52" fill="none" style="position:absolute;right:-66px;bottom:-18px;animation-delay:1.5s;filter:drop-shadow(0 0 10px rgba(0,0,0,.5))">
+      <path d="M6,6 C14,2 34,4 50,20 C54,25 56,33 52,44" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M52,44 L43,36" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+      <path d="M52,44 L58,37" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+    </svg>
   </div>
 
   <!-- 2. top-right: arrow exits left side → toward mosaic right-top corner -->
   <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% - min(44vh,44vw)/2 + 5px); transform:rotate(5deg);">
     <span class="anno-text" style="animation-delay:1.6s">Stein für Stein<br>aufgebaut ✦</span>
-    <span class="anno-arrow" style="left:-1.4em; bottom:-0.6em; transform:rotate(-160deg) scaleY(-1); animation-delay:1.9s">↩</span>
+    <svg class="anno-svg" width="62" height="52" viewBox="0 0 62 52" fill="none" style="position:absolute;left:-66px;bottom:-18px;animation-delay:1.9s;filter:drop-shadow(0 0 10px rgba(0,0,0,.5))">
+      <path d="M56,6 C48,2 28,4 12,20 C8,25 6,33 10,44" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10,44 L19,36" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+      <path d="M10,44 L4,37" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+    </svg>
   </div>
 
   <!-- 3. right-middle: arrow exits left side → toward mosaic right edge -->
   <div class="anno-wrap" style="left:calc(50% + min(44vh,44vw)/2 + 22px); top:calc(46% + 20px); transform:rotate(-6deg);">
     <span class="anno-text" style="animation-delay:2.0s">Perfektes<br>Geschenk ♡</span>
-    <span class="anno-arrow" style="left:-1.2em; top:0.1em; transform:rotate(180deg) scaleY(-1); animation-delay:2.3s">↩</span>
+    <svg class="anno-svg" width="54" height="40" viewBox="0 0 54 40" fill="none" style="position:absolute;left:-58px;top:4px;animation-delay:2.3s;filter:drop-shadow(0 0 10px rgba(0,0,0,.5))">
+      <path d="M50,14 C38,8 22,10 10,20 C6,23 4,28 8,34" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8,34 L6,24" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+      <path d="M8,34 L18,34" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+    </svg>
   </div>
 
   <!-- 4. left-middle: arrow exits right side → toward mosaic left edge -->
   <div class="anno-wrap" style="right:calc(50% + min(44vh,44vw)/2 + 20px); top:calc(46% + 15px); text-align:right; transform:rotate(-5deg);">
     <span class="anno-text" style="animation-delay:2.4s">Gemeinsam<br>bauen macht<br>Spaß ↗</span>
-    <span class="anno-arrow" style="right:-1.2em; top:0.1em; transform:scaleY(-1); animation-delay:2.7s">↩</span>
+    <svg class="anno-svg" width="54" height="40" viewBox="0 0 54 40" fill="none" style="position:absolute;right:-58px;top:4px;animation-delay:2.7s;filter:drop-shadow(0 0 10px rgba(0,0,0,.5))">
+      <path d="M4,14 C16,8 32,10 44,20 C48,23 50,28 46,34" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M46,34 L48,24" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+      <path d="M46,34 L36,34" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
+    </svg>
   </div>
   <div id="scrollHint"><span>Scroll</span><div class="scroll-arrow"></div></div>
 </div>
