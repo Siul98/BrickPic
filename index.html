@@ -246,19 +246,23 @@ input,textarea{user-select:text;-webkit-user-select:text}
   overflow: hidden;
   aspect-ratio: 4/5;
   cursor: pointer;
-  transition: transform .3s ease, box-shadow .3s ease;
+  transition: transform .4s cubic-bezier(.23,.86,.39,.96), box-shadow .4s ease;
   background: #111;
   border: 1px solid rgba(255,255,255,.08);
 }
 .testimonial-card:hover {
-  transform: translateY(-6px) scale(1.01);
-  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 32px 80px rgba(0,0,0,.6);
 }
 .testimonial-card .tc-photo {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform .5s cubic-bezier(.23,.86,.39,.96);
+}
+.testimonial-card:hover .tc-photo {
+  transform: scale(1.06);
 }
 .testimonial-card .tc-canvas {
   position: absolute; inset: 0;
@@ -266,54 +270,59 @@ input,textarea{user-select:text;-webkit-user-select:text}
   object-fit: cover;
   opacity: .7;
 }
+/* Overlay: invisible by default, fades in on hover */
 .testimonial-card .tc-gradient {
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.2) 50%, transparent 100%);
+  background: linear-gradient(to top,
+    rgba(0,0,0,.92) 0%,
+    rgba(0,0,0,.5) 45%,
+    rgba(0,0,0,.1) 75%,
+    transparent 100%);
+  opacity: 0;
+  transition: opacity .4s ease;
 }
+.testimonial-card:hover .tc-gradient {
+  opacity: 1;
+}
+/* Text body: sits below frame, slides up on hover */
 .testimonial-card .tc-body {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  padding: 20px 18px;
+  padding: 22px 18px;
+  transform: translateY(16px);
+  opacity: 0;
+  transition: transform .4s cubic-bezier(.23,.86,.39,.96), opacity .35s ease;
+}
+.testimonial-card:hover .tc-body {
+  transform: translateY(0);
+  opacity: 1;
 }
 .testimonial-card .tc-stars {
   color: #fbbf24;
-  font-size: 12px;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
 }
 .testimonial-card .tc-quote {
   font-family: 'Nunito', sans-serif;
   font-size: .88rem;
   font-weight: 600;
-  color: rgba(255,255,255,.92);
-  line-height: 1.45;
-  margin-bottom: 10px;
+  color: rgba(255,255,255,.95);
+  line-height: 1.5;
+  margin-bottom: 12px;
 }
 .testimonial-card .tc-author {
   font-family: 'Nunito', sans-serif;
-  font-size: .75rem;
+  font-size: .72rem;
   font-weight: 800;
   color: rgba(255,255,255,.5);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.testimonial-card .tc-tag {
-  position: absolute;
-  top: 14px; left: 14px;
-  background: rgba(255,255,255,.12);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,.2);
-  border-radius: 100px;
-  padding: 4px 10px;
-  font-family: 'Nunito', sans-serif;
-  font-size: .65rem;
-  font-weight: 800;
-  color: rgba(255,255,255,.7);
-  letter-spacing: .06em;
+  letter-spacing: .08em;
   text-transform: uppercase;
 }
 @media (max-width: 700px) {
   #testimonial-grid { grid-template-columns: repeat(2,1fr) !important; gap: 10px !important; }
+  .testimonial-card .tc-body { opacity: 1; transform: translateY(0); }
+  .testimonial-card .tc-gradient { opacity: 1; }
   .testimonial-card .tc-quote { font-size: .78rem; }
 }
 
@@ -3742,7 +3751,6 @@ function buildTestimonialGrid(){
 
     card.innerHTML+=`
       <div class="tc-gradient"></div>
-      <div class="tc-tag">Verified Build</div>
       <div class="tc-body">
         <div class="tc-stars">${'★'.repeat(c.stars)}</div>
         <div class="tc-quote">"${c.quote}"</div>
