@@ -4578,23 +4578,31 @@ var VARIANT_INFO = {
 };
 
 function _getThumbDataUrl() {
-  // Priorität 1: Hochgeladenes Originalbild — direkt als DataURL (keine Canvas-Umwegrendering)
-  if(typeof S !== 'undefined' && S.img) {
+  // Priorität 1: Hochgeladenes Bild → S.albums[S.active].src (DataURL)
+  if(typeof S !== 'undefined' && S.albums && S.albums[S.active] && S.albums[S.active].src) {
+    var srcUrl = S.albums[S.active].src;
+    // Sync-Crop auf 160x160 über temporäres Image
     try {
-      var cv = document.createElement('canvas');
-      var si = S.img;
-      var side = Math.min(si.naturalWidth || si.width || 300, si.naturalHeight || si.height || 300);
-      var ox = Math.max(0, ((si.naturalWidth || si.width || 0) - side) / 2);
-      var oy = Math.max(0, ((si.naturalHeight || si.height || 0) - side) / 2);
-      cv.width = 160; cv.height = 160;
-      var ctx = cv.getContext('2d');
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(si, ox, oy, side, side, 0, 0, 160, 160);
-      return cv.toDataURL('image/jpeg', .9);
+      var img = new Image();
+      img.src = srcUrl;
+      if(img.width > 0) {
+        // Bild bereits geladen (cache)
+        var cv = document.createElement('canvas');
+        cv.width = 160; cv.height = 160;
+        var ctx = cv.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        var side = Math.min(img.width, img.height);
+        var ox = (img.width - side) / 2;
+        var oy = (img.height - side) / 2;
+        ctx.drawImage(img, ox, oy, side, side, 0, 0, 160, 160);
+        return cv.toDataURL('image/jpeg', .9);
+      }
     } catch(e) {}
+    // Fallback: DataURL direkt zurückgeben (wird als img src verwendet)
+    return srcUrl;
   }
-  // Priorität 2: aktuelles Showcase-Originalfoto
+  // Priorität 2: Showcase-Originalfoto (kein Mosaic-Render)
   if(typeof SHOWCASE_ALBUMS !== 'undefined' && typeof scIdx !== 'undefined' && SHOWCASE_ALBUMS[scIdx] && SHOWCASE_ALBUMS[scIdx].thumb) {
     return SHOWCASE_ALBUMS[scIdx].thumb;
   }
