@@ -3266,12 +3266,14 @@ function updateThumbCanvas(){
 function paintDisplay(){
   const cv=document.getElementById('mosaicDisplay');if(!cv)return;
   const SZ=cv.offsetWidth||cv.parentElement?.offsetWidth||500;
-  if(SZ>10){cv.width=SZ;cv.height=SZ;}
+  // NOTE: do NOT resize cv here — causes white flash. Resize after render.
   const ctx=cv.getContext('2d');
   const mc=document.getElementById('mc');if(!mc)return;
   if(!S.albums[S.active]){
     if(!scGrids)return;
+    // Render to mc FIRST, then swap cv in one frame — prevents white flash
     renderMosaic(mc,scGrids[scIdx],48,'round');
+    if(SZ>10){cv.width=SZ;cv.height=SZ;}
     cv.getContext('2d').drawImage(mc,0,0,cv.width,cv.height);
     updateThumbCanvas();
     return;
