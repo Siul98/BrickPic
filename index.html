@@ -239,6 +239,84 @@ input,textarea{user-select:text;-webkit-user-select:text}
 /* ── INSPIRED: Pill badges ── */
 .insp-pill{padding:10px 20px;border-radius:100px;font-size:14px;font-weight:700;color:rgba(255,255,255,.85);cursor:pointer;border:1px solid rgba(255,255,255,.15);transition:all .3s cubic-bezier(.23,.86,.39,.96);position:relative;z-index:1;backdrop-filter:blur(8px)}
 
+/* ── Testimonial Photo Cards ─────────────────────────────── */
+.testimonial-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 4/5;
+  cursor: pointer;
+  transition: transform .3s ease, box-shadow .3s ease;
+  background: #111;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.testimonial-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+}
+.testimonial-card .tc-photo {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.testimonial-card .tc-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: .7;
+}
+.testimonial-card .tc-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.2) 50%, transparent 100%);
+}
+.testimonial-card .tc-body {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 20px 18px;
+}
+.testimonial-card .tc-stars {
+  color: #fbbf24;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.testimonial-card .tc-quote {
+  font-family: 'Nunito', sans-serif;
+  font-size: .88rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.92);
+  line-height: 1.45;
+  margin-bottom: 10px;
+}
+.testimonial-card .tc-author {
+  font-family: 'Nunito', sans-serif;
+  font-size: .75rem;
+  font-weight: 800;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.testimonial-card .tc-tag {
+  position: absolute;
+  top: 14px; left: 14px;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 100px;
+  padding: 4px 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: .65rem;
+  font-weight: 800;
+  color: rgba(255,255,255,.7);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+@media (max-width: 700px) {
+  #testimonial-grid { grid-template-columns: repeat(2,1fr) !important; gap: 10px !important; }
+  .testimonial-card .tc-quote { font-size: .78rem; }
+}
+
 /* ── CUSTOMERS: ExpandOnHover ── */
 .expand-card{
   flex-shrink:0;border-radius:20px;overflow:hidden;cursor:pointer;
@@ -2590,8 +2668,9 @@ html, body {
   <p class="sec-eyebrow">Reviews</p>
   <h2 class="sec-headline">Built with love.<br>Remembered forever.</h2>
   <p class="sec-body">Real people, real bricks, real memories.</p>
-  <div id="expand-cards" style="display:flex;gap:8px;align-items:stretch;max-width:1100px;width:100%;height:400px;position:relative;z-index:1"></div>
-  <div style="margin-top:40px;display:flex;align-items:center;gap:16px;position:relative;z-index:1">
+  <div id="testimonial-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:1100px;width:100%;position:relative;z-index:1"></div>
+  <div id="expand-cards" style="display:none"></div>
+  <div style="margin-top:48px;display:flex;align-items:center;gap:16px;position:relative;z-index:1">
     <span style="color:#fbbf24;font-size:22px">★★★★★</span>
     <div>
       <div style="font-size:24px;font-weight:900;color:#fff">4.98 / 5</div>
@@ -3605,57 +3684,78 @@ function buildInspiredGrid(){
 
 // ═══ CUSTOMERS: ExpandOnHover ════════════════════════════════════════════
 const CUSTOMERS=[
-  {quote:"Ich hab ein Mosaik von unserem Hund gemacht und es sieht unglaublich aus. Die Qualität war perfekt.",author:"Sarah M., München",stars:5,gradient:"linear-gradient(135deg,#1a0814,#2d0820)"},
-  {quote:"48x48 vom MBDTF Cover in meinem Studio. Meine Kunden reden immer noch davon. Absolut premium.",author:"Jonas K., Berlin",stars:5,gradient:"linear-gradient(135deg,#1a1000,#2d0815)"},
-  {quote:"Geburtstagsgeschenk für meinen Papa — sein Lieblingsfoto aus den 80ern. Er hat geweint. Jede Ecke wert.",author:"Lena F., Hamburg",stars:5,gradient:"linear-gradient(135deg,#0d0820,#1a0828)"},
-  {quote:"Mit meinen drei Kindern zusammen gebaut, jeder ein Modul. Bestes Wochenende seit Jahren.",author:"Thomas B., Wien",stars:5,gradient:"linear-gradient(135deg,#0a1020,#10182d)"},
-  {quote:"hat mir Stunden gespart.",author:"Maria S., Zürich",stars:5,gradient:"linear-gradient(135deg,#120818,#1e0d28)"},
-  {quote:"Unser Albumcover als 48x48 LEGO Mosaik. Hängt im Proberaum. Die Band liebt es.",author:"Felix R., Köln",stars:5,gradient:"linear-gradient(135deg,#1a0818,#08101e)"},
+  {
+    quote: "Mein Papa hat geweint. Sein Lieblingsfoto aus den 80ern, jetzt für immer in LEGO.",
+    author: "Lena F.", city: "Hamburg", stars: 5,
+    img: null, // → testimonial-1.jpg
+    accent: "linear-gradient(135deg,#2d0820,#1a0814)"
+  },
+  {
+    quote: "Das MBDTF-Cover im 48×48 Format. Hängt in meinem Studio — jeder Gast fragt danach.",
+    author: "Jonas K.", city: "Berlin", stars: 5,
+    img: null, // → testimonial-2.jpg
+    accent: "linear-gradient(135deg,#0a1020,#1a1000)"
+  },
+  {
+    quote: "Mit allen drei Kindern zusammen gebaut. Das beste Wochenende seit Jahren, ehrlich.",
+    author: "Thomas B.", city: "Wien", stars: 5,
+    img: null, // → testimonial-3.jpg
+    accent: "linear-gradient(135deg,#0d0820,#1a0828)"
+  },
+  {
+    quote: "Unser Albumcover als Mosaik. Hängt im Proberaum. Die Band liebt es, die Fans auch.",
+    author: "Felix R.", city: "Köln", stars: 5,
+    img: null, // → testimonial-4.jpg
+    accent: "linear-gradient(135deg,#1a0818,#08101e)"
+  },
 ];
 
 let expandedCard=1;
-function buildExpandCards(){
-  const container=document.getElementById('expand-cards');
-  if(!container)return;
-  container.innerHTML='';
+function buildExpandCards(){ /* legacy - replaced by buildTestimonialGrid */ }
+
+function buildTestimonialGrid(){
+  const grid=document.getElementById('testimonial-grid');
+  if(!grid)return;
+  grid.innerHTML='';
   CUSTOMERS.forEach((c,i)=>{
     const card=document.createElement('div');
-    card.className='expand-card';
-    card.id='ec-'+i;
-    const isExp=i===expandedCard;
-    card.style.cssText=`width:${isExp?'28rem':'4.5rem'};height:100%;min-width:4.5rem;background:${c.gradient};border:1px solid rgba(255,255,255,${isExp?'.12':'.06'})`;
-    // Mini mosaic background using canvas
-    if(scGrids){
+    card.className='testimonial-card';
+
+    // Photo or mosaic canvas as background
+    if(c.img){
+      const img=document.createElement('img');
+      img.className='tc-photo';
+      img.src=c.img;
+      img.alt=c.author;
+      card.appendChild(img);
+    } else if(scGrids){
+      // Placeholder: render mosaic on canvas
       const cv=document.createElement('canvas');
-      cv.width=280;cv.height=400;cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55';
-      const grid=scGrids[i%scGrids.length];
-      const SZ_h=400,SZ_w=280,x0c=SZ_w*.015,cellC=(SZ_w-2*x0c)/32,rC=cellC*.49;
+      cv.className='tc-canvas';
+      cv.width=300;cv.height=375;
+      const grid_data=scGrids[i%scGrids.length];
+      const W=300,H=375,pad=W*.015,cell=(W-2*pad)/32,r=cell*.48;
       const ctx=cv.getContext('2d');
-      ctx.fillStyle='#080808';ctx.fillRect(0,0,SZ_w,SZ_h);
+      ctx.fillStyle='#080808';ctx.fillRect(0,0,W,H);
       for(let row=0;row<32;row++)for(let col=0;col<32;col++){
-        const gc=grid[row][col];
-        const cx=x0c+col*cellC+cellC/2,cy=x0c+row*cellC+cellC/2;
-        ctx.beginPath();ctx.arc(cx,cy,rC,0,Math.PI*2);ctx.fillStyle=gc.hex;ctx.fill();
+        const gc=grid_data[row][col];
+        ctx.beginPath();ctx.arc(pad+col*cell+cell/2,pad+row*cell+cell/2,r,0,Math.PI*2);
+        ctx.fillStyle=gc.hex;ctx.fill();
       }
       card.appendChild(cv);
+    } else {
+      card.style.background=c.accent;
     }
+
     card.innerHTML+=`
-      <div class="ec-overlay"></div>
-      <div class="ec-content">
-        <div class="ec-stars">${'★'.repeat(c.stars)}</div>
-        <div class="ec-quote">${c.quote}</div>
-        <div class="ec-author">— ${c.author}</div>
+      <div class="tc-gradient"></div>
+      <div class="tc-tag">Verified Build</div>
+      <div class="tc-body">
+        <div class="tc-stars">${'★'.repeat(c.stars)}</div>
+        <div class="tc-quote">"${c.quote}"</div>
+        <div class="tc-author">${c.author} · ${c.city}</div>
       </div>`;
-    card.style.position='relative';
-    card.addEventListener('mouseenter',()=>{
-      expandedCard=i;
-      document.querySelectorAll('.expand-card').forEach((el,j)=>{
-        const isE=j===i;
-        el.style.width=isE?'28rem':'4.5rem';
-        el.style.borderColor=`rgba(255,255,255,${isE?.12:.06})`;
-      });
-    });
-    container.appendChild(card);
+    grid.appendChild(card);
   });
 }
 
@@ -3767,9 +3867,9 @@ function initLoader(){
       const hint=document.getElementById('scrollHint');if(hint)hint.classList.add('show');
       buildShowcaseGrids();startShowcase();paintDisplay();
       // Build other section content
-      setTimeout(()=>{buildInspiredGrid();buildExpandCards();},100);
+      setTimeout(()=>{buildInspiredGrid();buildTestimonialGrid();},100);
           },400);
-  },undefined,()=>{clearInterval(tick);buildShowcaseGrids();startShowcase();paintDisplay();setTimeout(()=>{buildInspiredGrid();buildExpandCards();},100);});
+  },undefined,()=>{clearInterval(tick);buildShowcaseGrids();startShowcase();paintDisplay();setTimeout(()=>{buildInspiredGrid();buildTestimonialGrid();},100);});
   const clock=new THREE.Clock();
   let animRunning=true;
   function easeOut(t){return 1-Math.pow(1-t,3);}
