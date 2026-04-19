@@ -372,7 +372,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   display: flex;
   align-items: center;
   gap: 3px;
-  overflow: hidden; /* clip on mobile */
+  overflow: visible;
 }
 .gnav-pill {
   position: relative;
@@ -646,12 +646,16 @@ input,textarea{user-select:text;-webkit-user-select:text}
 }
 .cart-empty svg { opacity: .35; }
 .cart-badge {
-  position: absolute; top: -6px; right: -6px;
-  background: #F2619C; color: #fff;
+  position: absolute; top: -8px; right: -8px;
+  background: linear-gradient(135deg, #F2619C, #e0507a);
+  color: #fff;
   border-radius: 50%; width: 18px; height: 18px;
-  font-size: .65rem; font-weight: 900;
+  font-size: .62rem; font-weight: 900;
   display: flex; align-items: center; justify-content: center;
   line-height: 1;
+  box-shadow: 0 2px 8px rgba(242,97,156,.5);
+  border: 1.5px solid rgba(255,255,255,.3);
+  z-index: 10;
 }
 .cart-icon-btn {
   position: relative;
@@ -2561,7 +2565,7 @@ html, body {
       <div id="actionBtns" style="display:none;padding:16px 0 4px">
         <div style="display:flex;gap:10px">
           <button class="btn-restart" onclick="resetToHome()" style="flex:1;background:none;border:1.5px solid var(--brd);color:var(--txt);padding:11px 0;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif">↺ Restart</button>
-          <button class="btn-order" onclick="openShopifyCheckout()" style="flex:2;background:linear-gradient(135deg,#F2619C,#93ABD9);border:none;color:#fff;padding:11px 0;border-radius:100px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:-.01em;font-family:'Nunito',sans-serif">Bestellen →</button>
+          <button class="btn-order" onclick="openShopifyCheckout()" style="flex:2;background:linear-gradient(135deg,#F2619C,#93ABD9);border:none;color:#fff;padding:11px 0;border-radius:100px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:-.01em;font-family:'Nunito',sans-serif">In den Warenkorb →</button>
         </div>
       </div>
     </div><!-- /config-content -->
@@ -4574,52 +4578,44 @@ var VARIANT_INFO = {
 };
 
 function _getThumbDataUrl() {
-  // Priorität 1: Hochgeladenes Originalbild (sieht bei 80x80 am besten aus)
+  // Priorität 1: Hochgeladenes Originalbild — direkt als DataURL (keine Canvas-Umwegrendering)
   if(typeof S !== 'undefined' && S.img) {
     try {
       var cv = document.createElement('canvas');
-      cv.width = 88; cv.height = 88;
+      var si = S.img;
+      var side = Math.min(si.naturalWidth || si.width || 300, si.naturalHeight || si.height || 300);
+      var ox = Math.max(0, ((si.naturalWidth || si.width || 0) - side) / 2);
+      var oy = Math.max(0, ((si.naturalHeight || si.height || 0) - side) / 2);
+      cv.width = 160; cv.height = 160;
       var ctx = cv.getContext('2d');
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-      // Quadratischer Crop aus der Mitte
-      var si = S.img;
-      var side = Math.min(si.naturalWidth || si.width, si.naturalHeight || si.height);
-      var ox = ((si.naturalWidth || si.width) - side) / 2;
-      var oy = ((si.naturalHeight || si.height) - side) / 2;
-      ctx.drawImage(si, ox, oy, side, side, 0, 0, 88, 88);
-      return cv.toDataURL('image/jpeg', .88);
+      ctx.drawImage(si, ox, oy, side, side, 0, 0, 160, 160);
+      return cv.toDataURL('image/jpeg', .9);
     } catch(e) {}
   }
-  // Priorität 2: Showcase-Originalfoto (nicht der Mosaic-Render)
+  // Priorität 2: aktuelles Showcase-Originalfoto
   if(typeof SHOWCASE_ALBUMS !== 'undefined' && typeof scIdx !== 'undefined' && SHOWCASE_ALBUMS[scIdx] && SHOWCASE_ALBUMS[scIdx].thumb) {
     return SHOWCASE_ALBUMS[scIdx].thumb;
   }
-  // Fallback: Mosaic-Canvas mit Smoothing
-  var src = document.getElementById('mosaicDisplay');
-  if(!src) return null;
-  try {
-    var cv = document.createElement('canvas');
-    cv.width = 88; cv.height = 88;
-    var ctx = cv.getContext('2d');
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(src, 0, 0, 88, 88);
-    return cv.toDataURL('image/jpeg', .85);
-  } catch(e) { return null; }
+  return null;
 }
 
-function addToCart(variantId) {
+function addToCartWithThumb(variantId, thumbOverride) {
   var info = VARIANT_INFO[variantId] || VARIANT_INFO[53712034333013];
-  var thumb = _getThumbDataUrl();
-  var existing = _cart.find(function(i){ return i.variantId === variantId && i.thumbDataUrl === thumb; });
+  var thumb = thumbOverride !== undefined ? thumbOverride : _getThumbDataUrl();
+  var existing = _cart.find(function(i){ return i.variantId === variantId; });
   if(existing) {
     existing.qty++;
+    if(thumb && !existing.thumbDataUrl) existing.thumbDataUrl = thumb;
   } else {
     _cart.push({variantId:variantId, label:info.label, size:info.size, price:info.price, thumbDataUrl:thumb, qty:1});
   }
   _renderCart();
   openCartDrawer();
+}
+function addToCart(variantId) {
+  addToCartWithThumb(variantId, undefined);
 }
 
 function openCartDrawer(variantId) {
@@ -4761,6 +4757,7 @@ function goShopify(variantId){
     BESTSELLERS.forEach(function(item, i) {
       var card = document.createElement('div');
       card.className = 'bs-card';
+      card.dataset.albumIdx = i;
       
       // Image area
       var imgWrap = document.createElement('div');
@@ -4787,7 +4784,7 @@ function goShopify(variantId){
         '<div class="bs-artist">' + item.artist + '</div>' +
         '<div class="bs-price-row">' +
           '<span class="bs-price">' + item.price + '</span>' +
-          '<button class="bs-buy-btn" data-variant="' + item.variant + '" data-title="' + item.title + '">Jetzt kaufen →</button>' +
+          '<button class="bs-buy-btn" data-variant="' + item.variant + '" data-title="' + item.title + '">In den Warenkorb →</button>' +
         '</div>';
       
       card.appendChild(info);
@@ -4799,9 +4796,13 @@ function goShopify(variantId){
       var btn = e.target.closest('.bs-buy-btn');
       if (!btn) return;
       var variantId = parseInt(btn.dataset.variant);
-      // Add to multi-item cart
+      // Add to multi-item cart with correct album thumbnail
       if (typeof addToCart === 'function') {
-        addToCart(variantId);
+        var card = btn.closest('.bs-card');
+        var albumIdx = card ? parseInt(card.dataset.albumIdx || 0) : 0;
+        var albumThumb = (typeof SHOWCASE_ALBUMS !== 'undefined' && SHOWCASE_ALBUMS[albumIdx]) 
+          ? SHOWCASE_ALBUMS[albumIdx].thumb : null;
+        addToCartWithThumb(variantId, albumThumb);
       }
     });
   }
