@@ -524,17 +524,18 @@ input,textarea{user-select:text;-webkit-user-select:text}
   align-items: center;
 }
 .cart-thumb {
-  width: 68px; height: 68px;
-  border-radius: 10px;
+  width: 80px; height: 80px;
+  border-radius: 12px;
   background: rgba(255,255,255,.07);
   border: 1px solid rgba(255,255,255,.1);
   overflow: hidden; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
 }
-.cart-thumb canvas {
-  width: 72px !important; height: 72px !important;
-  image-rendering: pixelated;
-  border-radius: 10px;
+.cart-thumb canvas, .cart-thumb img {
+  width: 80px !important; height: 80px !important;
+  image-rendering: auto;
+  border-radius: 0;
+  object-fit: cover;
 }
 .cart-info { flex: 1; }
 .cart-info .ci-name {
@@ -4573,13 +4574,38 @@ var VARIANT_INFO = {
 };
 
 function _getThumbDataUrl() {
+  // Priorität 1: Hochgeladenes Originalbild (sieht bei 80x80 am besten aus)
+  if(typeof S !== 'undefined' && S.img) {
+    try {
+      var cv = document.createElement('canvas');
+      cv.width = 88; cv.height = 88;
+      var ctx = cv.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      // Quadratischer Crop aus der Mitte
+      var si = S.img;
+      var side = Math.min(si.naturalWidth || si.width, si.naturalHeight || si.height);
+      var ox = ((si.naturalWidth || si.width) - side) / 2;
+      var oy = ((si.naturalHeight || si.height) - side) / 2;
+      ctx.drawImage(si, ox, oy, side, side, 0, 0, 88, 88);
+      return cv.toDataURL('image/jpeg', .88);
+    } catch(e) {}
+  }
+  // Priorität 2: Showcase-Originalfoto (nicht der Mosaic-Render)
+  if(typeof SHOWCASE_ALBUMS !== 'undefined' && typeof scIdx !== 'undefined' && SHOWCASE_ALBUMS[scIdx] && SHOWCASE_ALBUMS[scIdx].thumb) {
+    return SHOWCASE_ALBUMS[scIdx].thumb;
+  }
+  // Fallback: Mosaic-Canvas mit Smoothing
   var src = document.getElementById('mosaicDisplay');
   if(!src) return null;
   try {
     var cv = document.createElement('canvas');
-    cv.width = 72; cv.height = 72;
-    cv.getContext('2d').drawImage(src, 0, 0, 72, 72);
-    return cv.toDataURL('image/jpeg', .7);
+    cv.width = 88; cv.height = 88;
+    var ctx = cv.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(src, 0, 0, 88, 88);
+    return cv.toDataURL('image/jpeg', .85);
   } catch(e) { return null; }
 }
 
@@ -4656,7 +4682,7 @@ function _renderCart() {
     var div = document.createElement('div');
     div.className = 'cart-item';
     div.innerHTML =
-      '<div class="cart-thumb">'+(item.thumbDataUrl ? '<img src="'+item.thumbDataUrl+'" style="width:72px;height:72px;border-radius:10px;object-fit:cover">' : '<span style="font-size:1.5rem">🧱</span>')+'</div>'+
+      '<div class="cart-thumb">'+(item.thumbDataUrl ? '<img src="'+item.thumbDataUrl+'" style="width:80px;height:80px;object-fit:cover;display:block">' : '<span style="font-size:1.5rem">🧱</span>')+'</div>'+
       '<div class="cart-info" style="flex:1">'+
         '<div class="ci-name">'+item.label+'</div>'+
         '<div class="ci-size">'+item.size+'</div>'+
