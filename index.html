@@ -2589,7 +2589,18 @@ html, body {
 #section-build {
   height: 100vh;
   overflow: hidden;
-  background: #0a0a0a; /* matches section-customers — no white flash behind nav */
+  background: #F5F5F7; /* light default — matches inner UI */
+  position: relative;
+}
+/* Seal gap between generator and reviews — no white flash */
+#section-build::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: #030303;
+  z-index: 100;
+  pointer-events: none;
 }
 
 
