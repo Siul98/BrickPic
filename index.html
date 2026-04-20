@@ -19,6 +19,17 @@
       <input type="range" id="cropZoomSlider" min="100" max="400" value="100" step="1">
       <span id="cropZoomLabel">100%</span>
     </div>
+    <!-- Rotation slider -->
+    <div id="cropRotControls">
+      <span style="font-size:12px;color:var(--mut)">↻</span>
+      <input type="range" id="cropRotSlider" min="-180" max="180" value="0" step="1">
+      <span id="cropRotLabel">0°</span>
+    </div>
+    <!-- Auto-Optimize button -->
+    <button id="cropOptBtn" onclick="autoOptimize()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <span id="cropOptLabel">Belichtung optimieren</span>
+    </button>
     <div id="cropActions">
       <button id="cropCancel" onclick="closeCrop()">Abbrechen</button>
       <button id="cropConfirm" onclick="confirmCrop()">Mosaic erstellen →</button>
@@ -2498,6 +2509,24 @@ html, body {
   background:var(--blue);cursor:pointer;
 }
 #cropZoomLabel { font-size:12px;color:var(--mut);min-width:36px;text-align:right; }
+#cropRotControls { display:flex;align-items:center;gap:10px; }
+#cropRotSlider {
+  flex:1;-webkit-appearance:none;height:4px;border-radius:2px;
+  background:var(--brd);outline:none;cursor:pointer;
+}
+#cropRotSlider::-webkit-slider-thumb {
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--blue);cursor:pointer;
+}
+#cropRotLabel { font-size:12px;color:var(--mut);min-width:32px;text-align:right; }
+#cropOptBtn {
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;padding:9px 14px;border-radius:100px;border:none;cursor:pointer;
+  background:var(--brd);color:var(--txt);font-size:13px;font-weight:600;
+  font-family:'Nunito',sans-serif;transition:background .15s,opacity .15s;
+}
+#cropOptBtn:hover { background:rgba(59,130,246,.15); }
+#cropOptBtn.active { background:rgba(59,130,246,.25);color:var(--blue); }
 #cropActions { display:flex;gap:8px; }
 #cropActions button {
   flex:1;padding:11px;border-radius:100px;border:none;
@@ -3157,6 +3186,13 @@ function openCrop(src){
   };
   ci.src=src;
   modal.classList.add('open');
+  // Reset rotation + optimize state
+  _crop.rot=0;
+  _crop.brightness=1;_crop.contrast=1;_crop.optimized=false;
+  const rs=document.getElementById('cropRotSlider');
+  if(rs){rs.value=0;document.getElementById('cropRotLabel').textContent='0°';}
+  const ob=document.getElementById('cropOptBtn');
+  if(ob){ob.classList.remove('active');document.getElementById('cropOptLabel').textContent='Belichtung optimieren';}
   initCropDrag();
 }
 
@@ -3166,14 +3202,28 @@ function confirmCrop(){
   const stage=document.getElementById('cropStage');
   const ci=document.getElementById('cropImg');
   const sz=stage.offsetWidth;
-  // _crop.x/_crop.y are the image offset in px on screen
-  // scale: each screen px = 1/scale image px
   const cv=document.createElement('canvas');cv.width=sz;cv.height=sz;
   const ctx=cv.getContext('2d');
-  // draw: the image is displayed at scale _crop.scale, offset _crop.x/_crop.y
-  // to canvas coords: destX=_crop.x, destY=_crop.y, destW=imgW*scale, destH=imgH*scale
+  const rot=(_crop.rot||0)*Math.PI/180;
+  ctx.save();
+  ctx.translate(sz/2,sz/2);
+  ctx.rotate(rot);
+  ctx.translate(-sz/2,-sz/2);
   ctx.drawImage(ci,0,0,_crop.imgW,_crop.imgH,
     _crop.x,_crop.y,_crop.imgW*_crop.scale,_crop.imgH*_crop.scale);
+  ctx.restore();
+  // Apply brightness/contrast if optimized
+  if(_crop.optimized){
+    const id=ctx.getImageData(0,0,sz,sz);
+    const d=id.data,b=(_crop.brightness||1),c=(_crop.contrast||1);
+    const cf=(259*(c*255+255))/(255*(259-c*255));
+    for(let i=0;i<d.length;i+=4){
+      d[i]  =Math.min(255,Math.max(0,cf*(d[i]*b-128)+128));
+      d[i+1]=Math.min(255,Math.max(0,cf*(d[i+1]*b-128)+128));
+      d[i+2]=Math.min(255,Math.max(0,cf*(d[i+2]*b-128)+128));
+    }
+    ctx.putImageData(id,0,0);
+  }
   closeCrop();
   processImage(S.active,cv.toDataURL('image/jpeg',.92));
   revealBuild();
@@ -3187,11 +3237,16 @@ function centerCrop(){
 
 function updateCropTransform(){
   const ci=document.getElementById('cropImg');
+  const rot=_crop.rot||0;
   ci.style.width=(_crop.imgW*_crop.scale)+'px';
   ci.style.height=(_crop.imgH*_crop.scale)+'px';
   ci.style.left=_crop.x+'px';
   ci.style.top=_crop.y+'px';
-  ci.style.transform='';
+  // Rotate around the visual center of the stage
+  const sz=_crop.stageW||300;
+  const pivX=sz/2-_crop.x, pivY=sz/2-_crop.y;
+  ci.style.transformOrigin=pivX+'px '+pivY+'px';
+  ci.style.transform='rotate('+rot+'deg)';
 }
 
 function clampCrop(){
@@ -3218,6 +3273,62 @@ document.addEventListener('DOMContentLoaded',()=>{
     updateCropTransform();
     document.getElementById('cropZoomLabel').textContent=sl.value+'%';
   });
+
+  // Rotation slider
+  const rotSl=document.getElementById('cropRotSlider');
+  if(rotSl){
+    rotSl.addEventListener('input',()=>{
+      _crop.rot=parseInt(rotSl.value);
+      document.getElementById('cropRotLabel').textContent=rotSl.value+'°';
+      updateCropTransform();
+    });
+  }
+});
+
+// Auto brightness/contrast optimization
+function autoOptimize(){
+  const ci=document.getElementById('cropImg');
+  if(!ci||!ci.naturalWidth) return;
+  const btn=document.getElementById('cropOptBtn');
+  const lbl=document.getElementById('cropOptLabel');
+
+  if(_crop.optimized){
+    // Toggle off
+    _crop.optimized=false;
+    _crop.brightness=1;_crop.contrast=1;
+    btn.classList.remove('active');
+    lbl.textContent='Belichtung optimieren';
+    return;
+  }
+
+  // Sample image to find brightness
+  const cv=document.createElement('canvas');
+  const sample=120;cv.width=sample;cv.height=sample;
+  const ctx=cv.getContext('2d');
+  ctx.drawImage(ci,0,0,sample,sample);
+  const d=ctx.getImageData(0,0,sample,sample).data;
+  let sum=0,count=0;
+  for(let i=0;i<d.length;i+=4){
+    const lum=(d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114)/255;
+    sum+=lum;count++;
+  }
+  const avgLum=sum/count;
+
+  // Calculate adjustment: aim for ~0.55 avg luminance
+  const target=0.55;
+  _crop.brightness = avgLum < 0.15 ? 1.5 :   // very dark → boost a lot
+                     avgLum < 0.35 ? 1.2 :   // dark → moderate boost
+                     avgLum > 0.75 ? 0.8 :   // very bright → reduce
+                     avgLum > 0.6  ? 0.92 :  // bright → slight reduce
+                     target/avgLum;           // auto
+  _crop.brightness = Math.min(1.8, Math.max(0.6, _crop.brightness));
+  _crop.contrast = avgLum < 0.25 ? 0.12 : avgLum > 0.7 ? 0.05 : 0.08; // subtle contrast boost
+  _crop.optimized=true;
+
+  btn.classList.add('active');
+  const pct=Math.round((_crop.brightness-1)*100);
+  lbl.textContent= pct>0 ? `+${pct}% Helligkeit` : pct<0 ? `${pct}% Helligkeit` : 'Optimiert ✓';
+}
 });
 
 function initCropDrag(){
