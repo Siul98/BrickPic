@@ -137,9 +137,11 @@
 #section-build.gen-dark .ruler-right-label,
 #section-build.gen-dark .ruler-bottom-label { color:rgba(255,255,255,.55); }
 /* BrickPic logo in config → invert on dark */
-#section-build.gen-dark .prod-collab-logo { filter:invert(1); }
-#section-build.gen-dark .prod-collab-x { color:#aaa !important; }
-#section-build.gen-dark .prod-collab-diy { color:#ccc !important; }
+/* Logo is white-on-transparent PNG — invert(1) base makes it black for light mode.
+   On dark: remove invert so it stays white */
+#section-build.gen-dark .prod-collab-logo { filter: none !important; }
+#section-build.gen-dark .prod-collab-x { color:#F2619C !important; }
+#section-build.gen-dark .prod-collab-diy { color:rgba(255,255,255,.8) !important; }
 /* Config header border */
 #section-build.gen-dark .prod-collab-header { border-bottom-color:#3A3A3C !important; }
 /* Hint arrow + text brighter on dark */
