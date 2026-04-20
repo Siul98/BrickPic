@@ -5255,33 +5255,40 @@ function closeLegal() {
     if(!btn || !cv) return;
     const ctx = cv.getContext('2d');
     const particles = [];
-    const colors = ['#93c5fd','#a78bfa','#bae6fd','#c4b5fd','#7c3aed','#0284c7','#38bdf8','#fff'];
-    let running = false, raf = null;
+    const colors = ['#93c5fd','#a78bfa','#bae6fd','#c4b5fd','#7c3aed','#38bdf8','#ffffff','#ddd6fe'];
+    let running = false, raf = null, spawnTimer = 0;
 
     function spawn(){
-      for(let i=0;i<3;i++){
-        const side = Math.random() > .5 ? 1 : -1;
-        particles.push({
-          x: cv.width*.5 + (Math.random()-.5)*cv.width*.7,
-          y: cv.height*.5,
-          vx: (Math.random()-.5)*2.5 * side,
-          vy: -(1.5 + Math.random()*2),
-          size: 1.5 + Math.random()*3,
-          color: colors[Math.floor(Math.random()*colors.length)],
-          life: 1, decay: .015+Math.random()*.02,
-          rot: Math.random()*360, rotSpeed: (Math.random()-.5)*8
-        });
-      }
+      // Spawn 1 particle every ~10 frames = ~6/sec — slow & steady
+      spawnTimer++;
+      if(spawnTimer < 10) return;
+      spawnTimer = 0;
+
+      // Random angle in full 360° — burst in all directions
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 0.4 + Math.random() * 0.7; // slow speed
+      particles.push({
+        x: cv.width  * (0.3 + Math.random() * 0.4), // spread along button width
+        y: cv.height * (0.3 + Math.random() * 0.4), // spread along button height
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: 2 + Math.random() * 3.5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        life: 1,
+        decay: 0.006 + Math.random() * 0.006, // very slow fade → long life
+        rot: Math.random() * 360,
+        rotSpeed: (Math.random() - .5) * 3  // gentle spin
+      });
     }
 
-    function drawStar(ctx, x, y, r, rot){
-      ctx.save(); ctx.translate(x,y); ctx.rotate(rot*Math.PI/180);
+    function drawStar(x, y, r, rot){
+      ctx.save(); ctx.translate(x,y); ctx.rotate(rot * Math.PI/180);
       ctx.beginPath();
       for(let i=0;i<4;i++){
-        const a=i*90, ra=a*Math.PI/180, rb=(a+45)*Math.PI/180;
-        if(i===0) ctx.moveTo(Math.cos(ra)*r, Math.sin(ra)*r);
-        else ctx.lineTo(Math.cos(ra)*r, Math.sin(ra)*r);
-        ctx.lineTo(Math.cos(rb)*r*.4, Math.sin(rb)*r*.4);
+        const ra=(i*90)*Math.PI/180, rb=(i*90+45)*Math.PI/180;
+        i===0 ? ctx.moveTo(Math.cos(ra)*r, Math.sin(ra)*r)
+              : ctx.lineTo(Math.cos(ra)*r, Math.sin(ra)*r);
+        ctx.lineTo(Math.cos(rb)*r*.35, Math.sin(rb)*r*.35);
       }
       ctx.closePath(); ctx.fill(); ctx.restore();
     }
@@ -5290,28 +5297,30 @@ function closeLegal() {
       ctx.clearRect(0,0,cv.width,cv.height);
       if(running) spawn();
       for(let i=particles.length-1;i>=0;i--){
-        const p=particles[i];
-        p.x+=p.vx; p.y+=p.vy; p.vy*=.98;
-        p.life-=p.decay; p.rot+=p.rotSpeed;
-        if(p.life<=0){particles.splice(i,1);continue;}
-        ctx.globalAlpha=p.life*.8;
-        ctx.fillStyle=p.color;
-        drawStar(ctx,p.x,p.y,p.size,p.rot);
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= p.decay;
+        p.rot  += p.rotSpeed;
+        if(p.life <= 0){ particles.splice(i,1); continue; }
+        ctx.globalAlpha = p.life * 0.85;
+        ctx.fillStyle   = p.color;
+        drawStar(p.x, p.y, p.size, p.rot);
       }
-      ctx.globalAlpha=1;
-      if(running||particles.length>0) raf=requestAnimationFrame(tick);
-      else raf=null;
+      ctx.globalAlpha = 1;
+      if(running || particles.length > 0) raf = requestAnimationFrame(tick);
+      else raf = null;
     }
 
-    btn.addEventListener('mouseenter',()=>{
-      running=true;
-      if(!raf) raf=requestAnimationFrame(tick);
+    btn.addEventListener('mouseenter', () => {
+      running = true;
+      if(!raf) raf = requestAnimationFrame(tick);
     });
-    btn.addEventListener('mouseleave',()=>{ running=false; });
+    btn.addEventListener('mouseleave', () => { running = false; });
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initSBParticles);
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSBParticles);
   else initSBParticles();
-  setTimeout(initSBParticles,1500);
+  setTimeout(initSBParticles, 1500);
 })();
 
 // BlurFade headline animation via IntersectionObserver
