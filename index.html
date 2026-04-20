@@ -230,6 +230,44 @@ input,textarea{user-select:text;-webkit-user-select:text}
 }
 .sec-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:16px;position:relative;z-index:1}
 .sec-headline{font-size:clamp(40px,7vw,80px);font-weight:900;letter-spacing:-.04em;text-align:center;background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,.5) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:18px;line-height:1.05;position:relative;z-index:1}
+/* ── Loslegen Liquid Button ────────────────────────────────────────── */
+#loslegenBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 38px;
+  height: 54px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: .04em;
+  overflow: hidden;
+  isolation: isolate;
+  text-shadow: 0 1px 4px rgba(0,0,0,.4);
+  transition: transform .25s cubic-bezier(.23,.86,.39,.96), box-shadow .25s ease;
+  z-index: 2;
+}
+#loslegenBtn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 16px 48px rgba(242,97,156,.45); }
+#loslegenBtn:active { transform: scale(.97); }
+#loslegenBtn .liq-bg { position:absolute; inset:0; border-radius:100px; background:linear-gradient(135deg,#F2619C 0%,#93ABD9 100%); z-index:-2; }
+#loslegenBtn .liq-orb { position:absolute; border-radius:50%; filter:blur(18px); opacity:.85; animation:liqDrift linear infinite; mix-blend-mode:screen; z-index:-1; }
+#loslegenBtn .liq-orb:nth-child(1) { width:120px; height:120px; background:#F2619C; top:-30px; left:-20px; animation-duration:5s; }
+#loslegenBtn .liq-orb:nth-child(2) { width:100px; height:100px; background:#93ABD9; bottom:-20px; right:-10px; animation-duration:7s; animation-direction:reverse; }
+#loslegenBtn .liq-orb:nth-child(3) { width:80px; height:80px; background:#fff; top:50%; left:40%; transform:translate(-50%,-50%); animation-duration:6s; opacity:.25; }
+#loslegenBtn::before { content:''; position:absolute; inset:-6px; border-radius:100px; background:linear-gradient(135deg,#F2619C,#93ABD9); filter:blur(16px); opacity:.55; z-index:-3; transition:opacity .25s ease; }
+#loslegenBtn:hover::before { opacity:.8; }
+#loslegenBtn::after { content:''; position:absolute; inset:0; border-radius:100px; border:1.5px solid rgba(255,255,255,.35); z-index:1; pointer-events:none; }
+#loslegenBtn .liq-arrow { display:inline-flex; transition:transform .25s ease; font-style:normal; }
+#loslegenBtn:hover .liq-arrow { transform:translateX(4px); }
+@keyframes liqDrift { 0%{transform:translate(0,0) scale(1)} 33%{transform:translate(20px,-15px) scale(1.1)} 66%{transform:translate(-10px,20px) scale(.9)} 100%{transform:translate(0,0) scale(1)} }
+#heroCtaWrap { position:absolute; bottom:68px; left:50%; transform:translateX(-50%); z-index:5; opacity:0; animation:lcFadeUp .8s 2.8s ease both; }
+
 /* BlurFade Word Animation */
 .bfw {
   display: inline-block;
@@ -2520,6 +2558,16 @@ html, body {
       <path d="M46,34 L40,27" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
       <path d="M46,34 L52,27" stroke="rgba(255,255,255,.85)" stroke-width="2.3" stroke-linecap="round"/>
     </svg>
+  </div>
+  <div id="heroCtaWrap">
+    <button id="loslegenBtn" onclick="navTo('section-build',document.querySelector('[data-section=section-build]'))">
+      <div class="liq-bg"></div>
+      <div class="liq-orb"></div>
+      <div class="liq-orb"></div>
+      <div class="liq-orb"></div>
+      <span>Loslegen</span>
+      <i class="liq-arrow">→</i>
+    </button>
   </div>
   <div id="scrollHint"><span>Scroll</span><div class="scroll-arrow"></div></div>
 </div>
