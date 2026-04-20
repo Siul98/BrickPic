@@ -4078,14 +4078,18 @@ function updateScrollSpy(){
 }
 window.addEventListener('scroll',updateScrollSpy,{passive:true});
 
-// ── Nav theme: switch to light when past hero ──
+// ── Nav theme: light on generator, dark on hero/reviews ──
 (function(){
   const nav = document.getElementById('glass-nav');
   const hero = document.getElementById('loader');
+  const build = document.getElementById('section-build');
   function updateNavTheme(){
-    if(!nav||!hero) return;
-    const heroBottom = hero.getBoundingClientRect().bottom;
-    if(heroBottom < 60){
+    if(!nav) return;
+    const scrollY = window.scrollY;
+    const heroH = hero ? hero.offsetHeight : window.innerHeight;
+    const buildEnd = build ? build.offsetTop + build.offsetHeight : heroH * 2;
+    // nav-light only while over generator section (past hero, before reviews)
+    if(scrollY >= heroH - 60 && scrollY < buildEnd - 60){
       nav.classList.add('nav-light');
     } else {
       nav.classList.remove('nav-light');
