@@ -4078,18 +4078,19 @@ function updateScrollSpy(){
 }
 window.addEventListener('scroll',updateScrollSpy,{passive:true});
 
-// ── Nav theme: light on generator, dark on hero/reviews ──
+// ── Nav theme: light on generator, transparent on hero/dark-sections ──
 (function(){
   const nav = document.getElementById('glass-nav');
   const hero = document.getElementById('loader');
   const build = document.getElementById('section-build');
+  // Use scroll position for hero→build transition
   function updateNavTheme(){
     if(!nav) return;
     const scrollY = window.scrollY;
     const heroH = hero ? hero.offsetHeight : window.innerHeight;
-    const buildEnd = build ? build.offsetTop + build.offsetHeight : heroH * 2;
-    // nav-light only while over generator section (past hero, before reviews)
-    if(scrollY >= heroH - 60 && scrollY < buildEnd - 60){
+    // Only add nav-light after hero AND before build ends (with 120px early cutoff)
+    const buildEnd = build ? build.offsetTop + build.offsetHeight - 120 : heroH * 2;
+    if(scrollY >= heroH - 60 && scrollY < buildEnd){
       nav.classList.add('nav-light');
     } else {
       nav.classList.remove('nav-light');
@@ -4097,6 +4098,13 @@ window.addEventListener('scroll',updateScrollSpy,{passive:true});
   }
   window.addEventListener('scroll', updateNavTheme, {passive:true});
   updateNavTheme();
+  // IntersectionObserver: remove nav-light as soon as section-customers is visible
+  const sc = document.getElementById('section-customers');
+  if(sc && window.IntersectionObserver){
+    new IntersectionObserver(entries => {
+      if(entries[0].isIntersecting) nav.classList.remove('nav-light');
+    }, { threshold: 0.01 }).observe(sc);
+  }
 })();
   // Resume bricks animation when scrolled back to hero
   window.addEventListener('scroll',()=>{
