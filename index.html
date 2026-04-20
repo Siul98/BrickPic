@@ -74,6 +74,46 @@
   --brd:#D2D2D7;--ci-pink:#F2619C;--ci-lilac:#E7BEF8;--ci-blue:#93ABD9;--ci-yellow:#EDE986;--blue:#0066CC;--blue-bg:#EBF2FA;
   --radius:12px;
 }
+/* Generator dark mode */
+#section-build.gen-dark {
+  --bg:#161616;--white:#1C1C1E;--txt:#F5F5F7;--mut:#8E8E93;
+  --brd:#3A3A3C;--blue-bg:#0A1929;
+}
+#section-build.gen-dark #mosaicDisplay,
+#section-build.gen-dark #previewPanel { background:#0a0a0a; }
+#section-build.gen-dark .ruler-right-line,
+#section-build.gen-dark .ruler-bottom-line { border-color:rgba(255,255,255,.15); }
+/* Theme switch button — fixed bottom-left */
+#genThemeBtn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 999;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid var(--brd);
+  background: var(--white);
+  cursor: pointer;
+  display: none; /* shown only when generator visible */
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
+  transition: background .2s, border-color .2s, transform .2s;
+  overflow: hidden;
+  color: var(--txt);
+}
+#genThemeBtn:hover { transform: scale(1.1); }
+#genThemeBtn.visible { display: flex; }
+#genThemeBtn .btn-sun,
+#genThemeBtn .btn-moon {
+  position: absolute;
+  width: 18px; height: 18px;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+}
+#genThemeBtn .btn-moon { opacity: 0; transform: scale(.5) translateY(20px); }
+#genThemeBtn.dark-on .btn-sun  { opacity: 0; transform: scale(.5) translateY(20px); }
+#genThemeBtn.dark-on .btn-moon { opacity: 1; transform: scale(1) translateY(0); }
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
 input,textarea{user-select:text;-webkit-user-select:text}
 
@@ -5440,6 +5480,36 @@ function closeLegal() {
   setTimeout(initSBParticles, 1500);
 })();
 
+// Generator Dark Mode Toggle
+(function(){
+  const btn = document.getElementById('genThemeBtn');
+  const section = document.getElementById('section-build');
+  if(!btn || !section) return;
+
+  let dark = localStorage.getItem('genDark') === '1';
+
+  function apply(d){
+    section.classList.toggle('gen-dark', d);
+    btn.classList.toggle('dark-on', d);
+    dark = d;
+  }
+
+  // Show button only when generator section is visible
+  const obs = new IntersectionObserver(entries => {
+    const visible = entries[0].isIntersecting;
+    btn.classList.toggle('visible', visible);
+  }, { threshold: 0.1 });
+  obs.observe(section);
+
+  // Restore saved preference
+  apply(dark);
+
+  window.toggleGenDark = function(){
+    apply(!dark);
+    localStorage.setItem('genDark', dark ? '1' : '0');
+  };
+})();
+
 // BlurFade headline animation via IntersectionObserver
 (function() {
   function initBlurFade() {
@@ -5483,5 +5553,9 @@ function closeCookie(accepted) {
 })();
 </script>
 
+<button id="genThemeBtn" onclick="toggleGenDark()" title="Dark/Light Mode" aria-label="Dark Mode Toggle">
+  <svg class="btn-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+  <svg class="btn-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
 </body>
 </html>
