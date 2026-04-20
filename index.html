@@ -5482,6 +5482,7 @@ function closeLegal() {
 
 // Generator Dark Mode Toggle
 (function(){
+  function initGenDark(){
   const btn = document.getElementById('genThemeBtn');
   const section = document.getElementById('section-build');
   if(!btn || !section) return;
@@ -5508,6 +5509,9 @@ function closeLegal() {
     apply(!dark);
     localStorage.setItem('genDark', dark ? '1' : '0');
   };
+  } // end initGenDark
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initGenDark);
+  else initGenDark();
 })();
 
 // BlurFade headline animation via IntersectionObserver
