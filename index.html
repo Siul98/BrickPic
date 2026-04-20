@@ -74,55 +74,139 @@
   --brd:#D2D2D7;--ci-pink:#F2619C;--ci-lilac:#E7BEF8;--ci-blue:#93ABD9;--ci-yellow:#EDE986;--blue:#0066CC;--blue-bg:#EBF2FA;
   --radius:12px;
 }
-/* Generator dark mode */
+/* Generator dark mode — affects full layout */
 #section-build.gen-dark {
-  --bg:#1e1e1e;--white:#2a2a2a;--txt:#F5F5F7;--mut:#8E8E93;
+  --bg:#1e1e1e;--white:#2a2a2a;--txt:#F5F5F7;--mut:#9E9E9E;
   --brd:#3A3A3C;--blue-bg:#0A1929;
 }
-/* Entire left preview area → dark gray */
+/* Full left preview area */
 #section-build.gen-dark,
 #section-build.gen-dark #previewPanel,
 #section-build.gen-dark #previewTop,
-#section-build.gen-dark #mosaicWrap { background:#1e1e1e; }
-/* Sidebar + thumbnails — same dark gray */
+#section-build.gen-dark #mosaicWrap,
 #section-build.gen-dark #previewSidebar { background:#1e1e1e; }
 #section-build.gen-dark .preview-thumb { background:#1e1e1e !important; }
-#section-build.gen-dark .preview-thumb img { opacity:.85; }
-/* mosaicDisplay canvas area */
 #section-build.gen-dark #mosaicDisplay { background:#1e1e1e; }
-/* Right config panel stays white */
+/* Right config panel — also dark */
 #section-build.gen-dark #config {
-  background:#fff !important;
-  --bg:#F5F5F7;--white:#fff;--txt:#1D1D1F;--mut:#6E6E73;
-  --brd:#D2D2D7;--blue-bg:#EBF2FA;
+  background:#1e1e1e !important;
+  border-left-color:#3A3A3C;
 }
+/* Config panel text → light */
+#section-build.gen-dark #config h2,
+#section-build.gen-dark #config h3,
+#section-build.gen-dark #config h4,
+#section-build.gen-dark #config label,
+#section-build.gen-dark #config p,
+#section-build.gen-dark #config span:not(.cart-badge),
+#section-build.gen-dark #config .step-title,
+#section-build.gen-dark #config .step-label { color:var(--txt) !important; }
+/* Input fields */
+#section-build.gen-dark #config input,
+#section-build.gen-dark #config select,
+#section-build.gen-dark #config textarea {
+  background:#2a2a2a !important;
+  color:#F5F5F7 !important;
+  border-color:#3A3A3C !important;
+}
+/* Cards / boxes */
+#section-build.gen-dark #config .premium-box,
+#section-build.gen-dark #config .tier-card,
+#section-build.gen-dark #config .pal-option,
+#section-build.gen-dark #config .size-option,
+#section-build.gen-dark #config .step { background:#2a2a2a !important; border-color:#3A3A3C !important; }
+/* Dropzone */
+#section-build.gen-dark #dropzone {
+  background:#2a2a2a !important;
+  border-color:#4a4a4a !important;
+}
+#section-build.gen-dark #dropzone * { color:#aaa !important; }
+/* Upload zone header */
+#section-build.gen-dark .config-header,
+#section-build.gen-dark #configHeader { border-bottom-color:#3A3A3C; }
+/* Footer */
+#section-build.gen-dark #config-footer { background:#1e1e1e; border-top-color:#3A3A3C; }
+/* Muted text */
+#section-build.gen-dark #config .mut,
+#section-build.gen-dark #config .fs-i { color:#8E8E93 !important; }
 /* Rulers */
 #section-build.gen-dark .ruler-right-line,
 #section-build.gen-dark .ruler-bottom-line { border-color:rgba(255,255,255,.2); }
 #section-build.gen-dark .ruler-right-label,
 #section-build.gen-dark .ruler-bottom-label { color:rgba(255,255,255,.35); }
-/* Theme switch button — fixed bottom-left */
-#genThemeBtn {
+
+/* Light gray theme */
+#section-build.gen-gray,
+#section-build.gen-gray #previewPanel,
+#section-build.gen-gray #previewTop,
+#section-build.gen-gray #mosaicWrap,
+#section-build.gen-gray #previewSidebar { background:#E8E8EA; }
+#section-build.gen-gray .preview-thumb { background:#E8E8EA !important; }
+#section-build.gen-gray #config { background:#E8E8EA !important; }
+
+/* Beige theme */
+#section-build.gen-beige,
+#section-build.gen-beige #previewPanel,
+#section-build.gen-beige #previewTop,
+#section-build.gen-beige #mosaicWrap,
+#section-build.gen-beige #previewSidebar { background:#F0EBE1; }
+#section-build.gen-beige .preview-thumb { background:#F0EBE1 !important; }
+#section-build.gen-beige #config { background:#F0EBE1 !important; }
+/* Background picker — fixed bottom-left */
+#bgPickerWrap {
   position: fixed;
   bottom: 24px;
   left: 24px;
   z-index: 999;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+#bgPickerWrap.visible { display: flex; }
+
+/* Handwritten hint label */
+#bgHint {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin-bottom: 6px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .4s ease, transform .4s ease;
+  pointer-events: none;
+}
+#bgPickerWrap.visible #bgHint {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: .6s;
+}
+#bgHint span {
+  font-family: 'Caveat', cursive;
+  font-size: 14px;
+  color: var(--mut);
+  white-space: nowrap;
+  line-height: 1;
+}
+#bgHint svg { flex-shrink: 0; }
+
+/* Main trigger button */
+#genThemeBtn {
   width: 42px;
   height: 42px;
   border-radius: 50%;
   border: 1.5px solid var(--brd);
   background: var(--white);
   cursor: pointer;
-  display: none; /* shown only when generator visible */
+  display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 16px rgba(0,0,0,.12);
-  transition: background .2s, border-color .2s, transform .2s;
-  overflow: hidden;
+  transition: background .2s, border-color .2s, transform .2s, box-shadow .2s;
   color: var(--txt);
+  position: relative;
 }
-#genThemeBtn:hover { transform: scale(1.1); }
-#genThemeBtn.visible { display: flex; }
+#genThemeBtn:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0,0,0,.18); }
 #genThemeBtn .btn-sun,
 #genThemeBtn .btn-moon {
   position: absolute;
@@ -132,6 +216,64 @@
 #genThemeBtn .btn-moon { opacity: 0; transform: scale(.5) translateY(20px); }
 #genThemeBtn.dark-on .btn-sun  { opacity: 0; transform: scale(.5) translateY(20px); }
 #genThemeBtn.dark-on .btn-moon { opacity: 1; transform: scale(1) translateY(0); }
+
+/* Color picker popup */
+#bgPickerPopup {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  background: var(--white);
+  border: 1px solid var(--brd);
+  border-radius: 14px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.15);
+  opacity: 0;
+  transform: translateY(8px) scale(.95);
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s cubic-bezier(.34,1.56,.64,1);
+  min-width: 130px;
+}
+#bgPickerPopup.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+#bgPickerPopup .bp-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--mut);
+  padding: 0 4px 2px;
+}
+.bg-swatch {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background .15s;
+  border: none;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt);
+  width: 100%;
+  text-align: left;
+}
+.bg-swatch:hover { background: rgba(0,0,0,.05); }
+.bg-swatch.active { background: rgba(0,0,0,.07); }
+.swatch-dot {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,.12);
+  flex-shrink: 0;
+}
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
 input,textarea{user-select:text;-webkit-user-select:text}
 
@@ -5498,40 +5640,74 @@ function closeLegal() {
   setTimeout(initSBParticles, 1500);
 })();
 
-// Generator Dark Mode Toggle
+// Generator Background Picker
 (function(){
-  function initGenDark(){
-  const btn = document.getElementById('genThemeBtn');
-  const section = document.getElementById('section-build');
-  if(!btn || !section) return;
+  function initBgPicker(){
+    const wrap = document.getElementById('bgPickerWrap');
+    const popup = document.getElementById('bgPickerPopup');
+    const section = document.getElementById('section-build');
+    if(!wrap || !section) return;
 
-  let dark = localStorage.getItem('genDark') === '1';
+    const THEMES = {
+      light:     { cls: '',          bg: '#F5F5F7', dark: false },
+      lightgray: { cls: 'gen-gray',  bg: '#E8E8EA', dark: false },
+      beige:     { cls: 'gen-beige', bg: '#F0EBE1', dark: false },
+      dark:      { cls: 'gen-dark',  bg: '#1e1e1e', dark: true  }
+    };
+    const ALL_CLS = Object.values(THEMES).map(t => t.cls).filter(Boolean);
 
-  function apply(d){
-    section.classList.toggle('gen-dark', d);
-    btn.classList.toggle('dark-on', d);
-    dark = d;
+    let current = localStorage.getItem('genBg') || 'light';
+    let pickerOpen = false;
+
+    function apply(theme){
+      current = theme;
+      const t = THEMES[theme] || THEMES.light;
+      // Remove all theme classes, add new one
+      section.classList.remove(...ALL_CLS);
+      if(t.cls) section.classList.add(t.cls);
+      // Update button icon (sun=light, moon=dark)
+      const btn = document.getElementById('genThemeBtn');
+      if(btn) btn.classList.toggle('dark-on', t.dark);
+      // Mark active swatch
+      document.querySelectorAll('.bg-swatch').forEach(s => {
+        s.classList.toggle('active', s.getAttribute('onclick').includes("'"+theme+"'"));
+      });
+      localStorage.setItem('genBg', theme);
+    }
+
+    // Show/hide with IntersectionObserver
+    const obs = new IntersectionObserver(entries => {
+      wrap.classList.toggle('visible', entries[0].isIntersecting);
+    }, { threshold: 0.1 });
+    obs.observe(section);
+
+    // Restore
+    apply(current);
+
+    // Toggle picker popup
+    window.toggleBgPicker = function(){
+      pickerOpen = !pickerOpen;
+      popup.classList.toggle('open', pickerOpen);
+    };
+
+    // Apply theme
+    window.setBgTheme = function(theme){
+      apply(theme);
+      pickerOpen = false;
+      popup.classList.remove('open');
+    };
+
+    // Close on outside click
+    document.addEventListener('click', e => {
+      if(pickerOpen && !document.getElementById('genThemeBtn').contains(e.target)){
+        pickerOpen = false;
+        popup.classList.remove('open');
+      }
+    });
   }
-
-  // Show button only when generator section is visible
-  const obs = new IntersectionObserver(entries => {
-    const visible = entries[0].isIntersecting;
-    btn.classList.toggle('visible', visible);
-  }, { threshold: 0.1 });
-  obs.observe(section);
-
-  // Restore saved preference
-  apply(dark);
-
-  window.toggleGenDark = function(){
-    apply(!dark);
-    localStorage.setItem('genDark', dark ? '1' : '0');
-  };
-  } // end initGenDark
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initGenDark);
-  else initGenDark();
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initBgPicker);
+  else initBgPicker();
 })();
-
 // BlurFade headline animation via IntersectionObserver
 (function() {
   function initBlurFade() {
@@ -5575,9 +5751,39 @@ function closeCookie(accepted) {
 })();
 </script>
 
-<button id="genThemeBtn" onclick="toggleGenDark()" title="Dark/Light Mode" aria-label="Dark Mode Toggle">
-  <svg class="btn-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-  <svg class="btn-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-</button>
+<div id="bgPickerWrap">
+  <!-- Handwritten hint -->
+  <div id="bgHint">
+    <span>Veränder den Hintergrund</span>
+    <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--mut)">
+      <path d="M9 2 C6 6, 3 12, 5 18 M5 18 L2 14 M5 18 L9 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <!-- Trigger button -->
+  <button id="genThemeBtn" onclick="toggleBgPicker()" title="Hintergrund wählen" aria-label="Hintergrund ändern">
+    <svg class="btn-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <svg class="btn-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <!-- Color picker popup -->
+    <div id="bgPickerPopup" onclick="event.stopPropagation()">
+      <div class="bp-label">Hintergrund</div>
+      <button class="bg-swatch" onclick="setBgTheme('light')">
+        <span class="swatch-dot" style="background:#F5F5F7"></span>
+        <span>Weiß</span>
+      </button>
+      <button class="bg-swatch" onclick="setBgTheme('lightgray')">
+        <span class="swatch-dot" style="background:#E8E8EA"></span>
+        <span>Hell-Grau</span>
+      </button>
+      <button class="bg-swatch" onclick="setBgTheme('beige')">
+        <span class="swatch-dot" style="background:#F0EBE1"></span>
+        <span>Beige</span>
+      </button>
+      <button class="bg-swatch" onclick="setBgTheme('dark')">
+        <span class="swatch-dot" style="background:#1e1e1e;border-color:rgba(255,255,255,.15)"></span>
+        <span>Dunkel</span>
+      </button>
+    </div>
+  </button>
+</div>
 </body>
 </html>
