@@ -920,8 +920,18 @@ input,textarea{user-select:text;-webkit-user-select:text}
   border-color: rgba(255,255,255,.15);
   transform: translateY(-1px);
 }
-.cart-icon-btn.has-items {
-  color: #fff;
+.cart-icon-btn.has-items { color: #fff; }
+/* Light nav = dark text */
+#glass-nav.nav-light .cart-icon-btn {
+  color: rgba(0,0,0,.55);
+}
+#glass-nav.nav-light .cart-icon-btn:hover {
+  color: rgba(0,0,0,.85);
+  background: rgba(0,0,0,.06);
+  border-color: rgba(0,0,0,.08);
+}
+#glass-nav.nav-light .cart-icon-btn.has-items {
+  color: #000;
 }
 
 
