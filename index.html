@@ -3396,15 +3396,15 @@ function paintDisplay(){
     renderMosaic(mc,scGrids[scIdx],48,'round');
     if(SZ>10){cv.width=SZ;cv.height=SZ;}
     cv.getContext('2d').drawImage(mc,0,0,cv.width,cv.height);
-    // Also paint hero canvas (with frame overlay)
+    // Also paint hero canvas — tiles + PNG frame overlay (transparent center)
     const hero=document.getElementById('heroMosaicCanvas');
     if(hero){
       const hSZ=hero.parentElement?.offsetWidth||SZ;
       if(hSZ>10){hero.width=hSZ;hero.height=hSZ;}
       const hctx=hero.getContext('2d');
       hctx.drawImage(mc,0,0,hero.width,hero.height);
-      const fi=getLegoFrame();
-      if(fi.complete&&fi.naturalWidth>0) hctx.drawImage(fi,0,0,hero.width,hero.height);
+      const fo=document.getElementById('frameOverlay');
+      if(fo&&fo.complete&&fo.naturalWidth>0) hctx.drawImage(fo,0,0,hero.width,hero.height);
     }
     updateThumbCanvas();
     return;
