@@ -76,13 +76,29 @@
 }
 /* Generator dark mode */
 #section-build.gen-dark {
-  --bg:#161616;--white:#1C1C1E;--txt:#F5F5F7;--mut:#8E8E93;
+  --bg:#0a0a0a;--white:#1C1C1E;--txt:#F5F5F7;--mut:#8E8E93;
   --brd:#3A3A3C;--blue-bg:#0A1929;
 }
-#section-build.gen-dark #mosaicDisplay,
-#section-build.gen-dark #previewPanel { background:#0a0a0a; }
+/* Entire left preview area → black */
+#section-build.gen-dark,
+#section-build.gen-dark #previewPanel,
+#section-build.gen-dark #previewTop,
+#section-build.gen-dark #mosaicWrap { background:#0a0a0a; }
+/* mosaicDisplay canvas area */
+#section-build.gen-dark #mosaicDisplay { background:#0a0a0a; }
+/* Right config panel stays white */
+#section-build.gen-dark #config {
+  background:#fff !important;
+  --bg:#F5F5F7;--white:#fff;--txt:#1D1D1F;--mut:#6E6E73;
+  --brd:#D2D2D7;--blue-bg:#EBF2FA;
+}
+/* Sidebar thumbnails */
+#section-build.gen-dark #previewSidebar { background:#111; }
+/* Rulers */
 #section-build.gen-dark .ruler-right-line,
-#section-build.gen-dark .ruler-bottom-line { border-color:rgba(255,255,255,.15); }
+#section-build.gen-dark .ruler-bottom-line { border-color:rgba(255,255,255,.2); }
+#section-build.gen-dark .ruler-right-label,
+#section-build.gen-dark .ruler-bottom-label { color:rgba(255,255,255,.4); }
 /* Theme switch button — fixed bottom-left */
 #genThemeBtn {
   position: fixed;
