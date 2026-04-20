@@ -2494,15 +2494,27 @@ html, body {
   .sec-headline { font-size: clamp(28px, 8vw, 48px) !important; }
 }
 
-/* ── Mobile hero: stack logo → tagline → mosaic vertically ── */
+/* ── Mobile hero: stack logo → tagline → mosaic → CTA vertically ── */
 @media (max-width: 600px) {
   #loader {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     gap: 0 !important;
-    padding-top: 70px !important; /* account for fixed nav */
+    padding-top: clamp(96px, 13vh, 120px) !important; /* nav + breathing room */
+    padding-bottom: 32px !important;
+    min-height: 100vh !important;
+    height: auto !important;
+  }
+
+  /* Logo group: in flex flow, not absolute */
+  #heroLogoGroup {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    gap: 8px !important;
   }
 
   /* Canvas logo: reset absolute positioning, flow in flex */
@@ -2513,7 +2525,7 @@ html, body {
     transform: none !important;
     width: min(220px, 58vw) !important;
     max-width: min(220px, 58vw) !important;
-    margin-bottom: 6px;
+    margin-bottom: 0;
     z-index: 5;
   }
 
@@ -2525,7 +2537,7 @@ html, body {
     transform: none !important;
     font-size: 9px !important;
     letter-spacing: .25em;
-    margin-bottom: 14px;
+    margin-bottom: 0;
     z-index: 5;
   }
 
@@ -2535,15 +2547,24 @@ html, body {
     top: auto !important;
     left: auto !important;
     transform: none !important;
-    width: min(80vw, 80vw) !important;
-    max-width: 340px !important;
+    width: min(78vw, 320px) !important;
+    max-width: 320px !important;
+    margin-top: 28px !important;
     z-index: 2;
+  }
+
+  /* CTA: in flex flow, below mosaic with breathing room */
+  #heroCtaWrap {
+    position: relative !important;
+    top: auto !important;
+    margin-top: 28px !important;
+    width: 100%;
   }
 
   /* scrollHint */
   #scrollHint {
     position: absolute !important;
-    bottom: 28px;
+    bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
   }
@@ -2594,16 +2615,8 @@ html, body {
   background: #F5F5F7; /* light default — matches inner UI */
   position: relative;
 }
-/* Seal gap between generator and reviews — no white flash */
-#section-build::after {
-  content: "";
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 4px;
-  background: #030303;
-  z-index: 100;
-  pointer-events: none;
-}
+/* Body bg dark = no white sub-pixel flash between generator and reviews */
+html, body { background: #030303; }
 
 
 
@@ -4528,7 +4541,18 @@ function animate(){
   window._brickCamera = camera; // expose for cursor repulsion
 
 
-  const onResize=()=>{const W2=window.innerWidth,H2=window.innerHeight;camera.aspect=W2/H2;camera.updateProjectionMatrix();blurRenderer.setSize(W2,H2);sharpRenderer.setSize(W2,H2);};
+  const onResize=()=>{
+    const W2=window.innerWidth,H2=window.innerHeight;
+    const aspect=W2/H2;
+    camera.aspect=aspect;
+    // Pull camera back on portrait viewports so bricks at x=±5..7 stay in view.
+    // Base z=14 fits desktop; on narrow screens scale up so horizontal FOV widens enough.
+    camera.position.z=Math.min(28, Math.max(14, 14/Math.min(1,aspect)));
+    camera.updateProjectionMatrix();
+    blurRenderer.setSize(W2,H2);
+    sharpRenderer.setSize(W2,H2);
+  };
+  onResize();
   window.addEventListener('resize',onResize);
 }
 
