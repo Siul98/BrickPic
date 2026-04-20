@@ -281,7 +281,7 @@ input,textarea{user-select:text;-webkit-user-select:text}
   0%,100%{ opacity:1; transform:scale(1) rotate(0deg); }
   50%    { opacity:.25; transform:scale(.4) rotate(20deg); }
 }
-#sbParticles { position:absolute; inset:-20px; pointer-events:none; opacity:0; transition:opacity .3s ease; }
+#sbParticles { position:absolute; inset:-20px; pointer-events:none; opacity:0; transition:opacity .3s ease; -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%); mask-image:radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%); }
 #loslegenBtn:hover #sbParticles { opacity:1; }
 
 /* BlurFade Word Animation */
