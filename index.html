@@ -38,24 +38,8 @@
 </div>
 
 
-<!-- Shopify Checkout Modal -->
-<div id="shopifyModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
-  <div style="background:var(--bg);border-radius:20px;padding:24px;width:min(360px,90vw);box-shadow:0 24px 80px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:14px;">
-    <div style="font-size:16px;font-weight:800;color:var(--txt)">Format wählen</div>
-    <div style="font-size:13px;color:var(--mut)">Wähle dein Mosaic-Format aus:</div>
-    <div style="display:flex;flex-direction:column;gap:8px;" id="shopifyVariants">
-      <button onclick="goShopify('53712034333013')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-radius:12px;border:1.5px solid var(--brd);background:var(--white);cursor:pointer;font-family:inherit;font-size:14px;transition:border-color .15s" onmouseover="this.style.borderColor='#F2619C'" onmouseout="this.style.borderColor='var(--brd)'">
-        <span style="font-weight:700">48×48 STANDARD</span>
-        <span style="font-weight:800;color:#F2619C">119 €</span>
-      </button>
-      <button onclick="goShopify('53712034365781')" style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-radius:12px;border:1.5px solid var(--brd);background:var(--white);cursor:pointer;font-family:inherit;font-size:14px;transition:border-color .15s" onmouseover="this.style.borderColor='#F2619C'" onmouseout="this.style.borderColor='var(--brd)'">
-        <span style="font-weight:700">64×64 XL</span>
-        <span style="font-weight:800;color:#F2619C">189 €</span>
-      </button>
-    </div>
-    <button onclick="document.getElementById('shopifyModal').style.display='none'" style="padding:11px;border-radius:100px;border:1.5px solid var(--brd);background:none;color:var(--mut);font-size:13px;cursor:pointer;font-family:inherit">Abbrechen</button>
-  </div>
-</div>
+<!-- Legacy Shopify variant-select modal removed — all checkout flows go through the cart now. -->
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
@@ -977,12 +961,47 @@ input,textarea{user-select:text;-webkit-user-select:text}
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(242,97,156,.5), inset 0 1px 0 rgba(255,255,255,.2);
 }
+.cart-checkout-btn:disabled,
+.cart-checkout-btn.loading {
+  cursor: progress;
+  opacity: .85;
+  transform: none !important;
+}
+.cart-checkout-btn .btn-spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  margin-right: 8px;
+  border: 2px solid rgba(255,255,255,.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: btnSpin .7s linear infinite;
+  vertical-align: -3px;
+}
+@keyframes btnSpin { to { transform: rotate(360deg); } }
 .cart-note {
   text-align: center;
-  font-size: .7rem; color: rgba(255,255,255,.25);
+  font-size: .72rem; color: rgba(255,255,255,.35);
   margin-top: 10px;
   line-height: 1.5;
+  letter-spacing: .01em;
 }
+.cart-payments {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.05);
+  flex-wrap: wrap;
+}
+.cart-payments svg {
+  height: 18px;
+  width: auto;
+  opacity: .55;
+  transition: opacity .2s;
+}
+.cart-payments svg:hover { opacity: .85; }
 .cart-items-list {
   flex: 1; overflow-y: auto;
   padding: 6px 0;
@@ -5321,9 +5340,24 @@ function buildMarquee(){
       <span class="cart-total-price" id="cartTotal">0 €</span>
     </div>
     <button class="cart-checkout-btn" id="cartCheckoutBtn" onclick="cartGoCheckout()">
-      Zur Kasse →
+      <span class="btn-label">Zur Kasse →</span>
     </button>
-    <div class="cart-note">Sicherer Checkout · Lieferung in 5–7 Werktagen</div>
+    <div class="cart-note">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px;opacity:.6"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      SSL-verschlüsselt · 10 € Versand · Lieferung in 5–7 Werktagen
+    </div>
+    <div class="cart-payments" aria-label="Akzeptierte Zahlungsmethoden">
+      <!-- Visa -->
+      <svg viewBox="0 0 48 16" fill="#ffffff" aria-label="Visa"><text x="24" y="13" text-anchor="middle" font-family="Nunito, system-ui" font-size="13" font-weight="900" letter-spacing=".04em">VISA</text></svg>
+      <!-- Mastercard (overlapping circles) -->
+      <svg viewBox="0 0 34 18" aria-label="Mastercard"><circle cx="13" cy="9" r="7" fill="#EB001B"/><circle cx="21" cy="9" r="7" fill="#F79E1B"/><path d="M17 4a7 7 0 0 1 0 10 7 7 0 0 1 0-10z" fill="#FF5F00"/></svg>
+      <!-- PayPal -->
+      <svg viewBox="0 0 56 16" fill="#ffffff" aria-label="PayPal"><text x="28" y="13" text-anchor="middle" font-family="Nunito, system-ui" font-size="12" font-weight="900" font-style="italic" letter-spacing="-.02em">PayPal</text></svg>
+      <!-- Klarna -->
+      <svg viewBox="0 0 56 16" aria-label="Klarna"><rect width="56" height="16" rx="3" fill="#FFA8CD"/><text x="28" y="12.5" text-anchor="middle" font-family="Nunito, system-ui" font-size="11" font-weight="900" fill="#17120F" letter-spacing="-.02em">Klarna.</text></svg>
+      <!-- Apple Pay (apple glyph + Pay) -->
+      <svg viewBox="0 0 56 18" aria-label="Apple Pay" fill="#ffffff"><path d="M10.6 5.2c-.5.6-1.3 1-2.1.9-.1-.8.3-1.7.8-2.2.5-.6 1.4-1 2.1-1 .1.8-.2 1.7-.8 2.3zm.8.9c-1.2-.1-2.2.7-2.7.7-.6 0-1.4-.7-2.3-.6-1.2 0-2.3.7-2.9 1.8-1.2 2.2-.3 5.5.9 7.3.6.9 1.3 1.8 2.2 1.8.9 0 1.2-.6 2.3-.6 1.1 0 1.4.6 2.3.6.9 0 1.6-.9 2.2-1.8.5-.6.8-1.4 1.1-2.1-1.2-.5-2.1-1.7-2.1-3.2 0-1.3.7-2.5 1.8-3.1-.5-.7-1.4-.8-1.8-.8z"/><text x="19" y="14" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="12" font-weight="600" letter-spacing="-.01em">Pay</text></svg>
+    </div>
   </div>
 </div>
 
@@ -5463,9 +5497,32 @@ function _renderCart() {
 
 function cartGoCheckout() {
   if(_cart.length === 0) return;
+  var btn = document.getElementById('cartCheckoutBtn');
+  if(btn && btn.classList.contains('loading')) return; // guard against double-click
+  // Loading state so user gets feedback during the tab-open/redirect
+  if(btn){
+    btn.classList.add('loading');
+    btn.disabled = true;
+    var label = btn.querySelector('.btn-label');
+    if(label) label.innerHTML = '<span class="btn-spinner"></span>Weiterleiten…';
+  }
   // Build Shopify multi-item cart URL: /cart/variant1:qty1,variant2:qty2
   var parts = _cart.map(function(i){ return i.variantId+':'+i.qty; });
-  window.open('https://shop.brickpic.art/cart/'+parts.join(','),'_blank');
+  var url = 'https://shop.brickpic.art/cart/'+parts.join(',');
+  // Slight delay so the user actually sees the loading state
+  setTimeout(function(){
+    var w = window.open(url, '_blank', 'noopener');
+    if(!w){ window.location.href = url; } // popup blocked → fall back to same tab
+    // Reset button after a moment in case user returns
+    setTimeout(function(){
+      if(btn){
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        var lbl = btn.querySelector('.btn-label');
+        if(lbl) lbl.textContent = 'Zur Kasse →';
+      }
+    }, 1800);
+  }, 180);
 }
 
 // Legacy: openShopifyCheckout still works (called from generator "Bestellen" button)
