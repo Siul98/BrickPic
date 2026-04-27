@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<script>
+(function(){
+  var p = sessionStorage.getItem('bp_access');
+  if(p !== 'brickpic2026') {
+    document.documentElement.innerHTML = '';
+    document.head.innerHTML = '<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Nunito,sans-serif}</style><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">';
+    document.body.innerHTML = '<div style="text-align:center;color:white"><div style="font-size:28px;font-weight:900;letter-spacing:-.02em;margin-bottom:24px">BRICK<span style="color:#F2619C">PIC</span></div><div style="color:rgba(255,255,255,.4);font-size:13px;margin-bottom:40px">Diese Seite ist gerade nicht öffentlich.</div><input id="pw" type="password" placeholder="Passwort" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:12px 18px;color:white;font-size:15px;outline:none;width:240px;text-align:center"><br><button onclick="var v=document.getElementById("pw").value;if(v==="brickpic2026"){sessionStorage.setItem("bp_access","brickpic2026");location.reload();}else{document.getElementById("pw").style.borderColor="#F2619C"}" style="margin-top:14px;background:#F2619C;border:none;border-radius:8px;padding:12px 32px;color:white;font-size:14px;font-weight:700;cursor:pointer;width:240px">Zugang</button></div>';
+    throw new Error();
+  }
+})();
+</script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
