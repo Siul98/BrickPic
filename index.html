@@ -2982,10 +2982,7 @@ html, body { background: #030303; }
           <canvas id="thumbCanvas" width="54" height="54" style="display:block;width:54px;height:54px;image-rendering:pixelated;border-radius:6px"></canvas>
         </div>
         <!-- Room view thumb — live 3D mosaic composited into a real-room photo -->
-        <div class="preview-thumb photo-thumb" id="thumb-room" onclick="switchPreview('room')" title="Im Raum" style="background:linear-gradient(140deg,#e8dfd0 0%,#bba484 60%,#5d4332 100%);padding:0;position:relative">
-          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
-            <div style="width:46%;aspect-ratio:1;background:rgba(255,255,255,.85);border:1.5px solid rgba(0,0,0,.4);border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,.25)"></div>
-          </div>
+        <div class="preview-thumb photo-thumb" id="thumb-room" onclick="switchPreview('room')" title="Im Raum" style="background:url('room_eimsbude.jpg') center 45% / 165% no-repeat;padding:0;position:relative">
         </div>
         <!-- Lifestyle photo thumbs -->
         <div class="preview-thumb photo-thumb" id="thumb-0" onclick="switchPreview(0)" title="Building">
@@ -4785,12 +4782,19 @@ function switchPreview(mode) {
   }
 
   if(mode === 'room') {
-    document.getElementById('thumb-room')?.classList.add('active');
     if(lifestyleView) lifestyleView.classList.remove('show');
     if(!preview3D || typeof window.toggle3DPreview !== 'function') return;
+    // Need a populated grid first — guide user with a clear hint instead of silent failure
     if(preview3D.style.display === 'none' || !preview3D.querySelector('canvas')) {
+      const dataReady = (typeof getGrid === 'function') ? getGrid() : null;
+      if(!dataReady) {
+        alert('Lade erst dein Bild hoch — dann kannst du es im Raum hängen sehen ✦');
+        document.getElementById('thumb-mosaic')?.classList.add('active');
+        return;
+      }
       window.toggle3DPreview(true);
     }
+    document.getElementById('thumb-room')?.classList.add('active');
     // Apply the room background to preview3D (no DOM mutation — keeps WebGL context happy)
     const photoSrc = window.BP_ROOM_PHOTO_SRC || ROOM_PHOTO_DEFAULT_URL;
     preview3D.style.background = `url("${photoSrc}") center/cover no-repeat, ${ROOM_PLACEHOLDER_BG}`;
