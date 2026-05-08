@@ -6916,12 +6916,13 @@ function closeCookie(accepted) {
           activeCamera = camera; // perspective camera for room view
           // Rotate mosaic to vertical (tile surface faces camera at +Z)
           mosaicRoot.rotation.x = Math.PI/2;
-          // Frontal camera — distance tuned so 50-stud mosaic + frame fills ~94% of canvas
-          // (1.5-stud margin each side keeps the frame visible without too much empty space)
-          // r = TOTAL * 1.85 → visible width ~53 stud at z=0
+          // Frontal camera — distance tuned so the frame's OUTER edge hits the canvas edge exactly.
+          // r = TOTAL / (2 * tan(FOV/2)) places the visible width = TOTAL → 0 margin → no transparent
+          // canvas-edge halo where the wall-photo would otherwise shine through.
+          // FOV 32° vertical → r = TOTAL / (2 * 0.2867) = TOTAL × 1.745
           // Slight pitch tilt (0.04 rad ≈ 2.3°) shows bottom edge of frame for depth
           yaw = 0; pitch = 0.04;
-          camera.userData.r = TOTAL * 1.85;
+          camera.userData.r = TOTAL * 1.745;
           lookYTarget = 0;
           // Light from upper-LEFT to match the photo's light direction
           key.position.set(-40, 80, 30);
