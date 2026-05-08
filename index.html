@@ -4735,9 +4735,8 @@ let _previewMode = 'mosaic'; // 'mosaic' | 0 | 1
 const ROOM_PHOTO_DEFAULT_URL = 'room_eimsbude.jpg';
 const ROOM_PLACEHOLDER_BG = 'radial-gradient(ellipse at 28% 18%, rgba(255,240,200,0.35) 0%, rgba(255,240,200,0) 55%), linear-gradient(180deg, #ede4d3 0%, #d8c9b1 58%, #8f7250 60%, #5a3d27 100%)';
 // Where the BrickPic mosaic + frame sits in the photo (normalized 0–1, w & h equal for square frame).
-// Realistic proportion: 38cm mosaic on a real wall is small relative to room composition.
-// Calibrated for room_eimsbude.jpg — centered on the wall, sized to look like a believable hung picture.
-const ROOM_FRAME_RECT = { x: 0.475, y: 0.395, w: 0.13, h: 0.13 };
+// Center at (0.50, 0.46) — directly under the PH5 lamp at geometric photo center.
+const ROOM_FRAME_RECT = { x: 0.435, y: 0.395, w: 0.13, h: 0.13 };
 
 function switchPreview(mode) {
   _previewMode = mode;
@@ -6594,13 +6593,12 @@ function closeCookie(accepted) {
     rim.position.set(15, 25, -50); // strong rim catches highlights on the smooth tile cap
     scene.add(rim);
 
-    // ─── Materials — pure black Lambert (no specular, no env reflection — guarantees true black) ───
-    // Slight color variation between layers gives subtle shading from directional lights without shifting hue
+    // ─── Materials — uniform PURE BLACK across all frame parts (no shading variation) ───
     const matBaseplate  = new THREE.MeshLambertMaterial({color: 0x000000});
-    const matFrameBrick = new THREE.MeshLambertMaterial({color: 0x050505}); // very-dark-gray for hint of shading
-    const matFrameTile  = new THREE.MeshLambertMaterial({color: 0x050505});
-    const matCornerBrick= new THREE.MeshLambertMaterial({color: 0x080808}); // slightly lighter to distinguish corner pieces
-    const matCornerTile = new THREE.MeshLambertMaterial({color: 0x0a0a0a});
+    const matFrameBrick = new THREE.MeshLambertMaterial({color: 0x000000});
+    const matFrameTile  = new THREE.MeshLambertMaterial({color: 0x000000});
+    const matCornerBrick= new THREE.MeshLambertMaterial({color: 0x000000});
+    const matCornerTile = new THREE.MeshLambertMaterial({color: 0x000000});
     const matTile = new THREE.MeshLambertMaterial({color: 0xffffff}); // tile albedo set per-instance via setColorAt
 
     // ─── mosaicRoot — group containing all mosaic geometry; rotates as a unit for room view ───
@@ -6629,17 +6627,12 @@ function closeCookie(accepted) {
     studs.receiveShadow = true;
     mosaicRoot.add(studs);
 
-    // ─── Frame: 4 walls (length N-2) + 4 × 2x2 corner pieces with 3 studs each ───
+    // ─── Frame: 4 walls of 1×4 bricks meeting at corners — no special corner pieces ───
+    // Top + bottom walls span FULL perimeter (TOTAL stud), left + right walls span N stud (between them)
+    // This produces a uniform frame from above with consistent rectangular brick segments.
     const halfN = N/2, halfFW = FRAME_W/2;
     const halfTotal = TOTAL/2;
     const brickGap = 0.05;
-    const cornerGap = 0.06;
-    const CORNER_SIZE = 2; // 2 studs × 2 studs corner block (matches real product spec)
-    // Walls run BETWEEN the corner blocks — so wall length is N (inner tile width) - already same as before
-    // But the corner blocks now extend 1 stud INTO the tile area, so walls actually still cover N (not N-2)
-    // since walls live at the outer perimeter and corners overlap them at the outer 1×2 of each corner.
-    // To avoid z-fighting we shorten walls by 2 stud (1 at each end) so the 2x2 corner block exclusively fills the corner area.
-    const wallLen = N - (CORNER_SIZE - FRAME_W) * 2; // N - 2 = 46 for 48-stud frame
 
     function buildWall(centerX, centerZ, length, isHorizontal) {
       // Brick layer: 1×4 bricks end-to-end
@@ -6680,73 +6673,23 @@ function closeCookie(accepted) {
         used += segLen;
       }
     }
-    buildWall(0, -halfN-halfFW, wallLen, true);   // top
-    buildWall(0, +halfN+halfFW, wallLen, true);   // bottom
-    buildWall(-halfN-halfFW, 0, wallLen, false);  // left
-    buildWall(+halfN+halfFW, 0, wallLen, false);  // right
-
-    // 4 × 2x2 corner pieces — each fills the 2x2 area at frame corner with brick + tile cap + visible studs
-    // 2x2 extends 1 stud into the tile area (covers innermost-corner tile, like real product)
-    // Per PNG/product photo: only the 2 INNER studs of each 2x2 plate are visible (facing the tile area).
-    // The 2 outer studs sit on top of the frame's tile-cap layer where they appear flush.
-    const cornerBlocks = [
-      // For each corner, define the SIGNS of "inner direction" — towards the tile area
-      { cx: -halfTotal + CORNER_SIZE/2, cz: -halfTotal + CORNER_SIZE/2, innerDx: +0.5, innerDz: +0.5 }, // top-left
-      { cx: +halfTotal - CORNER_SIZE/2, cz: -halfTotal + CORNER_SIZE/2, innerDx: -0.5, innerDz: +0.5 }, // top-right
-      { cx: -halfTotal + CORNER_SIZE/2, cz: +halfTotal - CORNER_SIZE/2, innerDx: +0.5, innerDz: -0.5 }, // bottom-left
-      { cx: +halfTotal - CORNER_SIZE/2, cz: +halfTotal - CORNER_SIZE/2, innerDx: -0.5, innerDz: -0.5 }, // bottom-right
-    ];
-    const cornerStudGeo = new THREE.CylinderGeometry(STUD_R, STUD_R, STUD_HT, 14);
-    cornerBlocks.forEach(({cx, cz, innerDx, innerDz}) => {
-      // Corner brick (2×2 footprint, brick height)
-      const cb = new THREE.Mesh(
-        new THREE.BoxGeometry(CORNER_SIZE - cornerGap, BRICK_LAYER_H, CORNER_SIZE - cornerGap),
-        matCornerBrick
-      );
-      cb.position.set(cx, PLATE_H + BRICK_LAYER_H/2, cz);
-      cb.castShadow = true; cb.receiveShadow = true;
-      mosaicRoot.add(cb);
-      // Corner tile cap (2×2 footprint, plate height)
-      const ct = new THREE.Mesh(
-        new THREE.BoxGeometry(CORNER_SIZE - cornerGap, TILE_LAYER_H, CORNER_SIZE - cornerGap),
-        matCornerTile
-      );
-      ct.position.set(cx, PLATE_H + BRICK_LAYER_H + TILE_LAYER_H/2, cz);
-      ct.castShadow = true; ct.receiveShadow = true;
-      mosaicRoot.add(ct);
-      // 2 visible studs at the INNER side of the 2×2 plate (facing the tile area, perpendicular pair)
-      // Position 1: innermost stud (toward tile area corner)
-      // Position 2: adjacent inner stud (along one inner edge — pick the one perpendicular to first)
-      const innerStud1 = new THREE.Mesh(cornerStudGeo, matCornerBrick);
-      innerStud1.position.set(cx + innerDx, PLATE_H + BRICK_LAYER_H + TILE_LAYER_H + STUD_HT/2, cz + innerDz);
-      innerStud1.castShadow = true; innerStud1.receiveShadow = true;
-      mosaicRoot.add(innerStud1);
-      const innerStud2 = new THREE.Mesh(cornerStudGeo, matCornerBrick);
-      innerStud2.position.set(cx + innerDx, PLATE_H + BRICK_LAYER_H + TILE_LAYER_H + STUD_HT/2, cz - innerDz);
-      innerStud2.castShadow = true; innerStud2.receiveShadow = true;
-      mosaicRoot.add(innerStud2);
-    });
+    // Top + bottom: full TOTAL length (covers full horizontal perimeter incl. corners)
+    buildWall(0, -halfN-halfFW, TOTAL, true);   // top
+    buildWall(0, +halfN+halfFW, TOTAL, true);   // bottom
+    // Left + right: only N length (sits between top + bottom — they handle the corners)
+    buildWall(-halfN-halfFW, 0, N, false);  // left
+    buildWall(+halfN+halfFW, 0, N, false);  // right
+    // No special corner pieces — frame is uniform 1×4 brick segments meeting at corners.
 
     // ─── Round tiles — InstancedMesh, per-instance color, scale-up animation ───
-    // Skip the 4 inner-corner tiles — they're hidden under the 2x2 corner caps in real product
     const TILE_R = 0.485;
     const tileGeo = new THREE.CylinderGeometry(TILE_R, TILE_R, TILE_H, 28);
     const tiles = new THREE.InstancedMesh(tileGeo, matTile, N*N);
     tiles.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    function isInnerCorner(r, c){ return (r === 0 || r === N-1) && (c === 0 || c === N-1); }
     for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
       const i = r*N + c;
-      if (isInnerCorner(r, c)) {
-        // Hidden under 2x2 corner cap — render at scale 0 (effectively invisible)
-        dummy.position.set(c - N/2 + 0.5, PLATE_H + TILE_H/2, r - N/2 + 0.5);
-        dummy.scale.set(0.001, 0.001, 0.001);
-        dummy.updateMatrix();
-        tiles.setMatrixAt(i, dummy.matrix);
-        tiles.setColorAt(i, new THREE.Color(0x000000));
-        continue;
-      }
       dummy.position.set(c - N/2 + 0.5, PLATE_H + TILE_H/2, r - N/2 + 0.5);
-      dummy.scale.set(0.001, 0.001, 0.001); // start invisible, animate up
+      dummy.scale.set(0.001, 0.001, 0.001);
       dummy.updateMatrix();
       tiles.setMatrixAt(i, dummy.matrix);
       tiles.setColorAt(i, new THREE.Color(0x444444));
@@ -6774,7 +6717,6 @@ function closeCookie(accepted) {
       let allDone = true;
       for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
         const i = r*N + c;
-        if (isInnerCorner(r, c)) continue; // hidden under 2x2 corner cap; keep scale 0
         const localT = t - tileStart[i];
         let scale;
         if (localT < 0) { scale = 0.001; allDone = false; }
