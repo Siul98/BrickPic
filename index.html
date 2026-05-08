@@ -6586,13 +6586,14 @@ function closeCookie(accepted) {
     rim.position.set(15, 25, -50); // strong rim catches highlights on the smooth tile cap
     scene.add(rim);
 
-    // ─── Materials — pure black with roughness/metalness variation only ───
-    const matBaseplate  = new THREE.MeshStandardMaterial({color: 0x000000, roughness: 0.95, metalness: 0.0,  envMap: envTexture, envMapIntensity: 0.40});
-    const matFrameBrick = new THREE.MeshStandardMaterial({color: 0x000000, roughness: 0.45, metalness: 0.10, envMap: envTexture, envMapIntensity: 0.95});
-    const matFrameTile  = new THREE.MeshStandardMaterial({color: 0x000000, roughness: 0.16, metalness: 0.18, envMap: envTexture, envMapIntensity: 1.25}); // glossy tile cap
-    const matCornerBrick= new THREE.MeshStandardMaterial({color: 0x000000, roughness: 0.30, metalness: 0.14, envMap: envTexture, envMapIntensity: 1.10});
-    const matCornerTile = new THREE.MeshStandardMaterial({color: 0x000000, roughness: 0.10, metalness: 0.22, envMap: envTexture, envMapIntensity: 1.45}); // even glossier corners
-    const matTile = new THREE.MeshLambertMaterial({color: 0xffffff}); // Lambert for color-accurate hex reproduction
+    // ─── Materials — pure black Lambert (no specular, no env reflection — guarantees true black) ───
+    // Slight color variation between layers gives subtle shading from directional lights without shifting hue
+    const matBaseplate  = new THREE.MeshLambertMaterial({color: 0x000000});
+    const matFrameBrick = new THREE.MeshLambertMaterial({color: 0x050505}); // very-dark-gray for hint of shading
+    const matFrameTile  = new THREE.MeshLambertMaterial({color: 0x050505});
+    const matCornerBrick= new THREE.MeshLambertMaterial({color: 0x080808}); // slightly lighter to distinguish corner pieces
+    const matCornerTile = new THREE.MeshLambertMaterial({color: 0x0a0a0a});
+    const matTile = new THREE.MeshLambertMaterial({color: 0xffffff}); // tile albedo set per-instance via setColorAt
 
     // ─── mosaicRoot — group containing all mosaic geometry; rotates as a unit for room view ───
     const mosaicRoot = new THREE.Group();
