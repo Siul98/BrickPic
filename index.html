@@ -4775,25 +4775,6 @@ function switchPreview(mode) {
   if(rulerWrap) rulerWrap.style.visibility = (mode === 'mosaic') ? 'visible' : 'hidden';
   document.querySelectorAll('.preview-thumb').forEach(t => t.classList.remove('active'));
 
-  // Click → fullscreen handler (lazily attached when room mode is active)
-  function _roomClickFullscreen(e){
-    if (preview3D.dataset.roomMode !== '1') return;
-    if (document.fullscreenElement) return; // already fullscreen
-    const req = preview3D.requestFullscreen || preview3D.webkitRequestFullscreen;
-    if (req) req.call(preview3D).catch(() => {});
-  }
-  // Listen once globally — re-render when fullscreen state toggles so canvas refits
-  if (!window.__bpFullscreenWired) {
-    window.__bpFullscreenWired = true;
-    document.addEventListener('fullscreenchange', () => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (window.__bp3D && typeof window.__bp3D.forceResize === 'function') window.__bp3D.forceResize();
-        });
-      });
-    });
-  }
-
   // Tear down room styling on preview3D when leaving
   function exitRoomStyling(){
     if(!preview3D || preview3D.dataset.roomMode !== '1') return;
@@ -4802,7 +4783,6 @@ function switchPreview(mode) {
     preview3D.style.backgroundPosition = '';
     preview3D.style.backgroundRepeat = '';
     preview3D.style.cursor = '';
-    preview3D.removeEventListener('click', _roomClickFullscreen);
     if(canvas3D){
       canvas3D.style.position = '';
       canvas3D.style.left = '';
@@ -4871,8 +4851,7 @@ function switchPreview(mode) {
       cv.style.filter = '';
     }
     preview3D.dataset.roomMode = '1';
-    preview3D.style.cursor = 'zoom-in';
-    preview3D.addEventListener('click', _roomClickFullscreen);
+    preview3D.style.cursor = 'default';
     // Hide all 3D-mode buttons — room view is a static composition shot
     const centerBtn = document.getElementById('toggleCenter'); if (centerBtn) centerBtn.style.display = 'none';
     // Switch the 3D scene to frontal-static mode (mosaic vertical, camera straight-on, light from upper-left)
