@@ -2981,9 +2981,10 @@ html, body { background: #030303; }
         <div class="preview-thumb mosaic-thumb active" id="thumb-mosaic" onclick="switchPreview('mosaic')" title="Mosaik-Vorschau" style="background:#0a0a0a;padding:0">
           <canvas id="thumbCanvas" width="54" height="54" style="display:block;width:54px;height:54px;image-rendering:pixelated;border-radius:6px"></canvas>
         </div>
-        <!-- Room view thumb — live 3D mosaic composited into a real-room photo -->
-        <div class="preview-thumb photo-thumb" id="thumb-room" onclick="switchPreview('room')" title="Im Raum">
+        <!-- Room view thumb — live mosaic composited into a real-room photo -->
+        <div class="preview-thumb photo-thumb" id="thumb-room" onclick="switchPreview('room')" title="Im Raum" style="position:relative">
           <img src="room_eimsbude_thumb.jpg" alt="Im Raum">
+          <canvas id="thumbRoomMosaic" width="48" height="48" style="position:absolute;left:42%;top:24%;width:28%;height:28%;border:0.5px solid #000;border-radius:1px;box-shadow:1px 1.5px 2px rgba(0,0,0,0.45);pointer-events:none;image-rendering:pixelated"></canvas>
         </div>
         <!-- Lifestyle photo thumbs -->
         <div class="preview-thumb photo-thumb" id="thumb-0" onclick="switchPreview(0)" title="Building">
@@ -3845,6 +3846,19 @@ function renderView(cv,src,view,N){
 function goView(v){S.view=0;paintDisplay();}
 
 const _scThumbCache={};
+function updateRoomThumbMosaic(){
+  const c=document.getElementById('thumbRoomMosaic');if(!c)return;
+  const mc=document.getElementById('mc');if(!mc||!mc.width)return;
+  const ctx=c.getContext('2d');
+  // Crop mc's inner mosaic area (mc has a 36/768 border)
+  const border=Math.round(mc.width*36/768);
+  const inner=mc.width-2*border;
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality='high';
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.drawImage(mc,border,border,inner,inner,0,0,c.width,c.height);
+}
+
 function updateThumbCanvas(){
   const tc=document.getElementById('thumbCanvas');if(!tc)return;
   const ctx=tc.getContext('2d');
@@ -3912,6 +3926,7 @@ function paintDisplay(){
       if(fo&&fo.complete&&fo.naturalWidth>0) hctx.drawImage(fo,0,0,hero.width,hero.height);
     }
     updateThumbCanvas();
+    updateRoomThumbMosaic();
     return;
   }
   const dg=getGrid();if(!dg)return;
@@ -3919,6 +3934,7 @@ function paintDisplay(){
   renderView(cv,mc,0,dg.size);
   updateChips();
   updateThumbCanvas();
+  updateRoomThumbMosaic();
 }
 
 function updateChips(){
