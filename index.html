@@ -4801,6 +4801,10 @@ function switchPreview(mode) {
   if(mode === 'mosaic') {
     document.getElementById('thumb-mosaic')?.classList.add('active');
     if(lifestyleView) lifestyleView.classList.remove('show');
+    // Restore default top-down ortho view when returning from room/elsewhere
+    if (typeof window.__bp3DResetToTopDown === 'function') {
+      requestAnimationFrame(() => window.__bp3DResetToTopDown());
+    }
     requestAnimationFrame(() => paintDisplay());
     return;
   }
@@ -7002,19 +7006,27 @@ function closeCookie(accepted) {
   };
 
   // Toggle top-down lock <-> free orbit
-  let _isLocked = true;
+  window.__bp3DLocked = true;
   window.toggleRotate = function(){
     if (!isOpen || !bp3D) return;
     const lbl = document.getElementById('toggleRotateLabel');
-    if (_isLocked) {
-      _isLocked = false;
+    if (window.__bp3DLocked) {
+      window.__bp3DLocked = false;
       bp3D.setTopDownLocked(false);
       if (lbl) lbl.textContent = '🔒 Fixieren';
     } else {
-      _isLocked = true;
+      window.__bp3DLocked = true;
       bp3D.setTopDownLocked(true);
       if (lbl) lbl.textContent = '✦ Drehen';
     }
+  };
+  // Public helper used by switchPreview to re-apply top-down lock on return to mosaic mode
+  window.__bp3DResetToTopDown = function(){
+    if (!isOpen || !bp3D) return;
+    window.__bp3DLocked = true;
+    bp3D.setTopDownLocked(true);
+    const lbl = document.getElementById('toggleRotateLabel');
+    if (lbl) lbl.textContent = '✦ Drehen';
   };
 
   window.update3DPreviewIfOpen = function(){
