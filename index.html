@@ -4785,15 +4785,16 @@ function switchPreview(mode) {
   if(mode === 'room') {
     if(lifestyleView) lifestyleView.classList.remove('show');
     if(!preview3D || typeof window.toggle3DPreview !== 'function') return;
-    // Need a populated grid first — guide user with a clear hint instead of silent failure
+    // Open 3D if not yet — works with showcase rotation OR user upload
     if(preview3D.style.display === 'none' || !preview3D.querySelector('canvas')) {
-      const dataReady = (typeof getGrid === 'function') ? getGrid() : null;
-      if(!dataReady) {
-        alert('Lade erst dein Bild hoch — dann kannst du es im Raum hängen sehen ✦');
+      // Auto-open watcher will pick up the current grid (showcase or user) silently
+      window.toggle3DPreview(true);
+      // If still no canvas (no grid available at all yet), guide user
+      if (!preview3D.querySelector('canvas')) {
+        alert('Moment — die Vorschau lädt gerade ✦');
         document.getElementById('thumb-mosaic')?.classList.add('active');
         return;
       }
-      window.toggle3DPreview(true);
     }
     document.getElementById('thumb-room')?.classList.add('active');
     // Apply the room background to preview3D (no DOM mutation — keeps WebGL context happy)
@@ -6819,13 +6820,24 @@ function closeCookie(accepted) {
   }
 
   // ─── Public toggles ───
+  // Returns the currently-displayable 48×48 grid: user upload first, showcase rotation as fallback
+  function getCurrentGrid(){
+    if (typeof S !== 'undefined' && S.albums?.[S.active]?.grid && S.N === 48) {
+      return { grid: S.albums[S.active].grid, size: 48, src: 'upload' };
+    }
+    if (typeof scGrids !== 'undefined' && Array.isArray(scGrids) && typeof scIdx !== 'undefined' && scGrids[scIdx]) {
+      return { grid: scGrids[scIdx], size: 48, src: 'showcase', idx: scIdx };
+    }
+    return null;
+  }
+
   window.toggle3DPreview = function(silent){
     const display3D = document.getElementById('preview3D');
     const canvas2D = document.getElementById('mosaicDisplay');
     const overlay = document.getElementById('frameOverlay');
     const label = document.getElementById('toggle3DLabel');
     if (!isOpen) {
-      const data = (typeof getGrid === 'function') ? getGrid() : null;
+      const data = getCurrentGrid();
       if (!data) { if (!silent) alert('Lade erst dein Bild hoch.'); return; }
       if (data.size !== 48) { if (!silent) alert('3D-Vorschau ist aktuell nur für 48×48 verfügbar.'); return; }
       display3D.style.display = 'block';
@@ -6850,25 +6862,25 @@ function closeCookie(accepted) {
 
   window.update3DPreviewIfOpen = function(){
     if (!isOpen || !bp3D) return;
-    const data = (typeof getGrid === 'function') ? getGrid() : null;
+    const data = getCurrentGrid();
     if (data && data.size === bp3D.N) bp3D.updateColors(data.grid);
   };
 
-  // ─── Auto-open 3D as default once a 48×48 grid is populated ───
-  let lastGridRef = null;
+  // ─── Auto-open 3D + sync to showcase rotation OR user upload ───
+  let lastSrc = null, lastUploadGrid = null, lastShowcaseIdx = -1;
   setInterval(() => {
-    if (typeof S === 'undefined' || !S.albums) return;
-    const grid = S.albums[S.active]?.grid;
-    if (!grid) return;
-    const newGrid = grid !== lastGridRef;
-    if (newGrid) {
-      lastGridRef = grid;
-      if (!autoOpened && S.N === 48) {
-        autoOpened = true;
-        if (!isOpen) window.toggle3DPreview(true);
-      } else if (isOpen && bp3D && bp3D.N === S.N) {
-        bp3D.updateColors(grid);
-      }
+    const cur = getCurrentGrid();
+    if (!cur) return;
+    let changed = (cur.src !== lastSrc);
+    if (cur.src === 'upload' && cur.grid !== lastUploadGrid) { changed = true; lastUploadGrid = cur.grid; }
+    if (cur.src === 'showcase' && cur.idx !== lastShowcaseIdx) { changed = true; lastShowcaseIdx = cur.idx; }
+    lastSrc = cur.src;
+    if (!changed) return;
+    if (!autoOpened && cur.size === 48) {
+      autoOpened = true;
+      if (!isOpen) window.toggle3DPreview(true);
+    } else if (isOpen && bp3D && bp3D.N === cur.size) {
+      bp3D.updateColors(cur.grid);
     }
   }, 250);
 })();
