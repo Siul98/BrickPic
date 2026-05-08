@@ -2982,7 +2982,8 @@ html, body { background: #030303; }
           <canvas id="thumbCanvas" width="54" height="54" style="display:block;width:54px;height:54px;image-rendering:pixelated;border-radius:6px"></canvas>
         </div>
         <!-- Room view thumb — live 3D mosaic composited into a real-room photo -->
-        <div class="preview-thumb photo-thumb" id="thumb-room" onclick="switchPreview('room')" title="Im Raum" style="background:url('room_eimsbude.jpg') center 45% / 165% no-repeat;padding:0;position:relative">
+        <div class="preview-thumb photo-thumb" id="thumb-room" onclick="switchPreview('room')" title="Im Raum">
+          <img src="room_eimsbude.jpg" alt="Im Raum" style="object-position:center 38%;transform:scale(1.6);transform-origin:center 38%">
         </div>
         <!-- Lifestyle photo thumbs -->
         <div class="preview-thumb photo-thumb" id="thumb-0" onclick="switchPreview(0)" title="Building">
