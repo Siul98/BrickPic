@@ -6835,6 +6835,7 @@ function closeCookie(accepted) {
     loop();
 
     let savedView = null;
+    let _snapToken = 0; // race-fix: invalidates in-flight snapToTopDown animations when setFrontalMode flips
     return {
       N, scene, camera, renderer, tiles, mosaicRoot,
       updateColors(grid){
@@ -6860,24 +6861,34 @@ function closeCookie(accepted) {
           else { orthoCamera.left = -half; orthoCamera.right = half; orthoCamera.top = half/aspect; orthoCamera.bottom = -half/aspect; }
           orthoCamera.updateProjectionMatrix();
         }
-        // Animate yaw/pitch to top-down for the perspective camera, then swap to ortho at end
+        // Animate yaw/pitch to top-down for the perspective camera, then swap to ortho at end.
+        // Use a token so setFrontalMode can invalidate any in-flight animation (race fix).
         const targetYaw = 0, targetPitch = Math.PI/2 - 0.001;
         const startYaw = yaw, startPitch = pitch;
         const t0 = performance.now();
+        const myToken = ++_snapToken;
         (function tick(){
+          // Abort if a newer snap was queued OR if frontalMode flipped on mid-animation
+          if (myToken !== _snapToken || frontalMode) return;
           const t = Math.min(1, (performance.now() - t0) / 600);
           const e = 1 - Math.pow(1-t, 3);
           yaw = startYaw + (targetYaw - startYaw) * e;
           pitch = startPitch + (targetPitch - startPitch) * e;
           setCamera();
           if (t < 1) requestAnimationFrame(tick);
-          else activeCamera = orthoCamera; // snap to ortho at end for clean flat look
+          else if (!frontalMode) activeCamera = orthoCamera; // only swap to ortho if still NOT in frontal mode
         })();
       },
       setFrontalMode(enable){
-        if (enable && !frontalMode) {
-          savedView = { yaw, pitch, r: camera.userData.r, lookY: lookYTarget, keyX: key.position.x };
-          frontalMode = true;
+        if (enable) {
+          // Idempotent: re-apply frontal state every time, even when already in frontal
+          // (so room→room2 transition refreshes the camera correctly).
+          if (!frontalMode) {
+            savedView = { yaw, pitch, r: camera.userData.r, lookY: lookYTarget, keyX: key.position.x };
+            frontalMode = true;
+          }
+          // Invalidate any in-flight snapToTopDown animation
+          _snapToken++;
           activeCamera = camera; // perspective camera for room view
           // Rotate mosaic to vertical (tile surface faces camera at +Z)
           mosaicRoot.rotation.x = Math.PI/2;
