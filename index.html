@@ -4781,8 +4781,8 @@ function switchPreview(mode) {
       canvas3D.style.position = '';
       canvas3D.style.left = '';
       canvas3D.style.top = '';
-      canvas3D.style.width = '';
-      canvas3D.style.height = '';
+      canvas3D.style.width = '100%';   // restore default size (build3DScene set this on init)
+      canvas3D.style.height = '100%';
       canvas3D.style.borderRadius = '';
       canvas3D.style.boxShadow = '';
       canvas3D.style.filter = '';
