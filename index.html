@@ -6692,18 +6692,16 @@ function closeCookie(accepted) {
     buildWall(+halfN+halfFW, 0, N, false);  // right
     // No special corner pieces — frame is uniform 1×4 brick segments meeting at corners.
 
-    // ─── Round tiles — InstancedMesh, per-instance color, falling-from-sky animation ───
+    // ─── Round tiles — InstancedMesh, per-instance color, light-sweep reveal ───
     const TILE_R = 0.485;
     const tileGeo = new THREE.CylinderGeometry(TILE_R, TILE_R, TILE_H, 28);
     const tiles = new THREE.InstancedMesh(tileGeo, matTile, N*N);
     tiles.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     const TILE_LANDING_Y = PLATE_H + TILE_H/2;
-    const TILE_FALL_HEIGHT = TOTAL * 0.55; // start ~55% of mosaic width above baseplate — feels like falling from arm's reach
-    const TILE_START_Y = TILE_LANDING_Y + TILE_FALL_HEIGHT;
     for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
       const i = r*N + c;
       dummy.position.set(c - N/2 + 0.5, TILE_LANDING_Y, r - N/2 + 0.5);
-      dummy.scale.set(0.001, 0.001, 0.001); // invisible until spawn
+      dummy.scale.set(1, 1, 1); // tiles visible at full size from the start
       dummy.updateMatrix();
       tiles.setMatrixAt(i, dummy.matrix);
       tiles.setColorAt(i, new THREE.Color(0x444444));
@@ -6712,58 +6710,51 @@ function closeCookie(accepted) {
     tiles.receiveShadow = true;
     mosaicRoot.add(tiles);
 
-    // ─── Tile reveal animation (random staggered fall onto baseplate) ───
+    // ─── Light-sweep reveal: a diagonal "wave of brightness" passes over the board
+    //     while the intro camera animation runs. No placement animation — tiles are
+    //     already in place; only their color is briefly modulated. ───
     let animStartTime = null;
-    const ANIM_STAGGER = 1500;     // total spread between first and last tile starting
-    const ANIM_TILE_DUR = 700;     // per-tile fall duration
-    const tileOrder = new Array(N*N);
-    for (let i = 0; i < N*N; i++) tileOrder[i] = i;
-    for (let i = tileOrder.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i+1));
-      [tileOrder[i], tileOrder[j]] = [tileOrder[j], tileOrder[i]];
-    }
-    const tileStart = new Array(N*N);
-    tileOrder.forEach((idx, ord) => { tileStart[idx] = (ord / (N*N)) * ANIM_STAGGER; });
-    // Easing: ease-in cubic for the bulk of the fall (gravity acceleration), tiny overshoot/settle near landing
-    function easeFallSettle(t){
-      // t in [0,1]. For t<0.85: ease-in-cubic accelerating to 1.04 (4% overshoot below landing).
-      // For t>=0.85: settle from overshoot back to 1.0 with quick ease-out — gives a soft "click" at landing.
-      if (t < 0.85) {
-        const u = t / 0.85;
-        return u * u * u * 1.04;
-      }
-      const u = (t - 0.85) / 0.15;
-      return 1.04 - 0.04 * (1 - Math.pow(1 - u, 3));
-    }
+    const SWEEP_DUR = 1500;       // matches playIntroAnimation duration
+    const SWEEP_WIDTH = 6;        // wave width in tile units (full-bright at center, falls off over this distance)
+    const SWEEP_INTENSITY = 0.85; // how much the wave brightens passing tiles (0.85 = up to +85%)
+    // Base colors — true tile colors set by updateColors. Sweep modulates these into instanceColor.
+    const baseColors = new Float32Array(N*N*3);
     function tickAnim(){
       if (animStartTime === null) return;
-      const t = performance.now() - animStartTime;
-      let allDone = true;
+      const elapsed = performance.now() - animStartTime;
+      const ic = tiles.instanceColor;
+      if (!ic) return;
+      if (elapsed >= SWEEP_DUR) {
+        // Sweep done — restore all tiles to base colors exactly
+        for (let i = 0; i < N*N; i++) {
+          ic.array[3*i+0] = baseColors[3*i+0];
+          ic.array[3*i+1] = baseColors[3*i+1];
+          ic.array[3*i+2] = baseColors[3*i+2];
+        }
+        ic.needsUpdate = true;
+        animStartTime = null;
+        return;
+      }
+      // Sweep travels diagonally across the board: from upper-left (-N) to lower-right (+N).
+      // Total range covered: 3*N so the wave has time to pass off the far edge before the timer ends.
+      const t = elapsed / SWEEP_DUR;
+      const sweepPos = -N + t * (3 * N);
       for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
         const i = r*N + c;
-        const localT = t - tileStart[i];
-        let y, scale;
-        if (localT < 0) {
-          // Not spawned yet: invisible
-          y = TILE_LANDING_Y; scale = 0.001;
-          allDone = false;
-        } else if (localT >= ANIM_TILE_DUR) {
-          // Settled
-          y = TILE_LANDING_Y; scale = 1;
-        } else {
-          // Falling — full size, position animated from start_y down to landing_y
-          const e = easeFallSettle(localT / ANIM_TILE_DUR);
-          y = TILE_START_Y + (TILE_LANDING_Y - TILE_START_Y) * e;
-          scale = 1;
-          allDone = false;
+        // Diagonal axis = x + z position of the tile
+        const tilePos = (c - N/2 + 0.5) + (r - N/2 + 0.5);
+        const dist = Math.abs(tilePos - sweepPos);
+        let brightness = 1.0;
+        if (dist < SWEEP_WIDTH) {
+          // Smooth bell curve via 1 - (d/w)^2, scaled by intensity
+          const k = 1 - dist / SWEEP_WIDTH;
+          brightness += k * k * SWEEP_INTENSITY;
         }
-        dummy.position.set(c - N/2 + 0.5, y, r - N/2 + 0.5);
-        dummy.scale.set(scale, scale, scale);
-        dummy.updateMatrix();
-        tiles.setMatrixAt(i, dummy.matrix);
+        ic.array[3*i+0] = Math.min(1, baseColors[3*i+0] * brightness);
+        ic.array[3*i+1] = Math.min(1, baseColors[3*i+1] * brightness);
+        ic.array[3*i+2] = Math.min(1, baseColors[3*i+2] * brightness);
       }
-      tiles.instanceMatrix.needsUpdate = true;
-      if (allDone) animStartTime = null;
+      ic.needsUpdate = true;
     }
     function startAnim(){ animStartTime = performance.now(); }
 
@@ -6847,7 +6838,12 @@ function closeCookie(accepted) {
           const cell = grid[r][c];
           color.setStyle(cell.hex);
           color.convertSRGBToLinear();
-          tiles.setColorAt(r*N + c, color);
+          const i = r*N + c;
+          tiles.setColorAt(i, color);
+          // Mirror to baseColors so the light-sweep reveal can modulate without losing the truth
+          baseColors[3*i+0] = color.r;
+          baseColors[3*i+1] = color.g;
+          baseColors[3*i+2] = color.b;
         }
         if (tiles.instanceColor) tiles.instanceColor.needsUpdate = true;
       },
