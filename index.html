@@ -6875,8 +6875,8 @@ function closeCookie(accepted) {
           // r = TOTAL / (2 * tan(FOV/2)) places the visible width = TOTAL → 0 margin → no transparent
           // canvas-edge halo where the wall-photo would otherwise shine through.
           // FOV 32° vertical → r = TOTAL / (2 * 0.2867) = TOTAL × 1.745
-          // Slight pitch tilt (0.04 rad ≈ 2.3°) shows bottom edge of frame for depth
-          yaw = 0; pitch = 0.04;
+          // pitch=0 → perfectly frontal, uniform frame thickness on all 4 sides (no tilt asymmetry)
+          yaw = 0; pitch = 0;
           camera.userData.r = TOTAL * 1.745;
           lookYTarget = 0;
           // Light from upper-LEFT to match the photo's light direction
