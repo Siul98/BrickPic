@@ -4764,6 +4764,9 @@ const ROOMS = {
 // Backwards-compat aliases (legacy code paths still reference these)
 const ROOM_PHOTO_DEFAULT_URL = ROOMS.room.src;
 const ROOM_FRAME_RECT = ROOMS.room.rect;
+// Preload room photos so clicking a room thumb shows the photo immediately —
+// otherwise CSS background-image fetches lazily and the placeholder gradient flickers ~1s.
+Object.values(ROOMS).forEach(r => { const img = new Image(); img.src = r.src; });
 
 function switchPreview(mode) {
   _previewMode = mode;
@@ -4821,11 +4824,11 @@ function switchPreview(mode) {
     const roomCfg = ROOMS[mode];
     if(lifestyleView) lifestyleView.classList.remove('show');
     if(!preview3D || typeof window.toggle3DPreview !== 'function') return;
-    // Open 3D if not yet — works with showcase rotation OR user upload
+    // Open 3D if not yet — works with showcase rotation OR user upload.
+    // Suppress the cinematic intro + light sweep when opening directly into a room slide:
+    // the room view immediately enters setFrontalMode, so the intro would race + visibly click.
     if(preview3D.style.display === 'none' || !preview3D.querySelector('canvas')) {
-      // Auto-open watcher will pick up the current grid (showcase or user) silently
-      window.toggle3DPreview(true);
-      // If still no canvas (no grid available at all yet), guide user
+      window.toggle3DPreview(true, /*suppressIntro=*/true);
       if (!preview3D.querySelector('canvas')) {
         alert('Moment — die Vorschau lädt gerade ✦');
         document.getElementById('thumb-mosaic')?.classList.add('active');
@@ -7028,7 +7031,7 @@ function closeCookie(accepted) {
     return null;
   }
 
-  window.toggle3DPreview = function(silent){
+  window.toggle3DPreview = function(silent, suppressIntro){
     const display3D = document.getElementById('preview3D');
     const canvas2D = document.getElementById('mosaicDisplay');
     const overlay = document.getElementById('frameOverlay');
@@ -7042,10 +7045,12 @@ function closeCookie(accepted) {
       if (!bp3D) bp3D = build3DScene(data.size);
       window.__bp3D = bp3D; // debug accessor
       bp3D.updateColors(data.grid);
-      bp3D.startAnim();
-      // Cinematic intro: starts on a slightly tilted 3D perspective so the user
-      // sees this is a real 3D model, then ease-outs into the locked top-down ortho view.
-      bp3D.playIntroAnimation();
+      // Cinematic intro + light sweep — skipped when opening directly into a room slide
+      // (caller will immediately enter setFrontalMode, so the intro would just collide and visibly snap).
+      if (!suppressIntro) {
+        bp3D.startAnim();
+        bp3D.playIntroAnimation();
+      }
       const centerBtn = document.getElementById('toggleCenter'); if (centerBtn) centerBtn.style.display = 'flex';
       isOpen = true;
     } else {
