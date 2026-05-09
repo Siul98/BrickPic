@@ -6858,6 +6858,55 @@ function closeCookie(accepted) {
           else if (!frontalMode) activeCamera = orthoCamera; // only swap to ortho if still NOT in frontal mode
         })();
       },
+      playIntroAnimation(){
+        // Cool intro: dramatic perspective angle → easy ease-out to top-down ortho.
+        // Tells the viewer "this is a 3D model you can rotate" before settling into the locked flat view.
+        if (frontalMode) return;
+
+        // Start angle — perspective from upper-right showing nice 3D depth
+        yaw = 0.65;
+        pitch = 0.62;       // ~35° elevation
+        camera.userData.r = TOTAL * 1.25;
+        lookYTarget = WALL_H / 2;
+        activeCamera = camera; // perspective during intro
+        setCamera();
+
+        // Recalc ortho frustum so the swap at end has correct projection
+        const cv = renderer.domElement;
+        if (cv.clientWidth && cv.clientHeight) {
+          const aspect = cv.clientWidth / cv.clientHeight;
+          const half = TOTAL/2 * 1.05;
+          if (aspect >= 1) { orthoCamera.left = -half*aspect; orthoCamera.right = half*aspect; orthoCamera.top = half; orthoCamera.bottom = -half; }
+          else { orthoCamera.left = -half; orthoCamera.right = half; orthoCamera.top = half/aspect; orthoCamera.bottom = -half/aspect; }
+          orthoCamera.updateProjectionMatrix();
+        }
+
+        // Animate yaw, pitch, lookY AND r toward top-down view + ortho-matching distance.
+        // r animation eliminates the "size jump" when swapping to orthographic at the end:
+        // ortho shows 1.05*TOTAL width; perspective at FOV 32° matches that width when r ≈ 1.83*TOTAL.
+        const targetYaw = 0;
+        const targetPitch = Math.PI/2 - 0.001;
+        const targetR = TOTAL * 1.831;
+        const targetLookY = 0;
+        const startYaw = yaw, startPitch = pitch, startR = camera.userData.r, startLookY = lookYTarget;
+        const duration = 1500;
+        const t0 = performance.now();
+        const myToken = ++_snapToken;
+
+        (function tick(){
+          if (myToken !== _snapToken || frontalMode) return;
+          const t = Math.min(1, (performance.now() - t0) / duration);
+          // Ease-out quartic — buttery deceleration, lands with a soft settle
+          const e = 1 - Math.pow(1 - t, 4);
+          yaw = startYaw + (targetYaw - startYaw) * e;
+          pitch = startPitch + (targetPitch - startPitch) * e;
+          camera.userData.r = startR + (targetR - startR) * e;
+          lookYTarget = startLookY + (targetLookY - startLookY) * e;
+          setCamera();
+          if (t < 1) requestAnimationFrame(tick);
+          else if (!frontalMode) activeCamera = orthoCamera;
+        })();
+      },
       setFrontalMode(enable){
         if (enable) {
           // Idempotent: re-apply frontal state every time, even when already in frontal
@@ -6943,8 +6992,9 @@ function closeCookie(accepted) {
       window.__bp3D = bp3D; // debug accessor
       bp3D.updateColors(data.grid);
       bp3D.startAnim();
-      // Initial view: top-down ortho — orbit always available; "Zentrieren" button snaps back here
-      bp3D.snapToTopDown();
+      // Cinematic intro: starts on a slightly tilted 3D perspective so the user
+      // sees this is a real 3D model, then ease-outs into the locked top-down ortho view.
+      bp3D.playIntroAnimation();
       const centerBtn = document.getElementById('toggleCenter'); if (centerBtn) centerBtn.style.display = 'flex';
       isOpen = true;
     } else {
