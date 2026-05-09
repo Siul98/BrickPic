@@ -6587,7 +6587,8 @@ function closeCookie(accepted) {
     } catch(e) { /* envMap optional */ }
 
     // ─── Lighting — high ambient + key/fill/rim + hemisphere for depth ───
-    scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+    const ambient = new THREE.AmbientLight(0xffffff, 0.55);
+    scene.add(ambient);
     scene.add(new THREE.HemisphereLight(0xa8c0e0, 0x1a1a1a, 0.45));
     const key = new THREE.DirectionalLight(0xffffff, 0.85);
     key.position.set(40, 80, 30);
@@ -6932,7 +6933,13 @@ function closeCookie(accepted) {
           // Idempotent: re-apply frontal state every time, even when already in frontal
           // (so room→room2 transition refreshes the camera correctly).
           if (!frontalMode) {
-            savedView = { yaw, pitch, r: camera.userData.r, lookY: lookYTarget, keyX: key.position.x };
+            savedView = {
+              yaw, pitch, r: camera.userData.r, lookY: lookYTarget,
+              keyX: key.position.x,
+              keyIntensity: key.intensity,
+              keyColor: key.color.getHex(),
+              ambientIntensity: ambient.intensity
+            };
             frontalMode = true;
           }
           // Invalidate any in-flight snapToTopDown animation
@@ -6948,8 +6955,13 @@ function closeCookie(accepted) {
           yaw = 0; pitch = 0;
           camera.userData.r = TOTAL * 1.745;
           lookYTarget = 0;
-          // Light from upper-LEFT to match the photo's light direction
+          // Warmer + brighter lighting to match the room photos' afternoon golden-hour light.
+          // - Key from upper-left (matches photo light direction), warm cream tint, stronger intensity
+          // - Ambient bumped so even tiles facing away from key aren't crushed in shadow
           key.position.set(-40, 80, 30);
+          key.intensity = 1.35;
+          key.color.setHex(0xfff1d6); // warm cream, ~3500K feel
+          ambient.intensity = 0.78;
           setCamera();
           dom.style.cursor = 'default';
         } else if (!enable && frontalMode) {
@@ -6960,6 +6972,9 @@ function closeCookie(accepted) {
             camera.userData.r = savedView.r;
             lookYTarget = savedView.lookY;
             key.position.set(savedView.keyX, 80, 30);
+            key.intensity = savedView.keyIntensity;
+            key.color.setHex(savedView.keyColor);
+            ambient.intensity = savedView.ambientIntensity;
           }
           setCamera();
           dom.style.cursor = 'grab';
