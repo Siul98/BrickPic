@@ -6763,7 +6763,7 @@ function closeCookie(accepted) {
       const dx = t.clientX - lastX, dy = t.clientY - lastY;
       lastX = t.clientX; lastY = t.clientY;
       yaw -= dx * 0.008;
-      pitch = Math.max(0.08, Math.min(Math.PI/2 - 0.05, pitch - dy * 0.008));
+      pitch = Math.max(0.08, Math.min(Math.PI/2 - 0.05, pitch + dy * 0.008));
       setCamera();
     }
     function onUp(){ down = false; dom.style.cursor = frontalMode ? 'default' : 'grab'; }
