@@ -6567,6 +6567,10 @@ function closeCookie(accepted) {
     // Default: canvas fills the container; room-mode CSS will override to a smaller frame area
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
+    // touch-action:none → tells the browser this element handles its own gestures.
+    // Without this, iOS Safari would scroll the page while the user tries to orbit.
+    // Toggled to 'auto' in setFrontalMode(true) so the static room view passes touch through.
+    renderer.domElement.style.touchAction = 'none';
 
     // ─── Procedural environment map for frame reflections ───
     let envTexture = null;
@@ -6766,6 +6770,8 @@ function closeCookie(accepted) {
     const dom = renderer.domElement;
     function onDown(e){
       if (frontalMode) return; // only locked in room view
+      // For touch on iPhone: claim the gesture so the page doesn't scroll while we orbit.
+      if (e.touches && e.cancelable) e.preventDefault();
       // First drag on top-down ortho: switch to perspective for free orbit
       if (activeCamera === orthoCamera) activeCamera = camera;
       down = true;
@@ -6775,6 +6781,8 @@ function closeCookie(accepted) {
     }
     function onMove(e){
       if (!down || frontalMode) return;
+      // Stop the page from scrolling while we're orbiting (touch on iOS especially).
+      if (e.touches && e.cancelable) e.preventDefault();
       const t = e.touches ? e.touches[0] : e;
       const dx = t.clientX - lastX, dy = t.clientY - lastY;
       lastX = t.clientX; lastY = t.clientY;
@@ -6794,9 +6802,13 @@ function closeCookie(accepted) {
     dom.addEventListener('mousedown', onDown);
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
-    dom.addEventListener('touchstart', onDown, {passive:true});
-    window.addEventListener('touchmove', onMove, {passive:true});
-    window.addEventListener('touchend', onUp);
+    // Touch listeners on the canvas (NOT window) — iOS implicitly captures the touch to its
+    // original target, so the drag continues even if the finger leaves the canvas. passive:false
+    // is required so preventDefault() actually blocks the page from scrolling underneath.
+    dom.addEventListener('touchstart', onDown, {passive:false});
+    dom.addEventListener('touchmove', onMove, {passive:false});
+    dom.addEventListener('touchend', onUp);
+    dom.addEventListener('touchcancel', onUp);
     dom.addEventListener('wheel', onWheel, {passive:false});
 
     function resize(){
@@ -6964,6 +6976,8 @@ function closeCookie(accepted) {
           ambient.intensity = 0.78;
           setCamera();
           dom.style.cursor = 'default';
+          // Room view is a static composition — let the page scroll through the canvas naturally
+          dom.style.touchAction = 'auto';
         } else if (!enable && frontalMode) {
           frontalMode = false;
           mosaicRoot.rotation.x = 0;
@@ -6978,6 +6992,8 @@ function closeCookie(accepted) {
           }
           setCamera();
           dom.style.cursor = 'grab';
+          // Back to interactive mode — capture touch gestures for orbit again
+          dom.style.touchAction = 'none';
         }
       },
       forceResize(){
